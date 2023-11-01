@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise;
+package com.example.poseexercise.views.graphic.camera;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -31,8 +31,12 @@ import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
+
+import com.example.poseexercise.util.VisionImageProcessor;
+import com.example.poseexercise.util.FrameMetadata;
+import com.example.poseexercise.views.graphic.GraphicOverlay;
 import com.google.android.gms.common.images.Size;
-import com.example.poseexercise.preference.PreferenceUtils;
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

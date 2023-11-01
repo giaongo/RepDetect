@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise.kotlin.posedetector
+package com.example.poseexercise.posedetector
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import com.example.poseexercise.GraphicOverlay
-import com.example.poseexercise.GraphicOverlay.Graphic
+import com.example.poseexercise.views.graphic.GraphicOverlay
+import com.example.poseexercise.views.graphic.GraphicOverlay.Graphic
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 import java.lang.Math.max
@@ -30,12 +30,12 @@ import java.util.Locale
 /** Draw the detected pose in preview. */
 class PoseGraphic
 internal constructor(
-  overlay: GraphicOverlay,
-  private val pose: Pose,
-  private val showInFrameLikelihood: Boolean,
-  private val visualizeZ: Boolean,
-  private val rescaleZForVisualization: Boolean,
-  private val poseClassification: List<String>
+    overlay: GraphicOverlay,
+    private val pose: Pose,
+    private val showInFrameLikelihood: Boolean,
+    private val visualizeZ: Boolean,
+    private val rescaleZForVisualization: Boolean,
+    private val poseClassification: List<String>
 ) : Graphic(overlay) {
   private var zMin = java.lang.Float.MAX_VALUE
   private var zMax = java.lang.Float.MIN_VALUE

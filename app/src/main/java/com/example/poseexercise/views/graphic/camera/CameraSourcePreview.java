@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise;
-
+package com.example.poseexercise.views.graphic.camera;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
@@ -24,9 +23,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils;
+import com.example.poseexercise.views.graphic.GraphicOverlay;
 import com.google.android.gms.common.images.Size;
-import com.google.mlkit.vision.demo.preference.PreferenceUtils;
-
 import java.io.IOException;
 
 /** Preview the camera image in the screen. */
