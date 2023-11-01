@@ -68,27 +68,21 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
                 arrayOf<Class<*>>(
                     LivePreviewActivity::class.java,
-                    StillImageActivity::class.java,
                 )
             else
                 arrayOf<Class<*>>(
                     LivePreviewActivity::class.java,
-                    StillImageActivity::class.java,
                     CameraXLivePreviewActivity::class.java,
-                    CameraXSourceDemoActivity::class.java
                 )
         private val DESCRIPTION_IDS =
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
                 intArrayOf(
                     R.string.desc_camera_source_activity,
-                    R.string.desc_still_image_activity,
                 )
             else
                 intArrayOf(
                     R.string.desc_camera_source_activity,
-                    R.string.desc_still_image_activity,
                     R.string.desc_camerax_live_preview_activity,
-                    R.string.desc_cameraxsource_demo_activity
                 )
     }
 }
