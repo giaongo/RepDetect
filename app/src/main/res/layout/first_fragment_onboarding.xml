@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstOnboardingFragment">
+    tools:context=".onboarding.FirstOnboardingFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:text="Create a workout plan to stay fit"
+                android:text="@string/create_a_workout"
                 android:textSize="33sp"
                 android:textStyle="bold" />
 
@@ -35,21 +35,10 @@
                 android:layout_width="382dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="120dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:text="Kick start your journey by crafting a tailored workout plan that suits your needs and goals"
+                android:text="@string/kick_start"
                 android:textSize="22sp" />
-
- <!--           <Button
-                android:id="@+id/nextButton"
-                android:layout_width="161dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@color/primaryColor"
-                android:gravity="center"
-                android:text="Next"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />-->
         </LinearLayout>
 
     </RelativeLayout>

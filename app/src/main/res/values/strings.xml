@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Strings for splashscreen and onboarding -->
     <string name="next_button_text">Next</string>
+    <string name="elevate_your_workout_experience">Elevate Your Workout Experience</string>
+    <string name="empower_your_fitness_journey">Empower Your Fitness Journey</string>
+    <string name="counting_made_easier">Counting made easier</string>
+    <string name="hassle_free_repetition_tracking">Hassle-Free Repetition Tracking</string>
+    <string name="kick_start">Kick start your journey by crafting a tailored workout plan that suits your needs and goals</string>
+    <string name="create_a_workout">Create a workout plan to stay fit</string>
 
     <string name="app_name" translatable="false">MLKit-Vision</string>
     <string name="java_entry_title" translatable="false">Run the ML Kit quickstart written in Java</string>

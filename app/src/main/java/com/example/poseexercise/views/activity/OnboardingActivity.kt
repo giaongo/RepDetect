@@ -1,6 +1,6 @@
 package com.example.poseexercise.views.activity
 
-import OnboardingPagerAdapter
+import com.example.poseexercise.onboarding.OnboardingPagerAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -8,10 +8,11 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.example.poseexercise.FirstOnboardingFragment
+import com.example.poseexercise.onboarding.FirstOnboardingFragment
 import com.example.poseexercise.R
-import com.example.poseexercise.SecondOnboardingFragment
-import com.example.poseexercise.ThirdOnboardingFragment
+import com.example.poseexercise.onboarding.SecondOnboardingFragment
+import com.example.poseexercise.onboarding.ThirdOnboardingFragment
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class OnboardingActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
@@ -19,16 +20,25 @@ class OnboardingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
+
+        // Find and initialize UI components
         val  nextButton = findViewById<Button>(R.id.nextButton)
         prefManager = PrefManager(this)
+        // List of onboarding fragments
         val fragments = listOf(
             FirstOnboardingFragment(),
             SecondOnboardingFragment(),
             ThirdOnboardingFragment()
         )
         viewPager = findViewById(R.id.viewPager)
+
+        // Set up the adapter for the ViewPager
         val onboardingAdapter = OnboardingPagerAdapter(this)
         viewPager.adapter = onboardingAdapter
+
+        // Initialize and attach the DotsIndicator
+        val indicator = findViewById<DotsIndicator>(R.id.dots_indicator)
+        indicator.attachTo(viewPager)
 
         nextButton.setOnClickListener {
             // Handle "Next" button click

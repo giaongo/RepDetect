@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstOnboardingFragment">
+    tools:context=".onboarding.FirstOnboardingFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="614dp">
+                android:layout_height="534dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -26,12 +26,11 @@
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="317dp"
-                    android:layout_marginTop="500dp"
+                    android:layout_height="137dp"
+                    android:layout_marginTop="430dp"
                     android:alpha="0.9"
                     android:scaleType="fitXY"
                     android:src="@drawable/overlay" />
-                />
 
             </FrameLayout>
 
@@ -42,7 +41,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="5dp"
                 android:gravity="center"
-                android:text="Hassle-Free Repetition Tracking"
+                android:text="@string/hassle_free_repetition_tracking"
                 android:textSize="33sp"
                 android:textStyle="bold" />
 
@@ -51,24 +50,11 @@
                 android:layout_width="382dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="55dp"
+                android:layout_marginBottom="0dp"
                 android:gravity="center"
-                android:text="Counting made easier"
+                android:text="@string/counting_made_easier"
                 android:textSize="22sp" />
-
-         <!--   <Button
-                android:id="@+id/nextButton"
-                android:layout_width="161dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@color/primaryColor"
-                android:gravity="center"
-                android:text="Get Started"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />-->
         </LinearLayout>
 
     </RelativeLayout>
-
-
 </FrameLayout>

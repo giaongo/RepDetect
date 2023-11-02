@@ -12,10 +12,13 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        // Use a Handler to delay the intent navigation
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, MainActivity::class.java)
+
+            // Start the MainActivity and finish this SplashActivity
             startActivity(intent)
             finish()
-        }, 3000)
+        }, 3000)// Delay for 3000 milliseconds (3 seconds)
     }
 }
