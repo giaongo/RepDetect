@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FirstOnboardingFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="614dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/equipment3" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="317dp"
+                    android:layout_marginTop="500dp"
+                    android:alpha="0.9"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/overlay" />
+                />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="377dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:text="Hassle-Free Repetition Tracking"
+                android:textSize="33sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="382dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="55dp"
+                android:gravity="center"
+                android:text="Counting made easier"
+                android:textSize="22sp" />
+
+         <!--   <Button
+                android:id="@+id/nextButton"
+                android:layout_width="161dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/primaryColor"
+                android:gravity="center"
+                android:text="Get Started"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />-->
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</FrameLayout>
