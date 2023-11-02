@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise;
+package com.example.poseexercise.util;
 
 /** Describing a frame info. */
 public class FrameMetadata {

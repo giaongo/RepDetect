@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise;
+package com.example.poseexercise.views.graphic;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;

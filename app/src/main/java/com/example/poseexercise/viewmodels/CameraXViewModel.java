@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise;
+package com.example.poseexercise.viewmodels;
 
 import android.app.Application;
 import android.os.Build.VERSION_CODES;

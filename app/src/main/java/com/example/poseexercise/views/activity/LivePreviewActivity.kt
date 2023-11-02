@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise.kotlin
+package com.example.poseexercise.views.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -29,24 +29,14 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
 import android.widget.ToggleButton
-import com.example.poseexercise.CameraSourcePreview
-import com.example.poseexercise.GraphicOverlay
+import com.example.poseexercise.views.graphic.camera.CameraSourcePreview
+import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.example.poseexercise.R
-import com.example.poseexercise.preference.SettingsActivity
 import com.google.android.gms.common.annotation.KeepName
-import com.example.poseexercise.CameraSource
-import com.google.mlkit.common.model.LocalModel
-import com.google.mlkit.vision.barcode.ZoomSuggestionOptions.ZoomCallback
-import com.example.poseexercise.kotlin.posedetector.PoseDetectorProcessor
-import com.example.poseexercise.preference.PreferenceUtils
-import com.example.poseexercise.preference.SettingsActivity.LaunchSource
-import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions
-import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
-import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
-import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
-import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
-import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.example.poseexercise.views.graphic.camera.CameraSource
+import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils
+import com.example.poseexercise.views.activity.SettingsActivity.LaunchSource
 import java.io.IOException
 
 /** Live preview demo for ML Kit APIs. */
@@ -146,7 +136,11 @@ class LivePreviewActivity :
   private fun createCameraSource(model: String) {
     // If there's no existing cameraSource, create one.
     if (cameraSource == null) {
-      cameraSource = CameraSource(this, graphicOverlay)
+      cameraSource =
+        CameraSource(
+          this,
+          graphicOverlay
+        )
     }
     try {
       when (model) {

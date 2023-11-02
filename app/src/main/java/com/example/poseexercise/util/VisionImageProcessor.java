@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise;
+package com.example.poseexercise.util;
 
 import android.graphics.Bitmap;
 
 import androidx.camera.core.ImageProxy;
 
+import com.example.poseexercise.views.graphic.GraphicOverlay;
 import com.google.mlkit.common.MlKitException;
 
 import java.nio.ByteBuffer;
@@ -32,7 +33,7 @@ public interface VisionImageProcessor {
 
   /** Processes ByteBuffer image data, e.g. used for Camera1 live preview case. */
   void processByteBuffer(
-      ByteBuffer data, FrameMetadata frameMetadata, GraphicOverlay graphicOverlay)
+          ByteBuffer data, FrameMetadata frameMetadata, GraphicOverlay graphicOverlay)
       throws MlKitException;
 
   /** Processes ImageProxy image data, e.g. used for CameraX live preview case. */

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise.preference;
+package com.example.poseexercise.views.fragment.preference;
 
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -25,11 +25,9 @@ import android.preference.PreferenceFragment;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
-
-import com.example.poseexercise.CameraSource;
-import com.example.poseexercise.CameraSource.SizePair;
+import com.example.poseexercise.views.graphic.camera.CameraSource;
+import com.example.poseexercise.views.graphic.camera.CameraSource.SizePair;
 import com.example.poseexercise.R;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
