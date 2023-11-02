@@ -50,6 +50,10 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.31'
     implementation 'androidx.multidex:multidex:2.0.1'
 
+    //page indicator
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation("com.tbuonomo:dotsindicator:4.3")
+
     // Pose detection with default models
     implementation 'com.google.mlkit:pose-detection:18.0.0-beta3'
     // Pose detection with accurate models

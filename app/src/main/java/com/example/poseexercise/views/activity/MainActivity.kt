@@ -1,6 +1,7 @@
 package com.example.poseexercise.views.activity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,11 +14,20 @@ import android.widget.TextView
 import com.example.poseexercise.R
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var prefManager: PrefManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         Log.d(TAG, "onCreate")
         setContentView(R.layout.activity_main)
+
+        prefManager = PrefManager(this)
+
+        if (prefManager.isFirstTimeLaunch()) {
+            // Show the onboarding screen
+            startActivity(Intent(this, OnboardingActivity::class.java))
+            finish()  // Close the main activity
+        }
 
         // Set up ListView and Adapter
 //        val listView = findViewById<ListView>(R.id.test_activity_list_view)
