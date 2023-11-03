@@ -4,7 +4,7 @@
     android:id="@+id/planFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlanFragment"
+    tools:context=".views.fragment.PlanFragment"
     android:background="#6666FF">
 
     <!-- TODO: Update blank fragment layout -->

@@ -13,11 +13,11 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
-import com.example.poseexercise.HomeFragment
-import com.example.poseexercise.PlanFragment
-import com.example.poseexercise.ProfileFragment
+import com.example.poseexercise.views.fragment.HomeFragment
+import com.example.poseexercise.views.fragment.PlanFragment
+import com.example.poseexercise.views.fragment.ProfileFragment
 import com.example.poseexercise.R
-import com.example.poseexercise.WorkoutFragment
+import com.example.poseexercise.views.fragment.WorkoutFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefManager: PrefManager
