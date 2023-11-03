@@ -11,9 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.navigation.fragment.NavHostFragment
+import androidx.fragment.app.Fragment
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
+import com.example.poseexercise.HomeFragment
+import com.example.poseexercise.PlanFragment
+import com.example.poseexercise.ProfileFragment
 import com.example.poseexercise.R
+import com.example.poseexercise.WorkoutFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefManager: PrefManager
@@ -27,10 +31,7 @@ class MainActivity : AppCompatActivity() {
         prefManager = PrefManager(this)
 
         bottomNavigation = findViewById(R.id.bottomNavigation)
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-
+        switchFragment(HomeFragment())
         bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.home))
         bottomNavigation.add(MeowBottomNavigation.Model(2, R.drawable.workout))
         bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.plan))
@@ -38,10 +39,10 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigation.setOnClickMenuListener { item ->
             when (item.id) {
-                1 -> navController.navigate(R.id.homeFragment)
-                2 -> navController.navigate(R.id.workoutFragment)
-                3 -> navController.navigate(R.id.planFragment)
-                4 -> navController.navigate(R.id.profileFragment)
+                1 -> switchFragment(HomeFragment())
+                2 -> switchFragment(WorkoutFragment())
+                3 -> switchFragment(PlanFragment())
+                4 -> switchFragment(ProfileFragment())
             }
         }
 
@@ -61,7 +62,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+    private fun switchFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+        fragmentTransaction.addToBackStack(null) // Optional: Add the transaction to the back stack
+        fragmentTransaction.commit()
+    }
     private class MyArrayAdapter(
         private val ctx: Context,
         resource: Int,
