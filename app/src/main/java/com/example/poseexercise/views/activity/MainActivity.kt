@@ -11,10 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.navigation.fragment.NavHostFragment
+import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.poseexercise.R
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefManager: PrefManager
+    private lateinit var bottomNavigation: MeowBottomNavigation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +25,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         prefManager = PrefManager(this)
+
+        bottomNavigation = findViewById(R.id.bottomNavigation)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.home))
+        bottomNavigation.add(MeowBottomNavigation.Model(2, R.drawable.workout))
+        bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.plan))
+        bottomNavigation.add(MeowBottomNavigation.Model(4, R.drawable.profile))
+
+        bottomNavigation.setOnClickMenuListener { item ->
+            when (item.id) {
+                1 -> navController.navigate(R.id.homeFragment)
+                2 -> navController.navigate(R.id.workoutFragment)
+                3 -> navController.navigate(R.id.planFragment)
+                4 -> navController.navigate(R.id.profileFragment)
+            }
+        }
+
 
         if (prefManager.isFirstTimeLaunch()) {
             // Show the onboarding screen
