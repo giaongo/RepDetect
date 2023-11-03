@@ -29,14 +29,36 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         prefManager = PrefManager(this)
+        if (prefManager.isFirstTimeLaunch()) {
+            // Show the onboarding screen
+            startActivity(Intent(this, OnboardingActivity::class.java))
+            // Close the main activity
+            finish()
+        }
 
         bottomNavigation = findViewById(R.id.bottomNavigation)
         switchFragment(HomeFragment())
+
+        // Sets home page as default page and adds clicked animation to home button
+        bottomNavigation.show(1, true)
+        setupBottomNavigation()
+        handleBottomNavigation()
+
+        // Set up ListView and Adapter
+//        val listView = findViewById<ListView>(R.id.test_activity_list_view)
+//        val adapter = MyArrayAdapter(this, android.R.layout.simple_list_item_2, CLASSES)
+//        adapter.setDescriptionIds(DESCRIPTION_IDS)
+//        listView.adapter = adapter
+//        listView.onItemClickListener = this
+    }
+    private fun setupBottomNavigation() {
         bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.home))
         bottomNavigation.add(MeowBottomNavigation.Model(2, R.drawable.workout))
         bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.plan))
         bottomNavigation.add(MeowBottomNavigation.Model(4, R.drawable.profile))
+    }
 
+    private fun handleBottomNavigation(){
         bottomNavigation.setOnClickMenuListener { item ->
             when (item.id) {
                 1 -> switchFragment(HomeFragment())
@@ -45,21 +67,6 @@ class MainActivity : AppCompatActivity() {
                 4 -> switchFragment(ProfileFragment())
             }
         }
-
-
-        if (prefManager.isFirstTimeLaunch()) {
-            // Show the onboarding screen
-            startActivity(Intent(this, OnboardingActivity::class.java))
-            finish()  // Close the main activity
-        }
-
-        // Set up ListView and Adapter
-//        val listView = findViewById<ListView>(R.id.test_activity_list_view)
-//        val adapter = MyArrayAdapter(this, android.R.layout.simple_list_item_2, CLASSES)
-//        adapter.setDescriptionIds(DESCRIPTION_IDS)
-//        listView.adapter = adapter
-//        listView.onItemClickListener = this
-
     }
 
     private fun switchFragment(fragment: Fragment) {
@@ -69,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.addToBackStack(null) // Optional: Add the transaction to the back stack
         fragmentTransaction.commit()
     }
+
     private class MyArrayAdapter(
         private val ctx: Context,
         resource: Int,
