@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primaryColor">#DB4828</color>
+    <color name="backgroundFill">#F1F1F1</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#C4C4C4</color>
+    <color name="blueButton">#5362F6</color>
 </resources>

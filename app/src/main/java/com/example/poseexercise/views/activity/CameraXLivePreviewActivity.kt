@@ -16,7 +16,10 @@
 
 package com.example.poseexercise.views.activity
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +42,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -66,16 +70,18 @@ class CameraXLivePreviewActivity :
   private var analysisUseCase: ImageAnalysis? = null
   private var imageProcessor: VisionImageProcessor? = null
   private var needUpdateGraphicOverlayImageSourceInfo = false
-  private var selectedModel = OBJECT_DETECTION
+  private var selectedModel = POSE_DETECTION
   private var lensFacing = CameraSelector.LENS_FACING_BACK
   private var cameraSelector: CameraSelector? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     Log.d(TAG, "onCreate")
-    if (savedInstanceState != null) {
-      selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, OBJECT_DETECTION)
+
+    if (!allRuntimePermissionsGranted()) {
+      getRuntimePermissions()
     }
+
     cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
     setContentView(R.layout.activity_vision_camerax_live_preview)
     previewView = findViewById(R.id.preview_view)
@@ -86,24 +92,12 @@ class CameraXLivePreviewActivity :
     if (graphicOverlay == null) {
       Log.d(TAG, "graphicOverlay is null")
     }
-    val spinner = findViewById<Spinner>(R.id.spinner)
+
+
+/*    val spinner = findViewById<Spinner>(R.id.spinner)
     val options: MutableList<String> = ArrayList()
-    options.add(OBJECT_DETECTION)
-    options.add(OBJECT_DETECTION_CUSTOM)
-    options.add(CUSTOM_AUTOML_OBJECT_DETECTION)
-    options.add(FACE_DETECTION)
-    options.add(BARCODE_SCANNING)
-    options.add(IMAGE_LABELING)
-    options.add(IMAGE_LABELING_CUSTOM)
-    options.add(CUSTOM_AUTOML_LABELING)
     options.add(POSE_DETECTION)
-    options.add(SELFIE_SEGMENTATION)
-    options.add(TEXT_RECOGNITION_LATIN)
-    options.add(TEXT_RECOGNITION_CHINESE)
-    options.add(TEXT_RECOGNITION_DEVANAGARI)
-    options.add(TEXT_RECOGNITION_JAPANESE)
-    options.add(TEXT_RECOGNITION_KOREAN)
-    options.add(FACE_MESH_DETECTION)
+
 
     // Creating adapter for spinner
     val dataAdapter = ArrayAdapter(this, R.layout.spinner_style, options)
@@ -111,9 +105,11 @@ class CameraXLivePreviewActivity :
     dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     // attaching data adapter to spinner
     spinner.adapter = dataAdapter
-    spinner.onItemSelectedListener = this
+    spinner.onItemSelectedListener = this*/
+
     val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
     facingSwitch.setOnCheckedChangeListener(this)
+
     ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
       .get(CameraXViewModel::class.java)
       .processCameraProvider
@@ -131,6 +127,7 @@ class CameraXLivePreviewActivity :
       intent.putExtra(SettingsActivity.EXTRA_LAUNCH_SOURCE, SettingsActivity.LaunchSource.CAMERAX_LIVE_PREVIEW)
       startActivity(intent)
     }
+
   }
 
   override fun onSaveInstanceState(bundle: Bundle) {
@@ -307,25 +304,66 @@ class CameraXLivePreviewActivity :
     cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */ this, cameraSelector!!, analysisUseCase)
   }
 
+
+
+  private fun allRuntimePermissionsGranted(): Boolean {
+    for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
+      permission?.let {
+        if (!isPermissionGranted(this, it)) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  private fun getRuntimePermissions() {
+    val permissionsToRequest = java.util.ArrayList<String>()
+    for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
+      permission?.let {
+        if (!isPermissionGranted(this, it)) {
+          permissionsToRequest.add(permission)
+        }
+      }
+    }
+
+    if (permissionsToRequest.isNotEmpty()) {
+      ActivityCompat.requestPermissions(
+        this,
+        permissionsToRequest.toTypedArray(),
+        PERMISSION_REQUESTS
+      )
+    }
+  }
+
+  private fun isPermissionGranted(context: Context, permission: String): Boolean {
+    if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    ) {
+      Log.i(TAG, "Permission granted: $permission")
+      return true
+    }
+    Log.i(TAG, "Permission NOT granted: $permission")
+    return false
+  }
+
+
   companion object {
     private const val TAG = "CameraXLivePreview"
-    private const val OBJECT_DETECTION = "Object Detection"
-    private const val OBJECT_DETECTION_CUSTOM = "Custom Object Detection"
-    private const val CUSTOM_AUTOML_OBJECT_DETECTION = "Custom AutoML Object Detection (Flower)"
-    private const val FACE_DETECTION = "Face Detection"
-    private const val TEXT_RECOGNITION_LATIN = "Text Recognition Latin"
-    private const val TEXT_RECOGNITION_CHINESE = "Text Recognition Chinese"
-    private const val TEXT_RECOGNITION_DEVANAGARI = "Text Recognition Devanagari"
-    private const val TEXT_RECOGNITION_JAPANESE = "Text Recognition Japanese"
-    private const val TEXT_RECOGNITION_KOREAN = "Text Recognition Korean"
-    private const val BARCODE_SCANNING = "Barcode Scanning"
-    private const val IMAGE_LABELING = "Image Labeling"
-    private const val IMAGE_LABELING_CUSTOM = "Custom Image Labeling (Birds)"
-    private const val CUSTOM_AUTOML_LABELING = "Custom AutoML Image Labeling (Flower)"
     private const val POSE_DETECTION = "Pose Detection"
-    private const val SELFIE_SEGMENTATION = "Selfie Segmentation"
-    private const val FACE_MESH_DETECTION = "Face Mesh Detection (Beta)"
 
     private const val STATE_SELECTED_MODEL = "selected_model"
+
+    private const val PERMISSION_REQUESTS = 1
+
+    private val REQUIRED_RUNTIME_PERMISSIONS =
+      arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+      )
+
+
   }
+
+
 }
