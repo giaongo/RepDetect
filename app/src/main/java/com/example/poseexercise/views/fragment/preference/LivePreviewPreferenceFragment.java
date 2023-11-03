@@ -23,7 +23,6 @@ import android.preference.ListPreference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.widget.Toast;
-
 import androidx.annotation.StringRes;
 import com.example.poseexercise.views.graphic.camera.CameraSource;
 import com.example.poseexercise.views.graphic.camera.CameraSource.SizePair;
@@ -41,7 +40,7 @@ public class LivePreviewPreferenceFragment extends PreferenceFragment {
 
     addPreferencesFromResource(R.xml.preference_live_preview_quickstart);
     setUpCameraPreferences();
-    setUpFaceDetectionPreferencesForStreamMode();
+    // setUpFaceDetectionPreferencesForStreamMode();
   }
 
   void setUpCameraPreferences() {
@@ -123,7 +122,7 @@ public class LivePreviewPreferenceFragment extends PreferenceFragment {
     }
   }
 
-  private void setUpFaceDetectionPreferencesForStreamMode() {
+/*  private void setUpFaceDetectionPreferencesForStreamMode() {
     EditTextPreference minFaceSizePreference =
         (EditTextPreference)
             findPreference(getString(R.string.pref_key_live_preview_face_detection_min_face_size));
@@ -145,5 +144,5 @@ public class LivePreviewPreferenceFragment extends PreferenceFragment {
               .show();
           return false;
         });
-  }
+  }*/
 }
