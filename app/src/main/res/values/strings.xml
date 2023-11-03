@@ -60,6 +60,10 @@
     <string name="pref_title_camera_live_viewport" translatable="false">Enable live viewport</string>
     <string name="pref_summary_camera_live_viewport" translatable="false">Do not block camera preview drawing on detection</string>
 
+    <!-- Strings for info preference. -->
+    <string name="pref_title_info_hide" translatable="false">Hide detection info</string>
+    <string name="pref_key_info_hide" translatable="false">ih</string>
+
 
     <!-- Strings for pose detector performance mode preference. -->
     <string name="pref_title_pose_detector_performance_mode" translatable="false">Performance mode</string>
@@ -91,7 +95,12 @@
     <string name="pref_key_pose_detector_run_classification" translatable="false">pdrc</string>
     <string name="pref_summary_pose_detector_run_classification" translatable="false">Classify squat and pushup poses. Count reps in streaming mode. To get the best classification results based on the current sample data, face the camera side way and make sure your full body is in the frame.</string>
 
-
+    <!-- Strings for segmentation preference. -->
+    <string name="pref_title_segmentation_raw_size_mask" translatable="false">Enable raw size mask</string>
+    <string name="pref_key_segmentation_raw_size_mask" translatable="false">srsm</string>
+    <string name="pref_group_title_face_mesh" translatable="false">Face Mesh Detection</string>
+    <string name="pref_title_face_mesh_use_case" translatable="false">Use Case</string>
+    <string name="pref_key_face_mesh_use_case" translatable="false">face_mesh_use_case</string>
     <!-- Strings for Completed & Cancel fragment -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="completed_min">%1$d mins</string>
@@ -103,5 +112,12 @@
     <string name="canceled_workout_title">Canceled Workout</string>
     <string name="no_worries_body">No Worries, Adeline</string>
     <string name="canceled_announcement">Keep the motivation alive, and let\'s get back to it when you feel inspired!</string>
+
+    <!-- Strings for Start&InProcess fragment -->
+    <string name="cancel_button">Cancel</string>
+    <string name="start_button">Start</string>
+    <string name="complete_button">Complete</string>
+    <string name="timer">%s</string>
+    <string name="exercise_count">%1$s: %2$d</string>
 
 </resources>
