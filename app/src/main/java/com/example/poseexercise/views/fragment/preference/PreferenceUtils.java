@@ -120,7 +120,7 @@ public class PreferenceUtils {
     }
   }
 
-  public static PoseDetectorOptionsBase getPoseDetectorOptionsForStillImage(Context context) {
+/*  public static PoseDetectorOptionsBase getPoseDetectorOptionsForStillImage(Context context) {
     int performanceMode =
         getModeTypePreferenceValue(
             context,
@@ -143,31 +143,27 @@ public class PreferenceUtils {
       }
       return builder.build();
     }
-  }
+  }*/
 
-  public static boolean shouldEnableAutoZoom(Context context) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String prefKey = context.getString(R.string.pref_key_enable_auto_zoom);
-    return sharedPreferences.getBoolean(prefKey, true);
-  }
-
-  public static boolean shouldGroupRecognizedTextInBlocks(Context context) {
+/*  public static boolean shouldGroupRecognizedTextInBlocks(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefKey = context.getString(R.string.pref_key_group_recognized_text_in_blocks);
     return sharedPreferences.getBoolean(prefKey, false);
-  }
+  }*/
 
-  public static boolean showLanguageTag(Context context) {
+/*  public static boolean showLanguageTag(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefKey = context.getString(R.string.pref_key_show_language_tag);
     return sharedPreferences.getBoolean(prefKey, false);
-  }
+  }*/
 
+/*
   public static boolean shouldShowTextConfidence(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefKey = context.getString(R.string.pref_key_show_text_confidence);
     return sharedPreferences.getBoolean(prefKey, false);
   }
+*/
 
   public static boolean preferGPUForPoseDetection(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -207,11 +203,11 @@ public class PreferenceUtils {
     return sharedPreferences.getBoolean(prefKey, false);
   }
 
-  public static boolean shouldSegmentationEnableRawSizeMask(Context context) {
+/*  public static boolean shouldSegmentationEnableRawSizeMask(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefKey = context.getString(R.string.pref_key_segmentation_raw_size_mask);
     return sharedPreferences.getBoolean(prefKey, false);
-  }
+  }*/
 
   /**
    * Mode type preference is backed by {@link android.preference.ListPreference} which only support

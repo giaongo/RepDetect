@@ -24,9 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.poseexercise.R;
 import com.example.poseexercise.views.fragment.preference.CameraXLivePreviewPreferenceFragment;
-import com.example.poseexercise.views.fragment.preference.CameraXSourceDemoPreferenceFragment;
-import com.example.poseexercise.views.fragment.preference.LivePreviewPreferenceFragment;
-import com.example.poseexercise.views.fragment.preference.StillImagePreferenceFragment;
 
 /**
  * Hosts the preference fragment to configure settings for a demo activity that specified by the
