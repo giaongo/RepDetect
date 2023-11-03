@@ -77,7 +77,7 @@
         android:persistent="true"
         android:title="@string/pref_title_pose_detector_rescale_z"/>
     <SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="@string/pref_key_pose_detector_run_classification"
         android:persistent="true"
         android:title="@string/pref_title_pose_detector_run_classification"
