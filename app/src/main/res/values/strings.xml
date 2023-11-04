@@ -9,7 +9,7 @@
     <string name="kick_start">Kick start your journey by crafting a tailored workout plan that suits your needs and goals</string>
     <string name="create_a_workout">Create a workout plan to stay fit</string>
 
-    <string name="app_name" translatable="false">MLKit-Vision</string>
+    <string name="app_name" translatable="false">Pose Exercise</string>
     <string name="java_entry_title" translatable="false">Run the ML Kit quickstart written in Java</string>
     <string name="kotlin_entry_title" translatable="false">Run the ML Kit quickstart written in Kotlin</string>
     <string name="ok" translatable="false">OK</string>

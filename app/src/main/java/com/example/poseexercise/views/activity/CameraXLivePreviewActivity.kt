@@ -121,12 +121,12 @@ class CameraXLivePreviewActivity :
         }
       )
 
-    val settingsButton = findViewById<ImageView>(R.id.settings_button)
+/*    val settingsButton = findViewById<ImageView>(R.id.settings_button)
     settingsButton.setOnClickListener {
       val intent = Intent(applicationContext, SettingsActivity::class.java)
       intent.putExtra(SettingsActivity.EXTRA_LAUNCH_SOURCE, SettingsActivity.LaunchSource.CAMERAX_LIVE_PREVIEW)
       startActivity(intent)
-    }
+    }*/
 
   }
 
@@ -246,6 +246,9 @@ class CameraXLivePreviewActivity :
             val visualizeZ = PreferenceUtils.shouldPoseDetectionVisualizeZ(this)
             val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(this)
             val runClassification = PreferenceUtils.shouldPoseDetectionRunClassification(this)
+
+            Log.d("CLASSIFICATION: ", runClassification.toString())
+
             PoseDetectorProcessor(
               this,
               poseDetectorOptions,
@@ -361,9 +364,5 @@ class CameraXLivePreviewActivity :
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
       )
-
-
   }
-
-
 }
