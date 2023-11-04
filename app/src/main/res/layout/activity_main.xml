@@ -22,7 +22,8 @@
         app:mbn_circleColor="@color/primaryColor"
         app:mbn_backgroundBottomColor="@color/black"
         app:mbn_defaultIconColor="@color/white"
-        />
+        tools:ignore="MissingClass" />
+
     <Button
         android:id="@+id/Camera"
         android:layout_width="wrap_content"
