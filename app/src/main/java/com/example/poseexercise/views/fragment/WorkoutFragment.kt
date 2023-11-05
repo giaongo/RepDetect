@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfoUnavailableException
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -26,6 +27,7 @@ import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
 
 class WorkOutFragment : Fragment() {
@@ -41,6 +43,7 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!allRuntimePermissionsGranted()) {
@@ -61,6 +64,7 @@ class WorkOutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
+        val cameraFlipFAB:FloatingActionButton = view.findViewById(R.id.facing_switch)
         if (previewView == null) {
             Log.d(TAG, "Preview is null")
         }
@@ -78,7 +82,9 @@ class WorkOutFragment : Fragment() {
                 bindAllCameraUseCases()
 
             }
-
+        cameraFlipFAB.setOnClickListener {
+            toggleCameraLens()
+        }
     }
 
     private fun bindAllCameraUseCases() {
@@ -242,6 +248,35 @@ class WorkOutFragment : Fragment() {
                 permissionsToRequest.toTypedArray(),
                 PERMISSION_REQUESTS
             )
+        }
+    }
+
+    /**
+     *
+     */
+    private fun toggleCameraLens() {
+        if (cameraProvider == null) {
+            Log.d(TAG, "Camera provider is null")
+            return
+        }
+        val newLensFacing =
+            if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+                CameraSelector.LENS_FACING_BACK
+            } else {
+                CameraSelector.LENS_FACING_FRONT
+            }
+        val newCameraSelector = CameraSelector.Builder().requireLensFacing(newLensFacing).build()
+
+        try {
+            if (cameraProvider!!.hasCamera(newCameraSelector)) {
+                Log.d(TAG, "Set facing to $newLensFacing")
+                lensFacing = newLensFacing
+                cameraSelector = newCameraSelector
+                bindAllCameraUseCases()
+                return
+            }
+        } catch (e: CameraInfoUnavailableException) {
+            Log.e(TAG, "Failed to get camera info", e)
         }
     }
 

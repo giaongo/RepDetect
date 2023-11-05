@@ -26,9 +26,6 @@
             android:exported="false" />
 
         <activity
-            android:name=".views.activity.CameraXLivePreviewActivity"
-            android:exported="false" />
-        <activity
             android:name=".views.activity.MainActivity"
             android:exported="false" />
         <activity
