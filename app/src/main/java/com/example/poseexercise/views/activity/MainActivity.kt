@@ -36,11 +36,11 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         handleBottomNavigation()
 
-        val cameraButton = findViewById<Button>(R.id.Camera)
-
-        cameraButton.setOnClickListener{
-            startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
-        }
+//        val cameraButton = findViewById<Button>(R.id.Camera)
+//
+//        cameraButton.setOnClickListener{
+//            startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
+//        }
     }
 
     private fun setupBottomNavigation() {
