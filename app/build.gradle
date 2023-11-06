@@ -45,6 +45,10 @@ dependencies {
     implementation 'com.google.mlkit:pose-detection-accurate:17.0.0'
     implementation 'com.google.mlkit:pose-detection:17.0.0'
     implementation 'androidx.navigation:navigation-runtime-ktx:2.7.5'
+    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
+    // fragment testing
+    debugImplementation 'androidx.fragment:fragment-testing:1.6.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
