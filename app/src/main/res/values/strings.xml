@@ -146,6 +146,15 @@
     <string name="label_sat">Saturday</string>
     <string name="label_sun">Sunday</string>
 
+    <!-- Strings for Profile fragment -->
+    <string name="content_description">User avatar</string>
+    <string name="default_user">Adline Castelino</string>
+    <string name="result">Weekly result</string>
+    <string name="summary">Weekly summary</string>
+    <string name="example_time">120 minutes</string>
+    <string name="example_exercise">10 exercises</string>
+    <string name="example_percentage">110 %</string>
+
     <!-- Strings for exercise name -->
     <string name="push_up">Push up</string>
 
