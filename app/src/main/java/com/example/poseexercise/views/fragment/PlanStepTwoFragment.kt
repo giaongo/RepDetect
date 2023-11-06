@@ -9,8 +9,10 @@ import com.example.poseexercise.R
 
 class PlanStepTwoFragment: Fragment() {
 
+    private var exerciseName : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        exerciseName = arguments?.getString("exerciseName")
     }
 
     override fun onCreateView(

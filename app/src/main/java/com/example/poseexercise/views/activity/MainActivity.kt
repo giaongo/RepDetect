@@ -4,14 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.poseexercise.R
-import com.example.poseexercise.views.fragment.WorkOutFragment
 import com.example.poseexercise.views.fragment.HomeFragment
 import com.example.poseexercise.views.fragment.PlanStepOneFragment
 import com.example.poseexercise.views.fragment.ProfileFragment
+import com.example.poseexercise.views.fragment.WorkOutFragment
 
+
+/**
+ * Main Activity and entry point for the app.
+ */
 class MainActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
     private lateinit var prefManager: PrefManager
     private lateinit var bottomNavigation: MeowBottomNavigation
 
@@ -30,6 +37,12 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
         switchFragment(HomeFragment())
 
+        // Get the navigation host fragment from this Activity
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        // Instantiate the navController using the NavHostFragment
+        navController = navHostFragment.navController
+
         // Sets home page as default page and adds clicked animation to home button
         bottomNavigation.show(1, true)
         setupBottomNavigation()
@@ -40,6 +53,13 @@ class MainActivity : AppCompatActivity() {
         cameraButton.setOnClickListener{
             startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
         }*/
+    }
+
+    /**
+     * Enables back button support. Simply navigates one element up on the stack.
+     */
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     private fun setupBottomNavigation() {

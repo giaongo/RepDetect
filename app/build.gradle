@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id "androidx.navigation.safeargs"
+
 }
 
 android {
@@ -104,5 +106,8 @@ dependencies {
 
     // On Device Machine Learnings
     implementation "com.google.android.odml:image:1.0.0-beta1"
+
+    // Chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 }
