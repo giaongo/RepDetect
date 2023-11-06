@@ -122,6 +122,14 @@
 
     <!-- Strings for PlanStepOne & PlanStepTwo fragment -->
     <string name="choose_exercise">Choose Exercises</string>
+    <string name="level_easy">Beginner</string>
+    <string name="level_intermediate">Intermediate</string>
+    <string name="level_advance">Advance</string>
+    <string name="content_description_media">Image of exercise type</string>
+    <string name="title_example">Push up</string>
+    <string name="text_example">450 kCal</string>
+    <string name="supporting_text">Advance</string>
+    <string name="action">Choose</string>
 
     <string name="new_plan">New Fitness Plan</string>
     <string name="label_exercise_name">Exercise</string>
@@ -137,6 +145,9 @@
     <string name="label_fri">Friday</string>
     <string name="label_sat">Saturday</string>
     <string name="label_sun">Sunday</string>
+
+    <!-- Strings for exercise name -->
+    <string name="push_up">Push up</string>
 
 
 

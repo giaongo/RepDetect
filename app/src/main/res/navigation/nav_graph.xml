@@ -22,12 +22,15 @@
     </fragment>
     <fragment
         android:id="@+id/planFragment2"
-        android:name="com.example.poseexercise.views.fragment.PlanFragment"
+        android:name="com.example.poseexercise.views.fragment.PlanStepOneFragment"
         android:label="fragment_plan"
-        tools:layout="@layout/fragment_plan" >
+        tools:layout="@layout/fragment_plan_step_one" >
         <action
             android:id="@+id/action_planFragment2_to_homeFragment2"
             app:destination="@id/homeFragment2" />
+        <action
+            android:id="@+id/action_planFragment2_to_planStepTwoFragment"
+            app:destination="@id/planStepTwoFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment2"
@@ -66,6 +69,14 @@
         tools:layout="@layout/fragment_completed" >
         <action
             android:id="@+id/action_completedFragment_to_homeFragment2"
+            app:destination="@id/homeFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/planStepTwoFragment"
+        android:name="com.example.poseexercise.views.fragment.PlanStepTwoFragment"
+        android:label="PlanStepTwoFragment" >
+        <action
+            android:id="@+id/action_planStepTwoFragment_to_homeFragment2"
             app:destination="@id/homeFragment2" />
     </fragment>
 </navigation>

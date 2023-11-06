@@ -8,7 +8,7 @@ import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.poseexercise.R
 import com.example.poseexercise.views.fragment.WorkOutFragment
 import com.example.poseexercise.views.fragment.HomeFragment
-import com.example.poseexercise.views.fragment.PlanFragment
+import com.example.poseexercise.views.fragment.PlanStepOneFragment
 import com.example.poseexercise.views.fragment.ProfileFragment
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             when (item.id) {
                 1 -> switchFragment(HomeFragment())
                 2 -> switchFragment(WorkOutFragment())
-                3 -> switchFragment(PlanFragment())
+                3 -> switchFragment(PlanStepOneFragment())
                 4 -> switchFragment(ProfileFragment())
             }
         }
