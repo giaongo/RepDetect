@@ -12,23 +12,14 @@
 
     <!-- Strings for homescreen -->
     <string name="mixed_text">20 <font fgcolor="#A9A9A9">x 3</font></string>
-    <string name="hello">Hello! 🔥</string>
-    <string name="name">Adeline Castelino</string>
-    <string name="workout_progress">Workout Progress</string>
-    <string name="exercises_left">12 exercises left</string>
-    <string name="progress_image">Progress Image</string>
-    <string name="recent_activity">Recent Activity</string>
-    <string name="colorful_rectangle">Progress Image</string>
-    <string name="push_ups">Push-Ups</string>
-    <string name="green_rectangle">Progress Image</string>
-    <string name="orange_rectangle">Progress Image</string>
+    <!--<string name="orange_rectangle">Progress Image</string>
     <string name="squats">Squats</string>
     <string name="lunges">Lunges</string>
     <string name="plan_today">Today\'s Plan</string>
     <string name="push_up">Push Up</string>
     <string name="sub_header">100 Push up a day</string>
     <string name="sit_up">Sit Up</string>
-    <string name="sit_up_a_day">20 Sit up a day</string>
+    <string name="sit_up_a_day">20 Sit up a day</string>-->
 
 
     <string name="app_name" translatable="false">RepDetect+</string>
@@ -196,7 +187,7 @@
     <string name="example_percentage">110 %</string>
 
     <!-- Strings for exercise name -->
-    <string name="push_up">Push up</string>
+<!--    <string name="push_up">Push up</string>-->
 
 
 

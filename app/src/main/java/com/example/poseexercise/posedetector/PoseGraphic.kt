@@ -226,9 +226,9 @@ internal constructor(
 
   companion object {
 
-    private val DOT_RADIUS = 8.0f
-    private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 30.0f
-    private val STROKE_WIDTH = 10.0f
-    private val POSE_CLASSIFICATION_TEXT_SIZE = 60.0f
+    private val DOT_RADIUS = 6.0f
+    private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 0.0f
+    private val STROKE_WIDTH = 5.0f
+    private val POSE_CLASSIFICATION_TEXT_SIZE = 30.0f
   }
 }
