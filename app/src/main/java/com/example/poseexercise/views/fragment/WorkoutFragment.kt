@@ -8,6 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.Button
 import android.widget.Toast
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraInfoUnavailableException
@@ -64,7 +67,37 @@ class WorkOutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
+
         val cameraFlipFAB:FloatingActionButton = view.findViewById(R.id.facing_switch)
+        cameraFlipFAB.visibility = View.VISIBLE
+        //val cameraFlipFAB:Button = view.findViewById(R.id.facing_switch)
+
+        val startButton: Button = view.findViewById(R.id.button_start_exercise)
+        val buttonCancelExercise: Button = view.findViewById(R.id.button_cancel_exercise)
+        val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
+
+        startButton.setOnClickListener{
+            cameraFlipFAB.visibility = View.GONE
+            buttonCancelExercise.visibility = View.VISIBLE
+            buttonCompleteExercise.visibility = View.VISIBLE
+
+            startButton.visibility = View.GONE
+
+            // To disable screen timeout
+
+        }
+
+        buttonCancelExercise.setOnClickListener{
+            //TODO
+        }
+
+        buttonCompleteExercise.setOnClickListener{
+            //TODO
+        }
+
+
+
+
         if (previewView == null) {
             Log.d(TAG, "Preview is null")
         }
@@ -86,6 +119,8 @@ class WorkOutFragment : Fragment() {
             toggleCameraLens()
         }
     }
+
+
 
     private fun bindAllCameraUseCases() {
         bindPreviewUseCase()

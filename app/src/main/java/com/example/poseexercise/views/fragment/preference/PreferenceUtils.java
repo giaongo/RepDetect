@@ -38,12 +38,12 @@ public class PreferenceUtils {
 
   private static final int POSE_DETECTOR_PERFORMANCE_MODE_FAST = 1;
 
-  static void saveString(Context context, @StringRes int prefKeyId, @Nullable String value) {
+ /* static void saveString(Context context, @StringRes int prefKeyId, @Nullable String value) {
     PreferenceManager.getDefaultSharedPreferences(context)
         .edit()
         .putString(context.getString(prefKeyId), value)
         .apply();
-  }
+  }*/
 
   @Nullable
   public static SizePair getCameraPreviewSizePair(Context context, int cameraId) {
@@ -133,12 +133,12 @@ public class PreferenceUtils {
     return sharedPreferences.getBoolean(prefKey, true);
   }
 
-  public static boolean shouldShowPoseDetectionInFrameLikelihoodStillImage(Context context) {
+/*  public static boolean shouldShowPoseDetectionInFrameLikelihoodStillImage(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefKey =
         context.getString(R.string.pref_key_still_image_pose_detector_show_in_frame_likelihood);
     return sharedPreferences.getBoolean(prefKey, true);
-  }
+  }*/
 
   public static boolean shouldPoseDetectionVisualizeZ(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
