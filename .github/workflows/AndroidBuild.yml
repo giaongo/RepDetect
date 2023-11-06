@@ -26,5 +26,5 @@ jobs:
         uses: actions/upload-artifact@v3.1.3
         with:
           name: RepDetect.apk
-          path: app/build/outputs/apk/app-debug.apk
+          path: app/build/outputs/apk/
 
