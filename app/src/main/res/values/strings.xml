@@ -160,4 +160,46 @@
     <string name="sit_up">Sit Up</string>
     <string name="sit_up_a_day">20 Sit up a day</string>
 
+    <!-- Strings for PlanStepOne & PlanStepTwo fragment -->
+    <string name="choose_exercise">Choose Exercises</string>
+    <string name="level_easy">Beginner</string>
+    <string name="level_intermediate">Intermediate</string>
+    <string name="level_advance">Advance</string>
+    <string name="content_description_media">Image of exercise type</string>
+    <string name="title_example">Push up</string>
+    <string name="text_example">450 kCal</string>
+    <string name="supporting_text">Advance</string>
+    <string name="action">Choose</string>
+
+    <string name="new_plan">New Fitness Plan</string>
+    <string name="label_exercise_name">Exercise</string>
+    <string name="label_time">Time</string>
+    <string name="label_sets">Sets</string>
+    <string name="label_rep">Reps</string>
+    <string name="label_days">Select days</string>
+    <string name="create_button">Create plan</string>
+    <string name="label_mon">Monday</string>
+    <string name="label_tue">Tuesday</string>
+    <string name="label_wed">Wednesday</string>
+    <string name="label_thu">Thursday</string>
+    <string name="label_fri">Friday</string>
+    <string name="label_sat">Saturday</string>
+    <string name="label_sun">Sunday</string>
+
+    <!-- Strings for Profile fragment -->
+    <string name="content_description">User avatar</string>
+    <string name="default_user">Adline Castelino</string>
+    <string name="result">Weekly result</string>
+    <string name="summary">Weekly summary</string>
+    <string name="example_time">120 minutes</string>
+    <string name="example_exercise">10 exercises</string>
+    <string name="example_percentage">110 %</string>
+
+    <!-- Strings for exercise name -->
+    <string name="push_up">Push up</string>
+
+
+
+
+
 </resources>
