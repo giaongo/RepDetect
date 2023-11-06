@@ -9,7 +9,30 @@
     <string name="kick_start">Kick start your journey by crafting a tailored workout plan that suits your needs and goals</string>
     <string name="create_a_workout">Create a workout plan to stay fit</string>
 
+
+    <!-- Strings for homescreen -->
+    <string name="mixed_text">20 <font fgcolor="#A9A9A9">x 3</font></string>
+    <string name="hello">Hello! 🔥</string>
+    <string name="name">Adeline Castelino</string>
+    <string name="workout_progress">Workout Progress</string>
+    <string name="exercises_left">12 exercises left</string>
+    <string name="progress_image">Progress Image</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="colorful_rectangle">Progress Image</string>
+    <string name="push_ups">Push-Ups</string>
+    <string name="green_rectangle">Progress Image</string>
+    <string name="orange_rectangle">Progress Image</string>
+    <string name="squats">Squats</string>
+    <string name="lunges">Lunges</string>
+    <string name="plan_today">Today\'s Plan</string>
+    <string name="push_up">Push Up</string>
+    <string name="sub_header">100 Push up a day</string>
+    <string name="sit_up">Sit Up</string>
+    <string name="sit_up_a_day">20 Sit up a day</string>
+
+
     <string name="app_name" translatable="false">RepDetect+</string>
+
     <string name="java_entry_title" translatable="false">Run the ML Kit quickstart written in Java</string>
     <string name="kotlin_entry_title" translatable="false">Run the ML Kit quickstart written in Kotlin</string>
     <string name="ok" translatable="false">OK</string>
@@ -119,5 +142,22 @@
     <string name="complete_button">Complete</string>
     <string name="timer">%s</string>
     <string name="exercise_count">%1$s: %2$d</string>
+    <string name="hello">Hello! 🔥</string>
+    <string name="name">Adeline Castelino</string>
+    <string name="workout_progress">Workout Progress</string>
+    <string name="exercises_left">12 exercises left</string>
+    <string name="progress_image">Progress Image</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="colorful_rectangle">Progress Image</string>
+    <string name="push_ups">Push-Ups</string>
+    <string name="green_rectangle">Progress Image</string>
+    <string name="orange_rectangle">Progress Image</string>
+    <string name="squats">Squats</string>
+    <string name="lunges">Lunges</string>
+    <string name="plan_today">Today\'s Plan</string>
+    <string name="push_up">Push Up</string>
+    <string name="sub_header">100 Push up a day</string>
+    <string name="sit_up">Sit Up</string>
+    <string name="sit_up_a_day">20 Sit up a day</string>
 
 </resources>
