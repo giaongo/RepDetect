@@ -2,15 +2,14 @@ package com.example.poseexercise.views.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.poseexercise.R
+import com.example.poseexercise.views.fragment.WorkOutFragment
 import com.example.poseexercise.views.fragment.HomeFragment
 import com.example.poseexercise.views.fragment.PlanFragment
 import com.example.poseexercise.views.fragment.ProfileFragment
-import com.example.poseexercise.views.fragment.WorkoutFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefManager: PrefManager
@@ -36,11 +35,11 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         handleBottomNavigation()
 
-//        val cameraButton = findViewById<Button>(R.id.Camera)
-//
-//        cameraButton.setOnClickListener{
-//            startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
-//        }
+        /*val cameraButton = findViewById<Button>(R.id.Camera)
+
+        cameraButton.setOnClickListener{
+            startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
+        }*/
     }
 
     private fun setupBottomNavigation() {
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnClickMenuListener { item ->
             when (item.id) {
                 1 -> switchFragment(HomeFragment())
-                2 -> switchFragment(WorkoutFragment())
+                2 -> switchFragment(WorkOutFragment())
                 3 -> switchFragment(PlanFragment())
                 4 -> switchFragment(ProfileFragment())
             }
