@@ -120,4 +120,26 @@
     <string name="timer">%s</string>
     <string name="exercise_count">%1$s: %2$d</string>
 
+    <!-- Strings for PlanStepOne & PlanStepTwo fragment -->
+    <string name="choose_exercise">Choose Exercises</string>
+
+    <string name="new_plan">New Fitness Plan</string>
+    <string name="label_exercise_name">Exercise</string>
+    <string name="label_time">Time</string>
+    <string name="label_sets">Sets</string>
+    <string name="label_rep">Reps</string>
+    <string name="label_days">Select days</string>
+    <string name="create_button">Create plan</string>
+    <string name="label_mon">Monday</string>
+    <string name="label_tue">Tuesday</string>
+    <string name="label_wed">Wednesday</string>
+    <string name="label_thu">Thursday</string>
+    <string name="label_fri">Friday</string>
+    <string name="label_sat">Saturday</string>
+    <string name="label_sun">Sunday</string>
+
+
+
+
+
 </resources>
