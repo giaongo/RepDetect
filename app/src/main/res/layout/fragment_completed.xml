@@ -90,6 +90,7 @@
         </androidx.cardview.widget.CardView>
 
         <Button
+            android:id="@+id/goToHomeFromComplete"
             android:layout_width="158dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"

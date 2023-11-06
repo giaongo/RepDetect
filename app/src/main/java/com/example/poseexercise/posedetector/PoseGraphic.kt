@@ -73,7 +73,7 @@ internal constructor(
     for (i in poseClassification.indices) {
       val classificationY =
         canvas.height -
-          (POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
+          (POSE_CLASSIFICATION_TEXT_SIZE*6f + POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
       canvas.drawText(
         poseClassification[i],
         classificationX,

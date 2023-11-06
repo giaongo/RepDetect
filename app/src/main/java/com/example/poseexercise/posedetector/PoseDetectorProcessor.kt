@@ -18,9 +18,9 @@ package com.example.poseexercise.posedetector
 
 import android.content.Context
 import android.util.Log
-import com.example.poseexercise.views.graphic.GraphicOverlay
-import com.example.poseexercise.util.VisionProcessorBase
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor
+import com.example.poseexercise.util.VisionProcessorBase
+import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.gms.tasks.Task
 import com.google.android.odml.image.MlImage
 import com.google.mlkit.vision.common.InputImage
@@ -28,7 +28,6 @@ import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase
-import java.util.ArrayList
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -78,6 +77,7 @@ class PoseDetectorProcessor(
               )
           }
           classificationResult = poseClassifierProcessor!!.getPoseResult(pose)
+
         }
         PoseWithClassification(pose, classificationResult)
       }
@@ -100,6 +100,8 @@ class PoseDetectorProcessor(
               )
           }
           classificationResult = poseClassifierProcessor!!.getPoseResult(pose)
+
+          Log.d("ClassificationResult: ", classificationResult.toString())
         }
         PoseWithClassification(pose, classificationResult)
       }

@@ -8,8 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.camera.core.Camera
@@ -24,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.example.poseexercise.R
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.VisionImageProcessor
@@ -46,6 +45,7 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private lateinit var buttonCompleteExercise: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,19 @@ class WorkOutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_workout, container, false)
+
+        val view: View = inflater.inflate(R.layout.fragment_workout, container, false)
+
+        buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
+
+        buttonCompleteExercise.setOnClickListener {
+
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_completedFragment)
+        }
+
+        return view
+        //return inflater.inflate(R.layout.fragment_workout, container, false)
     }
 
 
@@ -74,7 +86,7 @@ class WorkOutFragment : Fragment() {
 
         val startButton: Button = view.findViewById(R.id.button_start_exercise)
         val buttonCancelExercise: Button = view.findViewById(R.id.button_cancel_exercise)
-        val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
+        //val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
 
         startButton.setOnClickListener{
             cameraFlipFAB.visibility = View.GONE
@@ -84,6 +96,7 @@ class WorkOutFragment : Fragment() {
             startButton.visibility = View.GONE
 
             // To disable screen timeout
+            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         }
 
@@ -91,9 +104,9 @@ class WorkOutFragment : Fragment() {
             //TODO
         }
 
-        buttonCompleteExercise.setOnClickListener{
-            //TODO
-        }
+        /*buttonCompleteExercise.setOnClickListener{
+            Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_completedFragment)
+        }*/
 
 
 
