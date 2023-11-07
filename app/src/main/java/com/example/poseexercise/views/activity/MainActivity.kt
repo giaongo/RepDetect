@@ -2,31 +2,27 @@ package com.example.poseexercise.views.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.poseexercise.R
-import com.example.poseexercise.views.fragment.CompletedFragment
-import com.example.poseexercise.views.fragment.HomeFragment
-import com.example.poseexercise.views.fragment.PlanStepOneFragment
-import com.example.poseexercise.views.fragment.ProfileFragment
-import com.example.poseexercise.views.fragment.WorkOutFragment
+import com.example.poseexercise.databinding.ActivityMainBinding
+import np.com.susanthapa.curved_bottom_navigation.CbnMenuItem
 
 
 /**
  * Main Activity and entry point for the app.
  */
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var prefManager: PrefManager
-    private lateinit var bottomNavigation: MeowBottomNavigation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -38,8 +34,6 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        bottomNavigation = findViewById(R.id.bottomNavigation)
-        switchFragment(HomeFragment())
 
         // Get the navigation host fragment from this Activity
         val navHostFragment = supportFragmentManager
@@ -47,16 +41,31 @@ class MainActivity : AppCompatActivity() {
         // Instantiate the navController using the NavHostFragment
         navController = navHostFragment.navController
 
-        // Sets home page as default page and adds clicked animation to home button
-        bottomNavigation.show(1, true)
-        setupBottomNavigation()
-        handleBottomNavigation()
+        val menuItems = arrayOf(
+            CbnMenuItem(
+                R.drawable.home, // the icon
+                R.drawable.avd_home, // the AVD that will be shown in FAB
+                R.id.homeFragment // Jetpack Navigation
+            ),
+            CbnMenuItem(
+                R.drawable.workout,
+                R.drawable.avd_workout,
+                R.id.workoutFragment
+            ),
+            CbnMenuItem(
+                R.drawable.plan,
+                R.drawable.avd_plan,
+                R.id.planStepOneFragment
+            ),
+            CbnMenuItem(
+                R.drawable.profile,
+                R.drawable.avd_profile,
+                R.id.profileFragment
+            )
+        )
+        binding.navView.setMenuItems(menuItems, 0)
+        binding.navView.setupWithNavController(navController)
 
-        /*val cameraButton = findViewById<Button>(R.id.Camera)
-
-        cameraButton.setOnClickListener{
-            startActivity(Intent(this, CameraXLivePreviewActivity::class.java))
-        }*/
     }
 
     /**
@@ -66,29 +75,4 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    private fun setupBottomNavigation() {
-        bottomNavigation.add(MeowBottomNavigation.Model(1, R.drawable.home))
-        bottomNavigation.add(MeowBottomNavigation.Model(2, R.drawable.workout))
-        bottomNavigation.add(MeowBottomNavigation.Model(3, R.drawable.plan))
-        bottomNavigation.add(MeowBottomNavigation.Model(4, R.drawable.profile))
-    }
-
-    private fun handleBottomNavigation(){
-        bottomNavigation.setOnClickMenuListener { item ->
-            when (item.id) {
-                1 -> switchFragment(HomeFragment())
-                2 -> switchFragment(WorkOutFragment())
-                3 -> switchFragment(PlanStepOneFragment())
-                4 -> switchFragment(ProfileFragment())
-            }
-        }
-    }
-
-    private fun switchFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
-        fragmentTransaction.addToBackStack(null) // Optional: Add the transaction to the back stack
-        fragmentTransaction.commit()
-    }
 }

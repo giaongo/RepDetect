@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activity.MainActivity">
+    tools:context=".views.activity.MainActivity"
+    tools:ignore="MissingClass">
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -22,25 +23,15 @@
             app:navGraph="@navigation/nav_graph" />
     </FrameLayout>
 
-    <com.etebarian.meowbottomnavigation.MeowBottomNavigation
-        android:id="@+id/bottomNavigation"
+    <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
+        android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:mbn_selectedIconColor="@color/black"
-        app:mbn_circleColor="@color/primaryColor"
-        app:mbn_backgroundBottomColor="@color/black"
-        app:mbn_defaultIconColor="@color/white"
-        tools:ignore="MissingClass" />
+        app:cbn_selectedColor="@color/white"
+        app:cbn_fabBg="@color/primaryColor"
+        app:cbn_bg="@color/black"
+        app:cbn_unSelectedColor="@color/white"
+        app:cbn_animDuration="200"
+       android:layout_alignBottom="@id/fragmentContainer"/>
 
-
-<!--    <Button
-        android:id="@+id/Camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to Camera"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />-->
 </RelativeLayout>

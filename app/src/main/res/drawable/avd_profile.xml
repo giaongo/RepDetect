@@ -1,0 +1,53 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt" >
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="20dp"
+            android:height="20dp"
+            android:viewportWidth="20"
+            android:viewportHeight="20">
+            <group
+                android:name="rotationGroup"
+                android:pivotX="300.0"
+                android:pivotY="300.0"
+                android:rotation="45.0" >
+
+                <path
+                    android:name="v"
+                    android:pathData="M20,10C20,15.523 15.523,20 10,20C4.477,20 0,15.523 0,10C0,4.477 4.477,0 10,0C15.523,0 20,4.477 20,10ZM14.815,17.605C13.375,18.519 11.705,19.003 10,19C8.254,19.003 6.545,18.495 5.084,17.54C4.964,17.39 4.843,17.235 4.719,17.075C4.576,16.888 4.499,16.658 4.5,16.423C4.5,15.884 4.887,15.432 5.405,15.357C8.827,14.857 11.184,14.9 14.611,15.375C14.859,15.41 15.085,15.535 15.249,15.725C15.413,15.915 15.502,16.158 15.5,16.409C15.5,16.649 15.417,16.882 15.269,17.064C15.115,17.251 14.964,17.431 14.815,17.605ZM16.493,16.233C16.413,15.297 15.702,14.516 14.748,14.384C11.24,13.899 8.788,13.852 5.26,14.368C4.3,14.507 3.592,15.295 3.509,16.234C1.896,14.559 0.997,12.325 1,10C1,5.03 5.03,1 10,1C14.97,1 19,5.03 19,10C19.003,12.324 18.104,14.559 16.493,16.233Z"
+                    android:fillColor="#ffffff"
+                    android:fillType="evenOdd"/>
+
+<!--                <path-->
+<!--                    android:name="v"-->
+<!--                    android:pathData="M10,11.5C11.061,11.5 12.078,11.079 12.828,10.328C13.579,9.578 14,8.561 14,7.5C14,6.439 13.579,5.422 12.828,4.672C12.078,3.921 11.061,3.5 10,3.5C8.939,3.5 7.922,3.921 7.172,4.672C6.421,5.422 6,6.439 6,7.5C6,8.561 6.421,9.578 7.172,10.328C7.922,11.079 8.939,11.5 10,11.5ZM10,10.5C10.394,10.5 10.784,10.422 11.148,10.272C11.512,10.121 11.843,9.9 12.121,9.621C12.4,9.343 12.621,9.012 12.772,8.648C12.922,8.284 13,7.894 13,7.5C13,7.106 12.922,6.716 12.772,6.352C12.621,5.988 12.4,5.657 12.121,5.379C11.843,5.1 11.512,4.879 11.148,4.728C10.784,4.578 10.394,4.5 10,4.5C9.204,4.5 8.441,4.816 7.879,5.379C7.316,5.941 7,6.704 7,7.5C7,8.296 7.316,9.059 7.879,9.621C8.441,10.184 9.204,10.5 10,10.5Z"-->
+<!--                    android:fillColor="#ffffff"-->
+<!--                    android:fillType="evenO"/>-->
+
+            </group>
+        </vector>
+    </aapt:attr>
+
+    <target android:name="rotationGroup"> *
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="6000"
+                android:propertyName="rotation"
+                android:valueFrom="0"
+                android:valueTo="360" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="v" >
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="3000"
+                    android:propertyName="pathData"
+                    android:valueFrom="M300,70 l 0,-70 70,70 0,0 -70,70z"
+                    android:valueTo="M300,70 l 0,-70 70,0  0,140 -70,0 z"
+                    android:valueType="pathType"/>
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>
