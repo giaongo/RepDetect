@@ -29,6 +29,7 @@
         android:textStyle="bold" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="99dp"
         android:layout_marginTop="16dp"
@@ -104,6 +105,7 @@
         android:layout_marginTop="16dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recentActivityLayout"
         android:layout_width="336dp"
         android:layout_height="187dp"
         android:layout_gravity="center"
@@ -232,6 +234,7 @@
         android:layout_marginTop="16dp" />
 
         <ScrollView
+            android:id="@+id/todayPlanScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
