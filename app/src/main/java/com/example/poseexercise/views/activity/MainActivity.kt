@@ -2,12 +2,14 @@ package com.example.poseexercise.views.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.poseexercise.R
+import com.example.poseexercise.views.fragment.CompletedFragment
 import com.example.poseexercise.views.fragment.HomeFragment
 import com.example.poseexercise.views.fragment.PlanStepOneFragment
 import com.example.poseexercise.views.fragment.ProfileFragment
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         prefManager = PrefManager(this)
         if (prefManager.isFirstTimeLaunch()) {
