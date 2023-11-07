@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.camera.core.Camera
@@ -34,6 +35,7 @@ import com.google.mlkit.common.MlKitException
 
 class WorkOutFragment : Fragment() {
 
+    private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -65,6 +67,9 @@ class WorkOutFragment : Fragment() {
         buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
 
         buttonCompleteExercise.setOnClickListener {
+            // Handle the "Complete" button click
+            screenOn = false
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_completedFragment)
@@ -89,6 +94,11 @@ class WorkOutFragment : Fragment() {
         //val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
 
         startButton.setOnClickListener{
+            // Set the screen on flag to true when "Start" button is pressed
+            screenOn = true
+            // Keep the screen on
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
             cameraFlipFAB.visibility = View.GONE
             buttonCancelExercise.visibility = View.VISIBLE
             buttonCompleteExercise.visibility = View.VISIBLE
@@ -97,16 +107,20 @@ class WorkOutFragment : Fragment() {
 
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         }
 
         buttonCancelExercise.setOnClickListener{
-            //TODO
+            //Handle the "Cancel" button click
+            screenOn = false
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_cancelFragment)
         }
 
-        buttonCompleteExercise.setOnClickListener{
+        /*buttonCompleteExercise.setOnClickListener{
             Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_completedFragment)
-        }
+        }*/
 
 
 
