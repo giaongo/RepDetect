@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- home_animation.xml -->
-<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:propertyName="pathData"
-    android:valueFrom="M12,2L12,2 12,2Z M12,2L12,2 12,2Z M12,2L12,2 12,2Z M12,2L12,2 12,2Z M12,2L12,2 12,2Z M21,8L21,21 3,21 3,8 12,3 21,8Z"
-    android:valueTo="M12,2L12,2 12,2Z M21,12L12,21 3,12Z M12,21L21,12 3,12Z"
-    android:duration="300"
-    android:valueType="pathType" />

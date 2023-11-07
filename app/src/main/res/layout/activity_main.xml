@@ -31,7 +31,6 @@
         app:cbn_fabBg="@color/primaryColor"
         app:cbn_bg="@color/black"
         app:cbn_unSelectedColor="@color/white"
-        app:cbn_animDuration="200"
        android:layout_alignBottom="@id/fragmentContainer"/>
 
 </RelativeLayout>
