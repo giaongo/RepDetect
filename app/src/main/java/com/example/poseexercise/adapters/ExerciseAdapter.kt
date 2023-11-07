@@ -36,8 +36,9 @@ class ExerciseAdapter(
         holder.level.text = currentExercise.level
         holder.calorieBurned.text = "${currentExercise.calorie} kCal"
 
+        // Set a click event listener for the CardView
         holder.cardView.setOnClickListener {
-            Log.d("RepDetect", "Click on exercise ${currentExercise.name}")
+            // Navigate to another fragment using the NavController
             navController.navigate(R.id.action_planStepOneFragment_to_planStepTwoFragment)
         }
     }

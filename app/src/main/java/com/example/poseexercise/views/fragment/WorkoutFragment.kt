@@ -67,8 +67,9 @@ class WorkOutFragment : Fragment() {
         buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
 
         buttonCompleteExercise.setOnClickListener {
-            // Handle the "Complete" button click
+            // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             Navigation.findNavController(view)
@@ -94,9 +95,10 @@ class WorkOutFragment : Fragment() {
         //val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
 
         startButton.setOnClickListener{
-            // Set the screen on flag to true when "Start" button is pressed
+            // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
-            // Keep the screen on
+
+            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             cameraFlipFAB.visibility = View.GONE
@@ -104,14 +106,12 @@ class WorkOutFragment : Fragment() {
             buttonCompleteExercise.visibility = View.VISIBLE
 
             startButton.visibility = View.GONE
-
-            // To disable screen timeout
-            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
         buttonCancelExercise.setOnClickListener{
-            //Handle the "Cancel" button click
+            // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             Navigation.findNavController(view)
