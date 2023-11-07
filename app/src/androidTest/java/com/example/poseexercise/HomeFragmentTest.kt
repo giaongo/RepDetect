@@ -16,14 +16,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 
-@Ignore("Test is running fine in local machine but fails with CI")
+//@Ignore("Test is running fine in local machine but fails with CI")
 @RunWith(AndroidJUnit4::class)
 class HomeFragmentTest {
 
     private lateinit var scenario: FragmentScenario<HomeFragment>
     @Before
     fun setUp() {
-        val scenario = launchFragmentInContainer<HomeFragment>()
+        val scenario = launchFragmentInContainer<HomeFragment>(initialState = Lifecycle.State.INITIALIZED)
         scenario.moveToState(Lifecycle.State.RESUMED)
     }
     @Test
