@@ -104,9 +104,9 @@ class WorkOutFragment : Fragment() {
             //TODO
         }
 
-        /*buttonCompleteExercise.setOnClickListener{
+        buttonCompleteExercise.setOnClickListener{
             Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_completedFragment)
-        }*/
+        }
 
 
 
