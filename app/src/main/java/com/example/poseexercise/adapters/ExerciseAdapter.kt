@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.poseexercise.R
 import com.example.poseexercise.data.Exercise
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 
 class ExerciseAdapter(
@@ -35,7 +36,7 @@ class ExerciseAdapter(
         holder.level.text = currentExercise.level
         holder.calorieBurned.text = "${currentExercise.calorie} kCal"
 
-        holder.itemView.setOnClickListener {
+        holder.cardView.setOnClickListener {
             Log.d("RepDetect", "Click on exercise ${currentExercise.name}")
             navController.navigate(R.id.action_planStepOneFragment_to_planStepTwoFragment)
         }
@@ -45,6 +46,7 @@ class ExerciseAdapter(
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var currentExercise: Exercise? = null
 
+        val cardView: MaterialCardView = itemView.findViewById(R.id.card)
         val name: TextView = itemView.findViewById(R.id.exercise_name)
         val image: ImageView = itemView.findViewById(R.id.exercise_image)
         val level: Chip = itemView.findViewById(R.id.chip)
