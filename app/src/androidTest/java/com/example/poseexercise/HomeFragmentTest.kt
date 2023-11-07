@@ -9,11 +9,11 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.poseexercise.views.fragment.HomeFragment
+import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-@Ignore("Test is running fine in local machine but fails with CI")
+//@Ignore("Test is running fine in local machine but fails with CI")
 @RunWith(AndroidJUnit4::class)
 class HomeFragmentTest {
 
@@ -30,4 +30,8 @@ class HomeFragmentTest {
         onView(withId(R.id.todayPlanScrollView)).check(matches(isDisplayed()))
     }
 
+    @After
+    fun tearDown() {
+        scenario.moveToState(Lifecycle.State.DESTROYED)
+    }
 }
