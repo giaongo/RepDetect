@@ -94,7 +94,7 @@
             android:layout_width="158dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
-            android:layout_marginBottom="60dp"
+            android:layout_marginBottom="90dp"
             android:backgroundTint="@color/primaryColor"
             android:text="@string/home_button"
             android:textColor="@color/white"

@@ -101,7 +101,7 @@ class WorkOutFragment : Fragment() {
         }
 
         buttonCancelExercise.setOnClickListener{
-            //TODO
+            Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_cancelFragment)
         }
 
         buttonCompleteExercise.setOnClickListener{
