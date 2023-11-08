@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.*;
 
 /**
  * Accepts a stream of {@link Pose} for classification and Rep counting.
@@ -149,10 +150,39 @@ public class PoseClassifierProcessor {
     }
 
 
+    // writing parsing logic
 
+    List<String> data = result;
 
+    String ExerciseRep = data.get(0);
+    String PoseConfidence = data.get(1);
 
-    //Log.d("ClassificationResult: ",result.toString());
+    String[] parts = PoseConfidence.split(":");
+
+    String repPattern = "([^:]+)\\s*:\\s*(\\d+)\\s*reps";
+
+    Pattern repR = Pattern.compile(repPattern);
+    Matcher repM = repR.matcher(ExerciseRep);
+
+    if (repM.find()) {
+      String exercise = repM.group(1).trim();
+      String count = repM.group(2);
+
+      Log.d("Classification Exercise: ", exercise);
+      Log.d("Classification Count: ", count);
+    }
+
+    if (parts.length == 2) {
+      // Trim leading and trailing spaces from the parts
+      String Expose = parts[0].trim();
+      String conf = parts[1].trim();
+
+      Log.d("Classification Pose: ", Expose);
+      Log.d("Classification Confidence: ", conf);
+    }
+
+    //Log.d("Classification: ", PoseConfidence);
+
     return result;
   }
 

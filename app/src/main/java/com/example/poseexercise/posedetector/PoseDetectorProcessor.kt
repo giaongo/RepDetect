@@ -101,7 +101,7 @@ class PoseDetectorProcessor(
           }
           classificationResult = poseClassifierProcessor!!.getPoseResult(pose)
 
-          Log.d("ClassificationResult: ", classificationResult.toString())
+          //Log.d("ClassificationResult: ", classificationResult.toString())
         }
         PoseWithClassification(pose, classificationResult)
       }
