@@ -21,18 +21,19 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Looper;
 import android.util.Log;
-
 import androidx.annotation.WorkerThread;
-
+import com.example.poseexercise.data.PostureResult;
 import com.google.common.base.Preconditions;
 import com.google.mlkit.vision.pose.Pose;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Accepts a stream of {@link Pose} for classification and Rep counting.
@@ -58,6 +59,8 @@ public class PoseClassifierProcessor {
   private List<RepetitionCounter> repCounters;
   private PoseClassifier poseClassifier;
   private String lastRepResult;
+
+  private static final Map<String,PostureResult> postureResults = new HashMap<>();
 
   @WorkerThread
   public PoseClassifierProcessor(Context context, boolean isStreamMode) {
@@ -105,9 +108,10 @@ public class PoseClassifierProcessor {
    * 1: PoseClass : [0.0-1.0] confidence
    */
   @WorkerThread
-  public List<String> getPoseResult(Pose pose) {
+  public Map<String,PostureResult> getPoseResult(Pose pose) {
     Preconditions.checkState(Looper.myLooper() != Looper.getMainLooper());
     List<String> result = new ArrayList<>();
+
     ClassificationResult classification = poseClassifier.classify(pose);
 
     // Update {@link RepetitionCounter}s if {@code isStreamMode}.
@@ -118,7 +122,7 @@ public class PoseClassifierProcessor {
       // Return early without updating repCounter if no pose found.
       if (pose.getAllPoseLandmarks().isEmpty()) {
         result.add(lastRepResult);
-        return result;
+        return postureResults;
       }
 
       for (RepetitionCounter repCounter : repCounters) {
@@ -130,6 +134,8 @@ public class PoseClassifierProcessor {
           tg.startTone(ToneGenerator.TONE_PROP_BEEP);
           lastRepResult = String.format(
               Locale.US, "%s : %d reps", repCounter.getClassName(), repsAfter);
+          // Add result to map
+          postureResults.put(repCounter.getClassName(), new PostureResult(repsAfter, 0));
           break;
         }
       }
@@ -146,14 +152,17 @@ public class PoseClassifierProcessor {
           classification.getClassConfidence(maxConfidenceClass)
               / poseClassifier.confidenceRange());
       result.add(maxConfidenceClassResult);
+
+      // find the key from the map -> if it exists, update the confidence value, otherwise add a new entry
+      if (postureResults.containsKey(maxConfidenceClass)) {
+        Objects.requireNonNull(postureResults.get(maxConfidenceClass))
+                .setConfidence(classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange());
+      } else {
+        postureResults.put(maxConfidenceClass, new PostureResult(0, classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange()));
+      }
     }
 
-
-
-
-
-    //Log.d("ClassificationResult: ",result.toString());
-    return result;
+    return postureResults;
   }
 
 }

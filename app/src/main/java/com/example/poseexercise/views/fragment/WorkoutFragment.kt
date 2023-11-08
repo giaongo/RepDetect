@@ -46,6 +46,8 @@ class WorkOutFragment : Fragment() {
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
     private lateinit var buttonCompleteExercise: Button
+    private lateinit var cameraViewModel: CameraXViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,8 +111,6 @@ class WorkOutFragment : Fragment() {
         }
 
 
-
-
         if (previewView == null) {
             Log.d(TAG, "Preview is null")
         }
@@ -118,18 +118,19 @@ class WorkOutFragment : Fragment() {
             Log.d(TAG, "graphicOverlay is null")
         }
 
-        ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
+        cameraViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
             .getInstance(requireActivity().application))[CameraXViewModel::class.java]
-            .processCameraProvider
-            .observe(
-                viewLifecycleOwner
-            ) { provider: ProcessCameraProvider? ->
+        cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
                 cameraProvider = provider
                 bindAllCameraUseCases()
-
-            }
+        }
         cameraFlipFAB.setOnClickListener {
             toggleCameraLens()
+        }
+        cameraViewModel.postureType.observe(viewLifecycleOwner) {mapResult ->
+            for ((key, value) in mapResult) {
+                Log.d("PostureType", "Posture: $key Repetition: ${value.repetition}")
+            }
         }
     }
 
@@ -198,7 +199,8 @@ class WorkOutFragment : Fragment() {
                         visualizeZ,
                         rescaleZ,
                         runClassification,
-                        true
+                        true,
+                        cameraViewModel
                     )
                 }
                 else -> throw IllegalStateException("Invalid model name")
