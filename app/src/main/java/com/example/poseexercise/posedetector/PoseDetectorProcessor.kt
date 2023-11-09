@@ -18,8 +18,10 @@ package com.example.poseexercise.posedetector
 
 import android.content.Context
 import android.util.Log
+import com.example.poseexercise.data.PostureResult
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor
 import com.example.poseexercise.util.VisionProcessorBase
+import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.gms.tasks.Task
 import com.google.android.odml.image.MlImage
@@ -39,7 +41,8 @@ class PoseDetectorProcessor(
   private val visualizeZ: Boolean,
   private val rescaleZForVisualization: Boolean,
   private val runClassification: Boolean,
-  private val isStreamMode: Boolean
+  private val isStreamMode: Boolean,
+  private val cameraXViewModel: CameraXViewModel
 ) : VisionProcessorBase<PoseDetectorProcessor.PoseWithClassification>(context) {
 
   private val detector: PoseDetector
@@ -48,7 +51,15 @@ class PoseDetectorProcessor(
   private var poseClassifierProcessor: PoseClassifierProcessor? = null
 
   /** Internal class to hold Pose and classification results. */
-  class PoseWithClassification(val pose: Pose, val classificationResult: List<String>)
+  inner class PoseWithClassification(val pose: Pose, val classificationResult: Map<String, PostureResult>) {
+
+    init {
+      // update live data value
+        if(classificationResult.isNotEmpty()) {
+          cameraXViewModel.postureType.postValue(classificationResult)
+        }
+    }
+  }
 
   init {
     detector = PoseDetection.getClient(options)
@@ -67,7 +78,7 @@ class PoseDetectorProcessor(
         classificationExecutor
       ) { task ->
         val pose = task.result
-        var classificationResult: List<String> = ArrayList()
+        var classificationResult: Map<String, PostureResult> = HashMap()
         if (runClassification) {
           if (poseClassifierProcessor == null) {
             poseClassifierProcessor =
@@ -90,7 +101,7 @@ class PoseDetectorProcessor(
         classificationExecutor
       ) { task ->
         val pose = task.result
-        var classificationResult: List<String> = ArrayList()
+        var classificationResult: Map<String, PostureResult> = HashMap()
         if (runClassification) {
           if (poseClassifierProcessor == null) {
             poseClassifierProcessor =
@@ -111,6 +122,12 @@ class PoseDetectorProcessor(
     poseWithClassification: PoseWithClassification,
     graphicOverlay: GraphicOverlay
   ) {
+    val listStringToDisplay:MutableList<String> = mutableListOf()
+    if(poseWithClassification.classificationResult.isNotEmpty()) {
+      for((key, value) in poseWithClassification.classificationResult) {
+        listStringToDisplay.add("${key}: ${value.repetition}\n")
+      }
+    }
     graphicOverlay.add(
       PoseGraphic(
         graphicOverlay,
@@ -118,7 +135,7 @@ class PoseDetectorProcessor(
         showInFrameLikelihood,
         visualizeZ,
         rescaleZForVisualization,
-        poseWithClassification.classificationResult
+        listStringToDisplay.toList()
       )
     )
   }
