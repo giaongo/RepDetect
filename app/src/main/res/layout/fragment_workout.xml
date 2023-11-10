@@ -121,21 +121,32 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.904" />
 
-        <TextView
+        <ImageView
+            android:id="@+id/timerRecIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="@string/timer"
+            android:src="@drawable/camera_rec_red_point"
+            android:layout_marginEnd="5dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/timerTV"
+            app:layout_constraintEnd_toStartOf="@+id/timerTV"
+            app:layout_constraintTop_toTopOf="@+id/timerTV" />
+
+        <TextView
+            android:id="@+id/timerTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.1"
 
-            />
+            app:layout_constraintVertical_bias="0.1" />
 
         <TextView
             android:layout_width="wrap_content"
