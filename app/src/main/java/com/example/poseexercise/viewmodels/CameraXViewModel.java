@@ -27,9 +27,9 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
+import com.example.poseexercise.data.PostureResult;
 import com.google.common.util.concurrent.ListenableFuture;
-
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /** View model for interacting with CameraX. */
@@ -39,12 +39,19 @@ public final class CameraXViewModel extends AndroidViewModel {
   private static final String TAG = "CameraXViewModel";
   private MutableLiveData<ProcessCameraProvider> cameraProviderLiveData;
 
+  private final MutableLiveData<Map<String,PostureResult>> postureTypeLiveData = new MutableLiveData();
+
+  public MutableLiveData<Map<String, PostureResult>> getPostureType() {
+    return postureTypeLiveData;
+  }
+
   /**
    * Create an instance which interacts with the camera service via the given application context.
    */
   public CameraXViewModel(@NonNull Application application) {
     super(application);
   }
+
 
   public LiveData<ProcessCameraProvider> getProcessCameraProvider() {
     if (cameraProviderLiveData == null) {
