@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
@@ -41,6 +42,7 @@ import java.util.TimerTask
 
 class WorkOutFragment : Fragment() {
 
+    private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -75,6 +77,8 @@ class WorkOutFragment : Fragment() {
             getRuntimePermissions()
         }
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        cameraViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
+            .getInstance(requireActivity().application))[CameraXViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -104,6 +108,12 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener{
+            // Set the screenOn flag to true, preventing the screen from turning off
+            screenOn = true
+
+            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
             cameraFlipFAB.visibility = View.GONE
             buttonCancelExercise.visibility = View.VISIBLE
             buttonCompleteExercise.visibility = View.VISIBLE
@@ -111,17 +121,39 @@ class WorkOutFragment : Fragment() {
             timerTextView.visibility = View.VISIBLE
             timerRecordIcon.visibility = View.VISIBLE
             startMediaTimer()
+            cameraViewModel.triggerClassification.value = true
+            // To disable screen timeout
+            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         }
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener{
             stopMediaTimer()
             Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_cancelFragment)
+            // Set the screenOn flag to false, allowing the screen to turn off
+            screenOn = false
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // stop triggering classification process
+            cameraViewModel.triggerClassification.value = false
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_cancelFragment)
+
         }
 
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener{
             stopMediaTimer()
+            // Set the screenOn flag to false, allowing the screen to turn off
+            screenOn = false
+
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // stop triggering classification process
+            cameraViewModel.triggerClassification.value = false
             Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_completedFragment)
         }
 
@@ -133,27 +165,27 @@ class WorkOutFragment : Fragment() {
             Log.d(TAG, "graphicOverlay is null")
         }
 
-        cameraViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
-            .getInstance(requireActivity().application))[CameraXViewModel::class.java]
+
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
                 cameraProvider = provider
                 bindAllCameraUseCases()
         }
+
         cameraFlipFAB.setOnClickListener {
             toggleCameraLens()
         }
-        cameraViewModel.postureType.observe(viewLifecycleOwner) {mapResult ->
+        cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
             for ((key, value) in mapResult) {
                 Log.d("PostureType", "Posture: $key Repetition: ${value.repetition}")
             }
         }
     }
 
-
-
     private fun bindAllCameraUseCases() {
         bindPreviewUseCase()
-        bindAnalysisUseCase()
+        cameraViewModel.triggerClassification.observe(viewLifecycleOwner) { pressed ->
+            bindAnalysisUseCase(pressed)
+        }
     }
 
     /**
@@ -183,15 +215,15 @@ class WorkOutFragment : Fragment() {
     /**
      * bind analysis use case
      */
-    private fun bindAnalysisUseCase() {
+    private fun bindAnalysisUseCase(runClassification: Boolean) {
         if (cameraProvider == null) {
             return
         }
         if (analysisUseCase != null) {
-            cameraProvider!!.unbind(analysisUseCase)
+            cameraProvider?.unbind(analysisUseCase)
         }
         if (imageProcessor != null) {
-            imageProcessor!!.stop()
+            imageProcessor?.stop()
         }
         imageProcessor = try {
             when(selectedModel) {
@@ -204,7 +236,8 @@ class WorkOutFragment : Fragment() {
                         )
                     val visualizeZ = PreferenceUtils.shouldPoseDetectionVisualizeZ(requireContext())
                     val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(requireContext())
-                    val runClassification = PreferenceUtils.shouldPoseDetectionRunClassification(requireContext())
+
+                    //PreferenceUtils.shouldPoseDetectionRunClassification(requireContext())
 
                     // Build Pose Detector Processor based on the settings/preferences
                     PoseDetectorProcessor(
@@ -272,7 +305,7 @@ class WorkOutFragment : Fragment() {
                 ).show()
             }
         }
-        cameraProvider!!.bindToLifecycle(this, cameraSelector!!, analysisUseCase)
+        cameraProvider?.bindToLifecycle(this, cameraSelector!!, analysisUseCase)
     }
 
 

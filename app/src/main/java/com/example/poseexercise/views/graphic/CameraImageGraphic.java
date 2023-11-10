@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise.views.graphic.camera;
+package com.example.poseexercise.views.graphic;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -23,6 +23,7 @@ import com.example.poseexercise.posedetector.classification.PoseClassifierProces
 import com.example.poseexercise.util.VisionProcessorBase
 import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.views.graphic.GraphicOverlay
+import com.example.poseexercise.views.graphic.PoseGraphic
 import com.google.android.gms.tasks.Task
 import com.google.android.odml.image.MlImage
 import com.google.mlkit.vision.common.InputImage
@@ -56,7 +57,7 @@ class PoseDetectorProcessor(
     init {
       // update live data value
         if(classificationResult.isNotEmpty()) {
-          cameraXViewModel.postureType.postValue(classificationResult)
+          cameraXViewModel.postureLiveData.postValue(classificationResult)
         }
     }
   }
