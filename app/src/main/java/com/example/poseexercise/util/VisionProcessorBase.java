@@ -18,37 +18,28 @@ package com.example.poseexercise.util;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build.VERSION_CODES;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageProxy;
-
-import com.example.poseexercise.views.graphic.camera.CameraImageGraphic;
+import com.example.poseexercise.views.graphic.CameraImageGraphic;
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils;
 import com.example.poseexercise.views.graphic.GraphicOverlay;
-import com.example.poseexercise.views.graphic.InferenceInfoGraphic;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.odml.image.BitmapMlImageBuilder;
-import com.google.android.odml.image.ByteBufferMlImageBuilder;
 import com.google.android.odml.image.MediaMlImageBuilder;
 import com.google.android.odml.image.MlImage;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.common.InputImage;
-
 import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -115,99 +106,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
     temperatureMonitor = new TemperatureMonitor(context);
   }
 
-  // -----------------Code for processing single still image----------------------------------------
-  @Override
-  public void processBitmap(Bitmap bitmap, final GraphicOverlay graphicOverlay) {
-    long frameStartMs = SystemClock.elapsedRealtime();
-
-    if (isMlImageEnabled(graphicOverlay.getContext())) {
-      MlImage mlImage = new BitmapMlImageBuilder(bitmap).build();
-      requestDetectInImage(
-          mlImage,
-          graphicOverlay,
-          /* originalCameraImage= */ null,
-          /* shouldShowFps= */ false,
-          frameStartMs);
-      mlImage.close();
-
-      return;
-    }
-
-    requestDetectInImage(
-        InputImage.fromBitmap(bitmap, 0),
-        graphicOverlay,
-        /* originalCameraImage= */ null,
-        /* shouldShowFps= */ false,
-        frameStartMs);
-  }
-
-  // -----------------Code for processing live preview frame from Camera1 API-----------------------
-  @Override
-  public synchronized void processByteBuffer(
-      ByteBuffer data, final FrameMetadata frameMetadata, final GraphicOverlay graphicOverlay) {
-    latestImage = data;
-    latestImageMetaData = frameMetadata;
-    if (processingImage == null && processingMetaData == null) {
-      processLatestImage(graphicOverlay);
-    }
-  }
-
-  private synchronized void processLatestImage(final GraphicOverlay graphicOverlay) {
-    processingImage = latestImage;
-    processingMetaData = latestImageMetaData;
-    latestImage = null;
-    latestImageMetaData = null;
-    if (processingImage != null && processingMetaData != null && !isShutdown) {
-      processImage(processingImage, processingMetaData, graphicOverlay);
-    }
-  }
-
-  private void processImage(
-      ByteBuffer data, final FrameMetadata frameMetadata, final GraphicOverlay graphicOverlay) {
-    long frameStartMs = SystemClock.elapsedRealtime();
-
-    // If live viewport is on (that is the underneath surface view takes care of the camera preview
-    // drawing), skip the unnecessary bitmap creation that used for the manual preview drawing.
-    Bitmap bitmap =
-        PreferenceUtils.isCameraLiveViewportEnabled(graphicOverlay.getContext())
-            ? null
-            : BitmapUtils.getBitmap(data, frameMetadata);
-
-    if (isMlImageEnabled(graphicOverlay.getContext())) {
-      MlImage mlImage =
-          new ByteBufferMlImageBuilder(
-                  data,
-                  frameMetadata.getWidth(),
-                  frameMetadata.getHeight(),
-                  MlImage.IMAGE_FORMAT_NV21)
-              .setRotation(frameMetadata.getRotation())
-              .build();
-
-      requestDetectInImage(mlImage, graphicOverlay, bitmap, /* shouldShowFps= */ true, frameStartMs)
-          .addOnSuccessListener(executor, results -> processLatestImage(graphicOverlay));
-
-      // This is optional. Java Garbage collection can also close it eventually.
-      mlImage.close();
-      return;
-    }
-
-    requestDetectInImage(
-            InputImage.fromByteBuffer(
-                data,
-                frameMetadata.getWidth(),
-                frameMetadata.getHeight(),
-                frameMetadata.getRotation(),
-                InputImage.IMAGE_FORMAT_NV21),
-            graphicOverlay,
-            bitmap,
-            /* shouldShowFps= */ true,
-            frameStartMs)
-        .addOnSuccessListener(executor, results -> processLatestImage(graphicOverlay));
-  }
-
   // -----------------Code for processing live preview frame from CameraX API-----------------------
   @Override
-  @RequiresApi(VERSION_CODES.LOLLIPOP)
   @ExperimentalGetImage
   public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay) {
     long frameStartMs = SystemClock.elapsedRealtime();

@@ -31,7 +31,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -58,7 +57,6 @@ public class PoseClassifierProcessor {
   private EMASmoothing emaSmoothing;
   private List<RepetitionCounter> repCounters;
   private PoseClassifier poseClassifier;
-  private String lastRepResult;
 
   private static final Map<String,PostureResult> postureResults = new HashMap<>();
 
@@ -69,7 +67,6 @@ public class PoseClassifierProcessor {
     if (isStreamMode) {
       emaSmoothing = new EMASmoothing();
       repCounters = new ArrayList<>();
-      lastRepResult = "";
     }
     loadPoseSamples(context);
   }
@@ -110,7 +107,6 @@ public class PoseClassifierProcessor {
   @WorkerThread
   public Map<String,PostureResult> getPoseResult(Pose pose) {
     Preconditions.checkState(Looper.myLooper() != Looper.getMainLooper());
-    List<String> result = new ArrayList<>();
 
     ClassificationResult classification = poseClassifier.classify(pose);
 
@@ -121,7 +117,6 @@ public class PoseClassifierProcessor {
 
       // Return early without updating repCounter if no pose found.
       if (pose.getAllPoseLandmarks().isEmpty()) {
-        result.add(lastRepResult);
         return postureResults;
       }
 
@@ -132,26 +127,17 @@ public class PoseClassifierProcessor {
           // Play a fun beep when rep counter updates.
           ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
           tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-          lastRepResult = String.format(
-              Locale.US, "%s : %d reps", repCounter.getClassName(), repsAfter);
+
           // Add result to map
           postureResults.put(repCounter.getClassName(), new PostureResult(repsAfter, 0));
           break;
         }
       }
-      result.add(lastRepResult);
     }
 
     // Add maxConfidence class of current frame to result if pose is found.
     if (!pose.getAllPoseLandmarks().isEmpty()) {
       String maxConfidenceClass = classification.getMaxConfidenceClass();
-      String maxConfidenceClassResult = String.format(
-          Locale.US,
-          "%s : %.2f",
-          maxConfidenceClass,
-          classification.getClassConfidence(maxConfidenceClass)
-              / poseClassifier.confidenceRange());
-      result.add(maxConfidenceClassResult);
 
       // find the key from the map -> if it exists, update the confidence value, otherwise add a new entry
       if (postureResults.containsKey(maxConfidenceClass)) {

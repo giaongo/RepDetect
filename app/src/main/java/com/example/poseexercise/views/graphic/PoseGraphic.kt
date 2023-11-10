@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.example.poseexercise.posedetector
+package com.example.poseexercise.views.graphic
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.example.poseexercise.views.graphic.GraphicOverlay.Graphic
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
@@ -69,11 +68,11 @@ internal constructor(
     }
 
     // Draw pose classification text.
-    val classificationX = POSE_CLASSIFICATION_TEXT_SIZE * 0.5f
+    val classificationX = POSE_CLASSIFICATION_TEXT_SIZE * 1f
     for (i in poseClassification.indices) {
       val classificationY =
         canvas.height -
-          (POSE_CLASSIFICATION_TEXT_SIZE*6f + POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
+          (POSE_CLASSIFICATION_TEXT_SIZE *10f + POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
       canvas.drawText(
         poseClassification[i],
         classificationX,
