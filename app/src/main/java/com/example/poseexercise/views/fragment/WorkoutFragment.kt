@@ -47,7 +47,6 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
-    private lateinit var buttonCompleteExercise: Button
     private lateinit var cameraViewModel: CameraXViewModel
 
 
@@ -65,21 +64,7 @@ class WorkOutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.fragment_workout, container, false)
-
-        buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
-
-        buttonCompleteExercise.setOnClickListener {
-            // Set the screenOn flag to false, allowing the screen to turn off
-            screenOn = false
-            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
-            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            Navigation.findNavController(view)
-                .navigate(R.id.action_workoutFragment_to_completedFragment)
-        }
-
-        return view
+        return inflater.inflate(R.layout.fragment_workout, container, false)
     }
 
 
@@ -95,7 +80,7 @@ class WorkOutFragment : Fragment() {
 
         val startButton: Button = view.findViewById(R.id.button_start_exercise)
         val buttonCancelExercise: Button = view.findViewById(R.id.button_cancel_exercise)
-        //val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
+        val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
 
         startButton.setOnClickListener{
             // Set the screenOn flag to true, preventing the screen from turning off
@@ -121,13 +106,21 @@ class WorkOutFragment : Fragment() {
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+            // stop triggering classification process
+            cameraViewModel.triggerClassification.value = false
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_cancelFragment)
-            cameraViewModel.triggerClassification.value = false
-            Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_cancelFragment)
+
         }
 
         buttonCompleteExercise.setOnClickListener{
+            // Set the screenOn flag to false, allowing the screen to turn off
+            screenOn = false
+
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
             Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_completedFragment)
         }
@@ -145,6 +138,7 @@ class WorkOutFragment : Fragment() {
                 cameraProvider = provider
                 bindAllCameraUseCases()
         }
+
         cameraFlipFAB.setOnClickListener {
             toggleCameraLens()
         }
