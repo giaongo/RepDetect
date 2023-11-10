@@ -138,9 +138,6 @@ class WorkOutFragment : Fragment() {
 
             // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
-            Navigation.findNavController(view)
-                .navigate(R.id.action_workoutFragment_to_cancelFragment)
-
         }
 
         // Complete the exercise
@@ -379,7 +376,7 @@ class WorkOutFragment : Fragment() {
     }
 
     /**
-     * timer handling couritine
+     * timer handling coroutine
      */
     private val mMainHandler: Handler by lazy {
         Handler(Looper.getMainLooper()) {
