@@ -57,7 +57,7 @@ class PoseDetectorProcessor(
     init {
       // update live data value
         if(classificationResult.isNotEmpty()) {
-          cameraXViewModel.postureType.postValue(classificationResult)
+          cameraXViewModel.postureLiveData.postValue(classificationResult)
         }
     }
   }
