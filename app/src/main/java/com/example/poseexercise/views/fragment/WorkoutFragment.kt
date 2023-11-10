@@ -4,12 +4,16 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraInfoUnavailableException
@@ -24,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.example.poseexercise.R
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.VisionImageProcessor
@@ -32,6 +37,8 @@ import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
+import java.util.Timer
+import java.util.TimerTask
 
 class WorkOutFragment : Fragment() {
 
@@ -47,7 +54,21 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private lateinit var startButton: Button
+    private lateinit var buttonCompleteExercise: Button
+    private lateinit var buttonCancelExercise: Button
+    private lateinit var cameraFlipFAB: FloatingActionButton
+
     private lateinit var cameraViewModel: CameraXViewModel
+
+    private var mRecTimer: Timer? = null
+    private var mRecSeconds = 0
+    private var mRecMinute = 0
+    private var mRecHours = 0
+    private lateinit var timerTextView: TextView
+    private lateinit var timerRecordIcon: ImageView
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,25 +84,29 @@ class WorkOutFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_workout, container, false)
+    ): View? {
+
+        val view: View = inflater.inflate(R.layout.fragment_workout, container, false)
+
+        // Linking all button and controls
+        cameraFlipFAB = view.findViewById(R.id.facing_switch)
+        startButton = view.findViewById(R.id.button_start_exercise)
+        buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
+        buttonCancelExercise = view.findViewById(R.id.button_cancel_exercise)
+        timerTextView = view.findViewById(R.id.timerTV)
+        timerRecordIcon = view.findViewById(R.id.timerRecIcon)
+
+        return view
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
-
-        val cameraFlipFAB:FloatingActionButton = view.findViewById(R.id.facing_switch)
         cameraFlipFAB.visibility = View.VISIBLE
-        //val cameraFlipFAB:Button = view.findViewById(R.id.facing_switch)
 
-        val startButton: Button = view.findViewById(R.id.button_start_exercise)
-        val buttonCancelExercise: Button = view.findViewById(R.id.button_cancel_exercise)
-        val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
-
+        // start exercise button
         startButton.setOnClickListener{
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
@@ -92,15 +117,20 @@ class WorkOutFragment : Fragment() {
             cameraFlipFAB.visibility = View.GONE
             buttonCancelExercise.visibility = View.VISIBLE
             buttonCompleteExercise.visibility = View.VISIBLE
-
             startButton.visibility = View.GONE
+            timerTextView.visibility = View.VISIBLE
+            timerRecordIcon.visibility = View.VISIBLE
+            startMediaTimer()
             cameraViewModel.triggerClassification.value = true
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         }
 
+        // Cancel the exercise
         buttonCancelExercise.setOnClickListener{
+            stopMediaTimer()
+            Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_cancelFragment)
             // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
@@ -108,12 +138,11 @@ class WorkOutFragment : Fragment() {
 
             // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
-            Navigation.findNavController(view)
-                .navigate(R.id.action_workoutFragment_to_cancelFragment)
-
         }
 
+        // Complete the exercise
         buttonCompleteExercise.setOnClickListener{
+            stopMediaTimer()
             // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
 
@@ -346,10 +375,122 @@ class WorkOutFragment : Fragment() {
         }
     }
 
+    /**
+     * timer handling coroutine
+     */
+    private val mMainHandler: Handler by lazy {
+        Handler(Looper.getMainLooper()) {
+            when(it.what) {
+                WHAT_START_TIMER -> {
+                    if (mRecSeconds % 2 != 0) {
+                        timerRecordIcon.visibility = View.VISIBLE
+                    } else {
+                        timerRecordIcon.visibility = View.INVISIBLE
+                    }
+                    timerTextView.text = calculateTime(mRecSeconds, mRecMinute)
+                }
+                WHAT_STOP_TIMER -> {
+                    timerTextView.text = calculateTime(0, 0)
+                    timerRecordIcon.visibility = View.GONE
+                    timerTextView.visibility = View.GONE
+                }
+            }
+            true
+        }
+    }
+
+
+    /**
+     * Start timer functionality
+     */
+    private fun startMediaTimer() {
+        val pushTask: TimerTask = object : TimerTask() {
+            override fun run() {
+
+                mRecSeconds++
+
+                if (mRecSeconds >= 60) {
+                    mRecSeconds = 0
+                    mRecMinute++
+                }
+
+                if (mRecMinute >= 60) {
+                    mRecMinute = 0
+                    mRecHours++
+                    if (mRecHours >= 24) {
+                        mRecHours = 0
+                        mRecMinute = 0
+                        mRecSeconds = 0
+                    }
+                }
+                mMainHandler.sendEmptyMessage(WHAT_START_TIMER)
+            }
+        }
+        if (mRecTimer != null) {
+            stopMediaTimer()
+        }
+        mRecTimer = Timer()
+
+        mRecTimer?.schedule(pushTask, 1000, 1000)
+    }
+
+
+    /**
+     * Stop timer functionality
+     */
+    private fun stopMediaTimer() {
+        if (mRecTimer != null) {
+            mRecTimer?.cancel()
+            mRecTimer = null
+        }
+        mRecHours = 0
+        mRecMinute = 0
+        mRecSeconds = 0
+        mMainHandler.sendEmptyMessage(WHAT_STOP_TIMER)
+    }
+
+    /**
+     * Calculate the time and return string
+     */
+    private fun calculateTime(seconds: Int, minute: Int, hour: Int? = null): String {
+        val mBuilder = java.lang.StringBuilder()
+
+        if (hour != null) {
+            if (hour < 10) {
+                mBuilder.append("0")
+                mBuilder.append(hour)
+            } else {
+                mBuilder.append(hour)
+            }
+            mBuilder.append(":")
+        }
+
+        if (minute < 10) {
+            mBuilder.append("0")
+            mBuilder.append(minute)
+        } else {
+            mBuilder.append(minute)
+        }
+
+        mBuilder.append(":")
+        if (seconds < 10) {
+            mBuilder.append("0")
+            mBuilder.append(seconds)
+        } else {
+            mBuilder.append(seconds)
+        }
+        return mBuilder.toString()
+    }
+
+
+
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val POSE_DETECTION = "Pose Detection"
         private const val PERMISSION_REQUESTS = 1
+
+        private const val WHAT_START_TIMER = 0x00
+        private const val WHAT_STOP_TIMER = 0x01
 
         private val REQUIRED_RUNTIME_PERMISSIONS =
             arrayOf(

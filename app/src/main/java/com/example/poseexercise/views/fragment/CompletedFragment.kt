@@ -11,7 +11,7 @@ import com.example.poseexercise.R
 
 class CompletedFragment : Fragment() {
 
-    private lateinit var testNavigation: Button
+    private lateinit var navigateToHomeButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +25,9 @@ class CompletedFragment : Fragment() {
 
         val view: View = inflater.inflate(R.layout.fragment_completed, container, false)
 
-        testNavigation = view.findViewById(R.id.goToHomeFromComplete)
+        navigateToHomeButton = view.findViewById(R.id.goToHomeFromComplete)
 
-        testNavigation.setOnClickListener {
+        navigateToHomeButton.setOnClickListener {
 
             Navigation.findNavController(view)
                 .navigate(R.id.action_completedFragment_to_homeFragment2)
