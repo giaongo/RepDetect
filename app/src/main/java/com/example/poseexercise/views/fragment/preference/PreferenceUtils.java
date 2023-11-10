@@ -24,10 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.camera.core.CameraSelector;
-import com.google.android.gms.common.images.Size;
+
 import com.google.common.base.Preconditions;
-import com.example.poseexercise.views.graphic.camera.CameraSource;
-import com.example.poseexercise.views.graphic.camera.CameraSource.SizePair;
 import com.example.poseexercise.R;
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
 import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions;
@@ -44,31 +42,6 @@ public class PreferenceUtils {
         .putString(context.getString(prefKeyId), value)
         .apply();
   }*/
-
-  @Nullable
-  public static SizePair getCameraPreviewSizePair(Context context, int cameraId) {
-    Preconditions.checkArgument(
-        cameraId == CameraSource.CAMERA_FACING_BACK
-            || cameraId == CameraSource.CAMERA_FACING_FRONT);
-    String previewSizePrefKey;
-    String pictureSizePrefKey;
-    if (cameraId == CameraSource.CAMERA_FACING_BACK) {
-      previewSizePrefKey = context.getString(R.string.pref_key_rear_camera_preview_size);
-      pictureSizePrefKey = context.getString(R.string.pref_key_rear_camera_picture_size);
-    } else {
-      previewSizePrefKey = context.getString(R.string.pref_key_front_camera_preview_size);
-      pictureSizePrefKey = context.getString(R.string.pref_key_front_camera_picture_size);
-    }
-
-    try {
-      SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-      return new SizePair(
-          Size.parseSize(sharedPreferences.getString(previewSizePrefKey, null)),
-          Size.parseSize(sharedPreferences.getString(pictureSizePrefKey, null)));
-    } catch (Exception e) {
-      return null;
-    }
-  }
 
   @RequiresApi(VERSION_CODES.LOLLIPOP)
   @Nullable

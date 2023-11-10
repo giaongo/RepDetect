@@ -35,10 +35,9 @@ import androidx.annotation.RequiresApi;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageProxy;
 
-import com.example.poseexercise.views.graphic.camera.CameraImageGraphic;
+import com.example.poseexercise.views.graphic.CameraImageGraphic;
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils;
 import com.example.poseexercise.views.graphic.GraphicOverlay;
-import com.example.poseexercise.views.graphic.InferenceInfoGraphic;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.android.gms.tasks.Tasks;
