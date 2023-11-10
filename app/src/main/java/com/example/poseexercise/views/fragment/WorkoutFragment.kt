@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import androidx.camera.core.Camera
@@ -34,6 +35,7 @@ import com.google.mlkit.common.MlKitException
 
 class WorkOutFragment : Fragment() {
 
+    private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -68,6 +70,10 @@ class WorkOutFragment : Fragment() {
         buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
 
         buttonCompleteExercise.setOnClickListener {
+            // Set the screenOn flag to false, allowing the screen to turn off
+            screenOn = false
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_completedFragment)
@@ -92,6 +98,12 @@ class WorkOutFragment : Fragment() {
         //val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
 
         startButton.setOnClickListener{
+            // Set the screenOn flag to true, preventing the screen from turning off
+            screenOn = true
+
+            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
             cameraFlipFAB.visibility = View.GONE
             buttonCancelExercise.visibility = View.VISIBLE
             buttonCompleteExercise.visibility = View.VISIBLE
@@ -104,6 +116,13 @@ class WorkOutFragment : Fragment() {
         }
 
         buttonCancelExercise.setOnClickListener{
+            // Set the screenOn flag to false, allowing the screen to turn off
+            screenOn = false
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_cancelFragment)
             cameraViewModel.triggerClassification.value = false
             Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_cancelFragment)
         }
