@@ -21,7 +21,19 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0" >
+
+            <Button
+                android:id="@+id/button_cancel_exercise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel_button"
+                android:textColor="@color/white"
+                android:visibility="invisible"
+                app:backgroundTint="@color/primaryColor"
+                app:pressedTranslationZ="6dp"
+                app:tint="@color/white" />
+        </androidx.camera.view.PreviewView>
 
 
         <com.example.poseexercise.views.graphic.GraphicOverlay
@@ -33,23 +45,6 @@
             app:layout_constraintRight_toRightOf="@id/preview_view"
             app:layout_constraintTop_toTopOf="@id/preview_view" />
 
-
-        <Button
-            android:id="@+id/button_cancel_exercise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel_button"
-            android:visibility="invisible"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/primaryColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.904"
-            app:pressedTranslationZ="6dp"
-            app:tint="@color/white" />
 
         <Button
             android:id="@+id/button_start_exercise"
