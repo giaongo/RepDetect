@@ -9,8 +9,8 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -28,8 +28,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.example.poseexercise.R
+import com.example.poseexercise.data.ExerciseLog
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
@@ -58,6 +58,8 @@ class WorkOutFragment : Fragment() {
     private lateinit var buttonCompleteExercise: Button
     private lateinit var buttonCancelExercise: Button
     private lateinit var cameraFlipFAB: FloatingActionButton
+    private lateinit var confIndicatorView: ImageView
+    private lateinit var exerciseTextView: TextView
 
     private lateinit var cameraViewModel: CameraXViewModel
 
@@ -95,6 +97,9 @@ class WorkOutFragment : Fragment() {
         buttonCancelExercise = view.findViewById(R.id.button_cancel_exercise)
         timerTextView = view.findViewById(R.id.timerTV)
         timerRecordIcon = view.findViewById(R.id.timerRecIcon)
+        confIndicatorView = view.findViewById(R.id.confidenceIndicatorView)
+        exerciseTextView = view.findViewById(R.id.exerciseText)
+        confIndicatorView.visibility = View.INVISIBLE
 
         return view
     }
@@ -124,6 +129,7 @@ class WorkOutFragment : Fragment() {
             cameraViewModel.triggerClassification.value = true
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
 
         }
 
@@ -162,7 +168,6 @@ class WorkOutFragment : Fragment() {
             Log.d(TAG, "graphicOverlay is null")
         }
 
-
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
                 cameraProvider = provider
                 bindAllCameraUseCases()
@@ -171,12 +176,52 @@ class WorkOutFragment : Fragment() {
         cameraFlipFAB.setOnClickListener {
             toggleCameraLens()
         }
+
+        // Initialize Exercise Log
+        val exerciseLog = ExerciseLog()
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
+
             for ((key, value) in mapResult) {
-                Log.d("PostureType", "Posture: $key Repetition: ${value.repetition}")
+                Log.d("PostureType","Posture: $key Repetition: ${value.repetition} Confidence: ${value.confidence}")
+
+                if (key=="squat" && value.repetition==10){
+                    exerciseLog.addExercise(key, value.repetition, value.confidence)
+                    displayResult(exerciseLog)
+                }
+
+                /*if(key=="neutral_standing"){
+                    confIndicatorView.visibility = View.VISIBLE
+                    displayConfidence(value.confidence)
+                }else{
+                    confIndicatorView.visibility = View.INVISIBLE
+                }*/
             }
         }
     }
+
+
+    private fun displayResult(exerciseLog: ExerciseLog){
+        exerciseTextView.visibility = View.VISIBLE
+        val pushUpData = exerciseLog.getExerciseData("pushups_down")
+        exerciseTextView.text = pushUpData.toString()
+    }
+
+
+    private fun displayConfidence(confidence: Float){
+        if (confidence < 0.5) {
+            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
+        } else if (confidence > 0.5 && confidence <= 0.6) {
+            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.orange)
+        }else if (confidence > 0.6 && confidence <= 0.75) {
+            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.yellow)
+        }else if (confidence > 0.75 && confidence <= 0.85) {
+            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
+        }else {
+            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
+        }
+    }
+
 
     private fun bindAllCameraUseCases() {
         bindPreviewUseCase()

@@ -33,6 +33,13 @@
             app:layout_constraintRight_toRightOf="@id/preview_view"
             app:layout_constraintTop_toTopOf="@id/preview_view" />
 
+        <ImageView
+            android:id="@+id/confidenceIndicatorView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:background="@drawable/confidence_indicator"
+            />
 
         <Button
             android:id="@+id/button_cancel_exercise"
@@ -139,21 +146,22 @@
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
 
-            app:layout_constraintVertical_bias="0.1" />
+            app:layout_constraintVertical_bias="0.05" />
 
         <TextView
+            android:id="@+id/exerciseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
             android:text="@string/exercise_count"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
