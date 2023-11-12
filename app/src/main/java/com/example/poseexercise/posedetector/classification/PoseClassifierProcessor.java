@@ -56,8 +56,13 @@ public class PoseClassifierProcessor {
   private static final String CHESTPRESS_DOWN_CLASS = "chestpress_down";
 
   private static final String SITUP_UP_CLASS = "situp_up_up";
+
+  private static final String SHOULDERPRESS_DOWN_CLASS = "shoulderpress_down";
+
+  private static final String SHOULDERPRESS_UP_CLASS = "shoulderpress_up";
+
   private static final String[] POSE_CLASSES = {
-    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, NEUTRAL_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS
+    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, NEUTRAL_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS
   };
 
   private final boolean isStreamMode;
