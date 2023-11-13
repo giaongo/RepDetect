@@ -40,18 +40,40 @@ import java.util.Objects;
 public class PoseClassifierProcessor {
   private static final String TAG = "PoseClassifierProcessor";
 
-  private static final String POSE_SAMPLES_FILE = "pose/fitness_poses_csvs_out_v01.csv";
+  //private static final String POSE_SAMPLES_FILE = "pose/fitness_pose_samples.csv";
+  private static final String POSE_SAMPLES_FILE = "pose/fitness_poses_csvs_out_v02.csv";
 
   // Specify classes for which we want rep counting.
   // These are the labels in the given {@code POSE_SAMPLES_FILE}. You can set your own class labels
   // for your pose samples.
+
+  // The class name for the pushups
   private static final String PUSHUPS_CLASS = "pushups_down";
+
+  // The class name for squat
   private static final String SQUATS_CLASS = "squat";
 
+  //class name for lunges
   private static final String LUNGES_CLASS = "lunges";
 
+ // The class name for chestpress
+  private static final String CHESTPRESS_DOWN_CLASS = "chestpress_down";
+
+  // The class name for the situp
+  private static final String SITUP_UP_CLASS = "situp_up_up";
+
+  // The class name for the shoulderpress
+  private static final String SHOULDERPRESS_DOWN_CLASS = "shoulderpress_down";
+
+  private static final String SHOULDERPRESS_UP_CLASS = "shoulderpress_up";
+
+  // The class name for the deadlift
+  private static final String DEADLIFT_UP_CLASS = "deadlift_up";
+
+  private static final String DEADLIFT_DOWN_CLASS = "deadlift_down";
+
   private static final String[] POSE_CLASSES = {
-    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS
+    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
   };
 
   private final boolean isStreamMode;
@@ -60,7 +82,7 @@ public class PoseClassifierProcessor {
   private List<RepetitionCounter> repCounters;
   private PoseClassifier poseClassifier;
 
-  private final Map<String,PostureResult> postureResults = new HashMap<>();
+  private static final Map<String,PostureResult> postureResults = new HashMap<>();
 
   @WorkerThread
   public PoseClassifierProcessor(Context context, boolean isStreamMode) {
@@ -131,7 +153,7 @@ public class PoseClassifierProcessor {
           tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 
           // Add result to map
-          postureResults.put(repCounter.getClassName(), new PostureResult(repsAfter, 0, repCounter.getClassName()));
+          postureResults.put(repCounter.getClassName(), new PostureResult(repsAfter, 0));
           break;
         }
       }
@@ -146,7 +168,7 @@ public class PoseClassifierProcessor {
         Objects.requireNonNull(postureResults.get(maxConfidenceClass))
                 .setConfidence(classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange());
       } else {
-        postureResults.put(maxConfidenceClass, new PostureResult(0, classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange(), maxConfidenceClass));
+          postureResults.put(maxConfidenceClass, new PostureResult(0, classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange(), maxConfidenceClass));
       }
     }
 
