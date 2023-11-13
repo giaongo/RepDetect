@@ -183,10 +183,9 @@ class WorkOutFragment : Fragment() {
         val exerciseLog = ExerciseLog()
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
-<<<<<<< HEAD
 
             val onlyPose = listOf("yoga", "Plank")
-            
+
             for ((key, value) in mapResult) {
                 Log.d("PostureType","Posture: $key Repetition: ${value.repetition} Confidence: ${value.confidence}")
 
@@ -218,13 +217,18 @@ class WorkOutFragment : Fragment() {
                 }else{
                     confIndicatorView.visibility = View.INVISIBLE
                 }*/
-=======
+
             for ((_, value) in mapResult) {
                 Log.d(
                     "PostureType",
                     "Posture: ${value.postureType} Repetition: ${value.repetition}"
                 )
->>>>>>> main
+
+            for ((_, value) in mapResult) {
+                Log.d(
+                    "PostureType",
+                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
+                )
             }
         }
     }
