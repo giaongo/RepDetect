@@ -51,7 +51,8 @@ public class PoseClassifierProcessor {
   private static final String PUSHUPS_CLASS = "pushups_down";
 
   // The class name for squat
-  private static final String SQUATS_CLASS = "squat";
+  private static final String SQUATS_UP_CLASS = "squats_up";
+    private static final String SQUATS_DOWN_CLASS = "squats_down";
 
   //class name for lunges
   private static final String LUNGES_CLASS = "lunges";
@@ -73,7 +74,7 @@ public class PoseClassifierProcessor {
   private static final String DEADLIFT_DOWN_CLASS = "deadlift_down";
 
   private static final String[] POSE_CLASSES = {
-    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
+    PUSHUPS_CLASS, SQUATS_UP_CLASS,SQUATS_DOWN_CLASS, LUNGES_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
   };
 
   private final boolean isStreamMode;
