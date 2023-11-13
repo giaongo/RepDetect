@@ -41,7 +41,7 @@ public class PoseClassifierProcessor {
   private static final String TAG = "PoseClassifierProcessor";
 
   //private static final String POSE_SAMPLES_FILE = "pose/fitness_pose_samples.csv";
-  private static final String POSE_SAMPLES_FILE = "pose/fitness_poses_csvs_out_v02.csv";
+  private static final String POSE_SAMPLES_FILE = "pose/fitness_poses_csvs_out_v03.csv";
  
 
   // Specify classes for which we want rep counting.
@@ -53,8 +53,7 @@ public class PoseClassifierProcessor {
 
 
   // The class name for squat
-  private static final String SQUATS_UP_CLASS = "squats_up";
-    private static final String SQUATS_DOWN_CLASS = "squats_down";
+    private static final String SQUATS_CLASS = "squats";
 
   //class name for lunges
   private static final String LUNGES_CLASS = "lunges";
@@ -76,7 +75,7 @@ public class PoseClassifierProcessor {
   private static final String DEADLIFT_DOWN_CLASS = "deadlift_down";
 
   private static final String[] POSE_CLASSES = {
-    PUSHUPS_CLASS, SQUATS_UP_CLASS,SQUATS_DOWN_CLASS, LUNGES_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
+    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
 
   };
 
