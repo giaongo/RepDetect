@@ -40,7 +40,6 @@ import java.util.Objects;
 public class PoseClassifierProcessor {
   private static final String TAG = "PoseClassifierProcessor";
 
-  //private static final String POSE_SAMPLES_FILE = "pose/fitness_pose_samples.csv";
   private static final String POSE_SAMPLES_FILE = "pose/fitness_poses_csvs_out_v01.csv";
 
   // Specify classes for which we want rep counting.
@@ -48,8 +47,11 @@ public class PoseClassifierProcessor {
   // for your pose samples.
   private static final String PUSHUPS_CLASS = "pushups_down";
   private static final String SQUATS_CLASS = "squat";
+
+  private static final String LUNGES_CLASS = "lunges";
+
   private static final String[] POSE_CLASSES = {
-    PUSHUPS_CLASS, SQUATS_CLASS
+    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS
   };
 
   private final boolean isStreamMode;
@@ -58,7 +60,7 @@ public class PoseClassifierProcessor {
   private List<RepetitionCounter> repCounters;
   private PoseClassifier poseClassifier;
 
-  private static final Map<String,PostureResult> postureResults = new HashMap<>();
+  private final Map<String,PostureResult> postureResults = new HashMap<>();
 
   @WorkerThread
   public PoseClassifierProcessor(Context context, boolean isStreamMode) {
@@ -129,7 +131,7 @@ public class PoseClassifierProcessor {
           tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 
           // Add result to map
-          postureResults.put(repCounter.getClassName(), new PostureResult(repsAfter, 0));
+          postureResults.put(repCounter.getClassName(), new PostureResult(repsAfter, 0, repCounter.getClassName()));
           break;
         }
       }
@@ -144,7 +146,7 @@ public class PoseClassifierProcessor {
         Objects.requireNonNull(postureResults.get(maxConfidenceClass))
                 .setConfidence(classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange());
       } else {
-        postureResults.put(maxConfidenceClass, new PostureResult(0, classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange()));
+        postureResults.put(maxConfidenceClass, new PostureResult(0, classification.getClassConfidence(maxConfidenceClass) / poseClassifier.confidenceRange(), maxConfidenceClass));
       }
     }
 

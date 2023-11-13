@@ -71,22 +71,22 @@ class WorkOutFragment : Fragment() {
     private lateinit var timerRecordIcon: ImageView
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         }
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        cameraViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
-            .getInstance(requireActivity().application))[CameraXViewModel::class.java]
+        cameraViewModel = ViewModelProvider(
+            this, ViewModelProvider.AndroidViewModelFactory
+                .getInstance(requireActivity().application)
+        )[CameraXViewModel::class.java]
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val view: View = inflater.inflate(R.layout.fragment_workout, container, false)
 
@@ -112,7 +112,7 @@ class WorkOutFragment : Fragment() {
         cameraFlipFAB.visibility = View.VISIBLE
 
         // start exercise button
-        startButton.setOnClickListener{
+        startButton.setOnClickListener {
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
 
@@ -134,9 +134,10 @@ class WorkOutFragment : Fragment() {
         }
 
         // Cancel the exercise
-        buttonCancelExercise.setOnClickListener{
+        buttonCancelExercise.setOnClickListener {
             stopMediaTimer()
-            Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_cancelFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_cancelFragment)
             // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
@@ -147,7 +148,7 @@ class WorkOutFragment : Fragment() {
         }
 
         // Complete the exercise
-        buttonCompleteExercise.setOnClickListener{
+        buttonCompleteExercise.setOnClickListener {
             stopMediaTimer()
             // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
@@ -157,7 +158,8 @@ class WorkOutFragment : Fragment() {
 
             // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
-            Navigation.findNavController(view).navigate(R.id.action_workoutFragment_to_completedFragment)
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_completedFragment)
         }
 
 
@@ -169,8 +171,8 @@ class WorkOutFragment : Fragment() {
         }
 
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
-                cameraProvider = provider
-                bindAllCameraUseCases()
+            cameraProvider = provider
+            bindAllCameraUseCases()
         }
 
         cameraFlipFAB.setOnClickListener {
@@ -181,6 +183,7 @@ class WorkOutFragment : Fragment() {
         val exerciseLog = ExerciseLog()
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
+<<<<<<< HEAD
 
             val onlyPose = listOf("yoga", "Plank")
             
@@ -215,6 +218,13 @@ class WorkOutFragment : Fragment() {
                 }else{
                     confIndicatorView.visibility = View.INVISIBLE
                 }*/
+=======
+            for ((_, value) in mapResult) {
+                Log.d(
+                    "PostureType",
+                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
+                )
+>>>>>>> main
             }
         }
     }
@@ -264,7 +274,8 @@ class WorkOutFragment : Fragment() {
             cameraProvider!!.unbind(previewUseCase)
         }
         val builder = Preview.Builder()
-        val targetResolution = PreferenceUtils.getCameraXTargetResolution(requireContext(), lensFacing)
+        val targetResolution =
+            PreferenceUtils.getCameraXTargetResolution(requireContext(), lensFacing)
         if (targetResolution != null) {
             builder.setTargetResolution(targetResolution)
         }
@@ -287,16 +298,18 @@ class WorkOutFragment : Fragment() {
             imageProcessor?.stop()
         }
         imageProcessor = try {
-            when(selectedModel) {
+            when (selectedModel) {
                 POSE_DETECTION -> {
                     // get all the setting preferences for camera x live preview
-                    val poseDetectorOptions = PreferenceUtils.getPoseDetectorOptionsForLivePreview(requireContext())
+                    val poseDetectorOptions =
+                        PreferenceUtils.getPoseDetectorOptionsForLivePreview(requireContext())
                     val shouldShowInFrameLikelihood =
                         PreferenceUtils.shouldShowPoseDetectionInFrameLikelihoodLivePreview(
                             requireContext()
                         )
                     val visualizeZ = PreferenceUtils.shouldPoseDetectionVisualizeZ(requireContext())
-                    val rescaleZ = PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(requireContext())
+                    val rescaleZ =
+                        PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(requireContext())
 
                     //PreferenceUtils.shouldPoseDetectionRunClassification(requireContext())
 
@@ -312,6 +325,7 @@ class WorkOutFragment : Fragment() {
                         cameraViewModel
                     )
                 }
+
                 else -> throw IllegalStateException("Invalid model name")
             }
         } catch (e: Exception) {
@@ -382,7 +396,10 @@ class WorkOutFragment : Fragment() {
     }
 
     private fun isPermissionGranted(context: Context, permission: String): Boolean {
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             Log.i(TAG, "Permission granted: $permission")
             return true
@@ -444,7 +461,7 @@ class WorkOutFragment : Fragment() {
      */
     private val mMainHandler: Handler by lazy {
         Handler(Looper.getMainLooper()) {
-            when(it.what) {
+            when (it.what) {
                 WHAT_START_TIMER -> {
                     if (mRecSeconds % 2 != 0) {
                         timerRecordIcon.visibility = View.VISIBLE
@@ -453,6 +470,7 @@ class WorkOutFragment : Fragment() {
                     }
                     timerTextView.text = calculateTime(mRecSeconds, mRecMinute)
                 }
+
                 WHAT_STOP_TIMER -> {
                     timerTextView.text = calculateTime(0, 0)
                     timerRecordIcon.visibility = View.GONE
@@ -545,7 +563,6 @@ class WorkOutFragment : Fragment() {
         }
         return mBuilder.toString()
     }
-
 
 
     companion object {
