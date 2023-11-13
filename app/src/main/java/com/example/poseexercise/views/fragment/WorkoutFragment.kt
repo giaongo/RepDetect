@@ -182,13 +182,32 @@ class WorkOutFragment : Fragment() {
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
+            val onlyPose = listOf("yoga", "Plank")
+            
             for ((key, value) in mapResult) {
                 Log.d("PostureType","Posture: $key Repetition: ${value.repetition} Confidence: ${value.confidence}")
 
-                if (key=="squat" && value.repetition==10){
+                if (key !in onlyPose){
+                    val data = exerciseLog.getExerciseData(key)
+
+                    if (data==null){
+                        exerciseLog.addExercise(key, value.repetition, value.confidence)
+                    } else if(value.repetition == data?.repetitions?.plus(1)) {
+                        exerciseLog.addExercise(key, value.repetition, value.confidence)
+                        displayResult(key, exerciseLog)
+                    }else{
+
+                    }
+
+
+
+                    //displayResult(exerciseLog)
+                }
+
+                /*if(key=="squat" && value.repetition < 10){
                     exerciseLog.addExercise(key, value.repetition, value.confidence)
                     displayResult(exerciseLog)
-                }
+                }*/
 
                 /*if(key=="neutral_standing"){
                     confIndicatorView.visibility = View.VISIBLE
@@ -201,10 +220,10 @@ class WorkOutFragment : Fragment() {
     }
 
 
-    private fun displayResult(exerciseLog: ExerciseLog){
+    private fun displayResult(key: String, exerciseLog: ExerciseLog){
         exerciseTextView.visibility = View.VISIBLE
-        val pushUpData = exerciseLog.getExerciseData("pushups_down")
-        exerciseTextView.text = pushUpData.toString()
+        val pushUpData = exerciseLog.getExerciseData(key)
+        exerciseTextView.text = pushUpData?.repetitions.toString()
     }
 
 

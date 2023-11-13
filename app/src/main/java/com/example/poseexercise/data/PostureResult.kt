@@ -6,3 +6,4 @@ class PostureResult(
     var confidence: Float = 0f
 )
 
+
