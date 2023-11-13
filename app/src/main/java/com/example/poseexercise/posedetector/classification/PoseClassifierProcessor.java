@@ -46,27 +46,34 @@ public class PoseClassifierProcessor {
   // Specify classes for which we want rep counting.
   // These are the labels in the given {@code POSE_SAMPLES_FILE}. You can set your own class labels
   // for your pose samples.
+
+  // The class name for the pushups
   private static final String PUSHUPS_CLASS = "pushups_down";
+
+  // The class name for squat
   private static final String SQUATS_CLASS = "squat";
 
+  //class name for lunges
   private static final String LUNGES_CLASS = "lunges";
 
-  private static final String NEUTRAL_CLASS= "neutral_standing";
-
+ // The class name for chestpress
   private static final String CHESTPRESS_DOWN_CLASS = "chestpress_down";
 
+  // The class name for the situp
   private static final String SITUP_UP_CLASS = "situp_up_up";
 
+  // The class name for the shoulderpress
   private static final String SHOULDERPRESS_DOWN_CLASS = "shoulderpress_down";
 
   private static final String SHOULDERPRESS_UP_CLASS = "shoulderpress_up";
 
+  // The class name for the deadlift
   private static final String DEADLIFT_UP_CLASS = "deadlift_up";
 
   private static final String DEADLIFT_DOWN_CLASS = "deadlift_down";
 
   private static final String[] POSE_CLASSES = {
-    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, NEUTRAL_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
+    PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, CHESTPRESS_DOWN_CLASS, SITUP_UP_CLASS, SHOULDERPRESS_DOWN_CLASS, SHOULDERPRESS_UP_CLASS, DEADLIFT_UP_CLASS, DEADLIFT_DOWN_CLASS
   };
 
   private final boolean isStreamMode;
