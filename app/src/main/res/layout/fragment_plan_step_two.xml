@@ -18,7 +18,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="@dimen/margin_xlarge"
             android:text="@string/new_plan"
             android:textSize="32sp"
             android:textStyle="bold"
@@ -28,45 +28,48 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField"
-            android:layout_width="240dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="35dp"
+            android:id="@+id/textField1"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_xlarge"
             android:hint="@string/label_exercise_name"
             app:endIconMode="clear_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView">>
+            app:layout_constraintTop_toBottomOf="@+id/textView">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:ems="10"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textField2"
-            android:layout_width="240dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="35dp"
-            android:hint="@string/label_time"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_xlarge"
+            android:hint="@string/label_sets"
             app:endIconMode="clear_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textField">
+            app:layout_constraintTop_toBottomOf="@+id/textField1">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textField3"
-            android:layout_width="240dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="35dp"
-            android:hint="@string/label_sets"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_xlarge"
+            android:hint="@string/label_rep"
             app:endIconMode="clear_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,24 +77,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField4"
-            android:layout_width="240dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="35dp"
-            android:hint="@string/label_rep"
-            app:endIconMode="clear_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textField3">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="number"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -103,84 +90,102 @@
             android:layout_marginTop="35dp"
             android:layout_marginEnd="4dp"
             android:text="@string/label_days"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="@+id/textField4"
-            app:layout_constraintTop_toBottomOf="@+id/textField4" />
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/textField3"
+            app:layout_constraintTop_toBottomOf="@+id/textField3" />
 
         <LinearLayout
             android:id="@+id/checkbox_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_xlarge"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView2">
+            app:layout_constraintTop_toTopOf="@+id/textView2">
 
-            <CheckBox
-                android:id="@+id/checkbox_child_1"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/checkbox_container1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_mon" />
+                android:layout_marginRight="@dimen/margin_large"
+                android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/checkbox_child_2"
-                android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/checkbox_child_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_mon"
+                    android:textSize="16sp"
+                    />
+
+                <CheckBox
+                    android:id="@+id/checkbox_child_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_tue"
+                    android:textSize="16sp"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_child_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_wed"
+                    android:textSize="16sp"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_child_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_thu"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/checkbox_container2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_tue" />
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginLeft="35dp"
+                android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/checkbox_child_3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_wed" />
+                <CheckBox
+                    android:id="@+id/checkbox_child_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_fri"
+                    android:textSize="16sp"/>
 
-            <CheckBox
-                android:id="@+id/checkbox_child_4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_thu" />
+                <CheckBox
+                    android:id="@+id/checkbox_child_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_sat"
+                    android:textSize="16sp"/>
 
-        </LinearLayout>
+                <CheckBox
+                    android:id="@+id/checkbox_child_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_sun"
+                    android:textSize="16sp"/>
 
-        <LinearLayout
-            android:id="@+id/checkbox_container2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="35dp"
-            app:layout_constraintStart_toEndOf="@+id/checkbox_container"
-            app:layout_constraintTop_toBottomOf="@+id/textView2">
-
-            <CheckBox
-                android:id="@+id/checkbox_child_5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_fri" />
-
-            <CheckBox
-                android:id="@+id/checkbox_child_6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_sat" />
-
-            <CheckBox
-                android:id="@+id/checkbox_child_7"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_sun" />
-
+            </LinearLayout>
         </LinearLayout>
 
         <Button
             android:id="@+id/button"
             android:layout_width="158dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="60dp"
             android:backgroundTint="@color/primaryColor"
+            android:layout_marginTop="@dimen/margin_xlarge"
             android:text="@string/create_button"
+            android:textSize="16sp"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox_container" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

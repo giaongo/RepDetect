@@ -1,6 +1,5 @@
 package com.example.poseexercise.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,7 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.poseexercise.R
-import com.example.poseexercise.data.Exercise
+import com.example.poseexercise.data.plan.Exercise
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 
