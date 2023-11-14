@@ -25,6 +25,7 @@ class HomeFragment : Fragment(), CoroutineScope {
     val TAG = "RepDetect Debug"
     private lateinit var homeViewModel: HomeViewModel
     private var planList: List<Plan>? = emptyList()
+    private var notCompletePlanList: List<Plan>? = emptyList()
     var today : String = DateFormat.format("EEEE" , Date()) as String
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,11 +41,12 @@ class HomeFragment : Fragment(), CoroutineScope {
         recyclerView.adapter = adapter
         launch{
             planList = homeViewModel.getPlanByDay(today)
+            notCompletePlanList = homeViewModel.getNotCompletePlans(today)
             planList?.map {
                 Log.d(TAG, "Exercise is ${it.exercise}")
             }
             planList?.let { adapter.setPlans(it) }
-            progressText.text = "${planList?.size} exercise left"
+            progressText.text = "${notCompletePlanList?.size} exercise left"
         }
         return view
     }

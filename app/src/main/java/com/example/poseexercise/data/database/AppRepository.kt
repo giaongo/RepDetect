@@ -31,4 +31,8 @@ class AppRepository(application: Application): CoroutineScope {
     fun getPlanByDay(day: String): List<Plan>? {
         return planDao?.getPlansByDay(day)
     }
+
+    fun getNotCompletePlanByDay(day: String): List<Plan>? {
+        return planDao?.getNotCompletePlanByDay(day)
+    }
 }
