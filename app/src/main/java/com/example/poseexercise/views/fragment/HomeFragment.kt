@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +34,8 @@ class HomeFragment : Fragment(), CoroutineScope {
         Log.d(TAG, "TODAY IS ${today}")
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        val recyclerView: RecyclerView = view.findViewById<RecyclerView>(R.id.today_plans)
+        val progressText = view.findViewById<TextView>(R.id.exercise_left)
+        val recyclerView= view.findViewById<RecyclerView>(R.id.today_plans)
         val adapter = PlanAdapter(activity, homeViewModel)
         recyclerView.adapter = adapter
         launch{
@@ -42,8 +44,8 @@ class HomeFragment : Fragment(), CoroutineScope {
                 Log.d(TAG, "Exercise is ${it.exercise}")
             }
             planList?.let { adapter.setPlans(it) }
+            progressText.text = "${planList?.size} exercise left"
         }
-
         return view
     }
 
