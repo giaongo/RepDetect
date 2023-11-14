@@ -12,5 +12,5 @@ interface WorkoutResultDao {
     suspend fun insert(item: WorkoutResult)
 
     @Query("SELECT * FROM workout_results")
-    fun getAll(): List<WorkoutResult>
+    suspend fun getAll(): List<WorkoutResult>
 }

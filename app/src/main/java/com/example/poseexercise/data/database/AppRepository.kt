@@ -3,6 +3,7 @@ package com.example.poseexercise.data.database
 import android.app.Application
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.plan.PlanDataDao
+import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.data.results.WorkoutResultDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,4 +25,12 @@ class AppRepository(application: Application): CoroutineScope {
     suspend fun insertPlan(plan: Plan){
         planDao?.insert(plan)
     }
+
+    suspend fun insertResult(result: WorkoutResult){
+        resultDao?.insert(result)
+    }
+
+    suspend fun getAllResult(): List<WorkoutResult>? =
+        resultDao?.getAll()
+
 }
