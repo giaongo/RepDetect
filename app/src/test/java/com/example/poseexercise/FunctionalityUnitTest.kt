@@ -1,6 +1,6 @@
 package com.example.poseexercise
 
-import com.example.poseexercise.views.fragment.WorkoutFragment
+import com.example.poseexercise.views.fragment.WorkOutFragment
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -18,7 +18,7 @@ class FunctionalityUnitTest {
 
     @Test
     fun testWorkoutResult_lowercaseText_distanceby_underscore() {
-        val completedFragment = WorkoutFragment()
+        val completedFragment = WorkOutFragment()
 
         val inputText = "neutral_standing"
         val expectedOutput = "Neutral standing"
@@ -30,7 +30,7 @@ class FunctionalityUnitTest {
 
     @Test
     fun testWorkoutResult_capitalizeText_distanceby_underscore() {
-        val completedFragment = WorkoutFragment()
+        val completedFragment = WorkOutFragment()
 
         val inputText = "Pushups_down"
         val expectedOutput = "Pushups down"
@@ -42,7 +42,7 @@ class FunctionalityUnitTest {
 
     @Test
     fun testWorkoutResult_singleLowerCaseText() {
-        val completedFragment = WorkoutFragment()
+        val completedFragment = WorkOutFragment()
         val inputText = "lunges"
         val expectedOutput = "Lunges"
         val actualOutput = completedFragment.transformText(inputText)
