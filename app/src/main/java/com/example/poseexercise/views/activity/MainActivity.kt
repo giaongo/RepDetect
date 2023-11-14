@@ -75,4 +75,9 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    companion object {
+        var workoutResultData: String? = null
+        var workoutTimer: String? = null
+    }
+
 }
