@@ -39,6 +39,8 @@
             app:layout_constraintTop_toBottomOf="@+id/textView">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/exercise_name"
+                android:enabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -48,7 +50,7 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField3"
+            android:id="@+id/textField2"
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_xlarge"
@@ -59,6 +61,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textField1">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/repeat_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"/>
@@ -74,8 +77,8 @@
             android:layout_marginEnd="4dp"
             android:text="@string/label_days"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/textField3"
-            app:layout_constraintTop_toBottomOf="@+id/textField3" />
+            app:layout_constraintStart_toStartOf="@+id/textField2"
+            app:layout_constraintTop_toBottomOf="@+id/textField2" />
 
         <LinearLayout
             android:id="@+id/checkbox_container"
