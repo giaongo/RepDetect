@@ -12,7 +12,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/margin_large">
 
                 <TextView
                     android:id="@+id/exercise_title"
@@ -48,14 +48,6 @@
                     android:textColor="@color/textGray"
                     android:textSize="14sp" />
 
-                <ProgressBar
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:backgroundTint="#F2F2F2"
-                    android:progress="75"
-                    android:progressDrawable="@drawable/custom_progress_bar"
-                    android:progressTint="@color/primaryColor" />
             </LinearLayout>
         </LinearLayout>
 

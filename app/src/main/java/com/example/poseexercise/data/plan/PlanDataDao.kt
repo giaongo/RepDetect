@@ -19,7 +19,7 @@ interface PlanDataDao {
     fun getPlansByDay(day: String?): List<Plan>
 
     /* Get not completed plans from day of the week */
-    @Query("SELECT * FROM plan_items WHERE selectedDays LIKE '%' || :day || '%' AND completed = 0")
+    @Query("SELECT * FROM plan_items WHERE selectedDays LIKE '%' || :day || '%'")
     fun getNotCompletePlanByDay(day: String?): List<Plan>
 
 }
