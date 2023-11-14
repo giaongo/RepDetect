@@ -80,99 +80,26 @@
             app:layout_constraintStart_toStartOf="@+id/textField2"
             app:layout_constraintTop_toBottomOf="@+id/textField2" />
 
-        <LinearLayout
-            android:id="@+id/checkbox_container"
-            android:layout_width="wrap_content"
+        <ListView
+            android:id="@+id/days_list"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/margin_xlarge"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="@+id/textView2">
-
-            <LinearLayout
-                android:id="@+id/checkbox_container1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/margin_large"
-                android:orientation="vertical">
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_mon"
-                    android:textSize="16sp"
-                    />
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_tue"
-                    android:textSize="16sp"/>
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_wed"
-                    android:textSize="16sp"/>
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_thu"
-                    android:textSize="16sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/checkbox_container2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_large"
-                android:layout_marginLeft="35dp"
-                android:orientation="vertical">
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_fri"
-                    android:textSize="16sp"/>
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_sat"
-                    android:textSize="16sp"/>
-
-                <CheckBox
-                    android:id="@+id/checkbox_child_7"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_sun"
-                    android:textSize="16sp"/>
-
-            </LinearLayout>
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@id/textView2"
+            android:layout_margin="@dimen/margin_large"
+            app:layout_constraintBottom_toTopOf="@id/button"
+            android:choiceMode="multipleChoice"/>
 
         <Button
             android:id="@+id/button"
             android:layout_width="158dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/primaryColor"
-            android:layout_marginTop="@dimen/margin_xlarge"
             android:text="@string/create_button"
             android:textSize="16sp"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkbox_container" />
-
+            app:layout_constraintTop_toBottomOf="@+id/days_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

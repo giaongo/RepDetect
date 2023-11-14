@@ -34,7 +34,6 @@ abstract class AppDatabase: RoomDatabase() {
                     AppDatabase::class.java,
                     "repdetect_database.db"
                 )
-                    .createFromAsset("repdetect_database.db")
                     .build()
                 INSTANCE = instance
                 return instance

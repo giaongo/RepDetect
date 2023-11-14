@@ -1,11 +1,15 @@
 package com.example.poseexercise.viewmodels
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import java.util.logging.Filter
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.example.poseexercise.data.database.AppRepository
+import com.example.poseexercise.data.plan.Plan
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class AddPlanViewModel: ViewModel() {
-    val filters = MutableLiveData<Set<Filter>>()
-
-
+class AddPlanViewModel(application: Application): AndroidViewModel(application) {
+    private val repository: AppRepository = AppRepository(application)
+    suspend fun insert(plan: Plan) = withContext(Dispatchers.IO){
+        repository.insertPlan(plan)
+    }
 }
