@@ -1,5 +1,6 @@
 package com.example.poseexercise.data.plan
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,7 +13,13 @@ interface PlanDataDao {
     suspend fun insert(plan: Plan)
     /* Get all plans in the database. */
     @Query("SELECT * FROM plan_items")
-    fun getAll(): List<Plan>
-    /* Get all plans from current date */
+    fun getAll(): LiveData<List<Plan>>
+    /* Get all plans from day of the week */
+    @Query("SELECT * FROM plan_items WHERE selectedDays LIKE '%' || :day || '%'")
+    fun getPlansByDay(day: String?): List<Plan>
+
+    /* Get not completed plans from day of the week */
+    @Query("SELECT * FROM plan_items WHERE selectedDays LIKE '%' || :day || '%' AND completed = 0")
+    fun getNotCompletePlanByDay(day: String?): List<Plan>
 
 }

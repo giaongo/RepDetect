@@ -1,6 +1,7 @@
 package com.example.poseexercise.data.database
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.plan.PlanDataDao
 import com.example.poseexercise.data.results.WorkoutResultDao
@@ -21,7 +22,13 @@ class AppRepository(application: Application): CoroutineScope {
         resultDao = database.resultDao()
     }
 
+    val allPlans: LiveData<List<Plan>> = planDao?.getAll()!!
+
     suspend fun insertPlan(plan: Plan){
         planDao?.insert(plan)
+    }
+
+    fun getPlanByDay(day: String): List<Plan>? {
+        return planDao?.getPlansByDay(day)
     }
 }
