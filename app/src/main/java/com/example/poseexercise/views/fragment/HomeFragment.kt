@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -77,6 +78,7 @@ class HomeFragment : Fragment(), CoroutineScope {
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         val progressText = view.findViewById<TextView>(R.id.exercise_left)
         val recyclerView= view.findViewById<RecyclerView>(R.id.today_plans)
+        val noPlanTV = view.findViewById<TextView>(R.id.no_plan)
         val adapter = PlanAdapter(activity)
         recyclerView.adapter = adapter
 
@@ -89,6 +91,10 @@ class HomeFragment : Fragment(), CoroutineScope {
             }
             planList?.let { adapter.setPlans(it) }
             progressText.text = "${notCompletePlanList?.size} exercise left"
+            if(planList?.size == 0){
+                recyclerView.isVisible = false
+                noPlanTV.text = "There is no plan set at the moment"
+            }
         }
         // Return the inflated view
         return view

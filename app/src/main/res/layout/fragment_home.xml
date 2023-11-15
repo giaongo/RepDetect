@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="@dimen/margin_large"
     android:background="@color/backgroundFill">
 
     <TextView
@@ -15,7 +15,7 @@
         android:text="@string/hello"
         android:textSize="20sp"
         android:paddingTop="18dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_large"
         android:textColor="@color/black" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/name"
         android:textColor="@color/black"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_large"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -32,11 +32,10 @@
         android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="99dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/rounded_rectangle"
         android:backgroundTint="@color/primaryColor"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/workout_progress"
@@ -45,26 +44,24 @@
             android:text="@string/workout_progress"
             android:textColor="@color/white"
             android:textSize="18sp"
+            android:layout_marginStart="@dimen/margin_large"
             app:layout_constraintBottom_toTopOf="@+id/exercise_left"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.068"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+             />
 
         <TextView
             android:id="@+id/exercise_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginBottom="@dimen/margin_medium"
             android:text="@string/exercises_left"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/workout_progress"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@+id/workout_progress" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -100,9 +97,9 @@
         android:text="@string/recent_activity"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_large"
         android:textColor="@color/black"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/margin_medium"
         tools:listitem="@layout/card_recent_activity"/>
 
     <androidx.core.widget.NestedScrollView
@@ -121,37 +118,50 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/card_recent_activity"/>
     </androidx.core.widget.NestedScrollView>
-
-    <TextView
-        android:id="@+id/plans"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/plan_today"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/black"
-        android:layout_marginTop="16dp" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/today_plans"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="@dimen/margin_large"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/plans"
-        tools:listitem="@layout/plan_list_item"/>
+        android:layout_height="wrap_content">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:listitem="@layout/card_todays_plan" />
+        <TextView
+            android:id="@+id/plans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plan_today"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/no_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/plans"
+            app:layout_constraintTop_toBottomOf="@+id/plans"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/today_plans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plans"
+            tools:listitem="@layout/plan_list_item"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 </LinearLayout>
