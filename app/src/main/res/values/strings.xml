@@ -115,6 +115,7 @@
     <string name="pref_group_title_face_mesh" translatable="false">Face Mesh Detection</string>
     <string name="pref_title_face_mesh_use_case" translatable="false">Use Case</string>
     <string name="pref_key_face_mesh_use_case" translatable="false">face_mesh_use_case</string>
+
     <!-- Strings for Completed & Cancel fragment -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="completed_min">%1$d mins</string>
@@ -126,6 +127,9 @@
     <string name="canceled_workout_title">Canceled Workout</string>
     <string name="no_worries_body">No Worries, Adeline</string>
     <string name="canceled_announcement">Keep the motivation alive, and let\'s get back to it when you feel inspired!</string>
+    <string name="workoutResultDisplay">%s</string>
+    <string name="noWorkoutResultDisplay">No Exercise Performed</string>
+    <string name="workoutTimer">%s</string>
 
     <!-- Strings for Start&InProcess fragment -->
     <string name="cancel_button">Cancel</string>

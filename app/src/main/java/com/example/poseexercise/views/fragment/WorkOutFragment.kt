@@ -38,6 +38,7 @@ import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.AddPlanViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.viewmodels.CameraXViewModel
+import com.example.poseexercise.views.activity.MainActivity
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -47,6 +48,8 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+import java.util.Locale
+import kotlin.text.StringBuilder
 
 class WorkOutFragment : Fragment() {
     private lateinit var resultViewModel: ResultViewModel
@@ -62,10 +65,6 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
-    private lateinit var startButton: Button
-    private lateinit var buttonCompleteExercise: Button
-    private lateinit var buttonCancelExercise: Button
-    private lateinit var cameraFlipFAB: FloatingActionButton
 
     private lateinit var cameraViewModel: CameraXViewModel
 
@@ -93,25 +92,23 @@ class WorkOutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val view: View = inflater.inflate(R.layout.fragment_workout, container, false)
-
-        // Linking all button and controls
-        cameraFlipFAB = view.findViewById(R.id.facing_switch)
-        startButton = view.findViewById(R.id.button_start_exercise)
-        buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
-        buttonCancelExercise = view.findViewById(R.id.button_cancel_exercise)
-        timerTextView = view.findViewById(R.id.timerTV)
-        timerRecordIcon = view.findViewById(R.id.timerRecIcon)
-
-        return view
+        return inflater.inflate(R.layout.fragment_workout, container, false)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        // Linking all button and controls
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
+        val cameraFlipFAB: FloatingActionButton = view.findViewById(R.id.facing_switch)
+        val startButton: Button = view.findViewById(R.id.button_start_exercise)
+        val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
+        val buttonCancelExercise:Button = view.findViewById(R.id.button_cancel_exercise)
+        timerTextView = view.findViewById(R.id.timerTV)
+        timerRecordIcon = view.findViewById(R.id.timerRecIcon)
+
         cameraFlipFAB.visibility = View.VISIBLE
 
         // start exercise button
@@ -163,12 +160,32 @@ class WorkOutFragment : Fragment() {
                     }
                 }
             }
+
+            // update the workoutTimer in MainActivity
+            val currentTimer = timerTextView.text.toString()
+            MainActivity.workoutTimer = currentTimer
+
             stopMediaTimer()
+
             // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
 
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // update MainActivity static postureResultData based on the postureLiveData
+            Log.d("WorkoutFragment","complete button clicked")
+
+            // update the workoutResultData in MainActivity
+            cameraViewModel.postureLiveData.value?.let {
+                val builder = StringBuilder()
+                for((_,value) in it) {
+                    if (value.repetition != 0) {
+                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
+                    }
+                }
+                if(builder.toString().isNotEmpty()) MainActivity.workoutResultData = builder.toString()
+            }
 
             // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
@@ -513,6 +530,20 @@ class WorkOutFragment : Fragment() {
             mBuilder.append(seconds)
         }
         return mBuilder.toString()
+    }
+
+    /**
+     * Transform the posture result text to be displayed in the CompletedFragment
+     */
+    internal fun transformText(input:String): String {
+        val regex = Regex("_")
+        if (regex.containsMatchIn(input)) {
+            return regex.replace(input.lowercase(), " ")
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        } else {
+            print("No match found")
+        }
+        return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
     }
 
     companion object {
