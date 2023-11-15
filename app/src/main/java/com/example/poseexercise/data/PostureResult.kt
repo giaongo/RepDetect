@@ -6,8 +6,8 @@ class PostureResult(
     var confidence: Float = 0f,
     val postureType: String = "",
 ) {
-    constructor(repsAfter: Int, arg2: Int) : this() {
+    /*constructor(repsAfter: Int, arg2: Int) : this() {
 
-    }
+    }*/
 }
 

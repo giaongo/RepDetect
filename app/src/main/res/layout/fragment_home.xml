@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="@dimen/margin_large"
     android:background="@color/backgroundFill">
 
     <TextView
@@ -15,7 +15,7 @@
         android:text="@string/hello"
         android:textSize="20sp"
         android:paddingTop="18dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_large"
         android:textColor="@color/black" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/name"
         android:textColor="@color/black"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_large"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -32,11 +32,10 @@
         android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="99dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/rounded_rectangle"
         android:backgroundTint="@color/primaryColor"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/workout_progress"
@@ -45,43 +44,40 @@
             android:text="@string/workout_progress"
             android:textColor="@color/white"
             android:textSize="18sp"
+            android:layout_marginStart="@dimen/margin_large"
             app:layout_constraintBottom_toTopOf="@+id/exercise_left"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.068"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+             />
 
         <TextView
             android:id="@+id/exercise_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginBottom="@dimen/margin_medium"
             android:text="@string/exercises_left"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/workout_progress"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@+id/workout_progress" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/progress_image"
-            android:indeterminateOnly="false"
-            android:progressDrawable="@drawable/circle"
+            android:indeterminate="true"
+            app:trackColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.796"
-            app:layout_constraintStart_toEndOf="@+id/exercise_left"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.313"
-            tools:progress="80" />
+            app:layout_constraintStart_toEndOf="@+id/exercise_left"
+            android:layout_marginStart="@dimen/margin_xlarge"/>
 
         <TextView
+            android:id="@+id/progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -90,8 +86,7 @@
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
-            app:layout_constraintTop_toTopOf="@+id/progress_bar"
-            tools:text="80%" />
+            app:layout_constraintTop_toTopOf="@+id/progress_bar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -100,333 +95,72 @@
         android:text="@string/recent_activity"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_large"
         android:textColor="@color/black"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="@dimen/margin_medium"
+        tools:listitem="@layout/card_recent_activity"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/recentActivityLayout"
-        android:layout_width="336dp"
-        android:layout_height="187dp"
-        android:layout_gravity="center"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="338dp"
+        android:layout_height="200dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_rectangle"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_bigrectangle">
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="78dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="52dp"
-            android:text="@string/push_ups"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView9"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.289" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recentActivityRecyclerView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/green_rectangle"
-            android:src="@drawable/green"
-            app:layout_constraintBottom_toTopOf="@+id/imageView3"
-            app:layout_constraintEnd_toStartOf="@+id/textView9"
-            app:layout_constraintHorizontal_bias="0.543"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="96dp"
-            android:layout_marginBottom="28dp"
-            android:text="@string/mixed_text"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toTopOf="@+id/textView11"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.615" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:contentDescription="@string/orange_rectangle"
-            android:src="@drawable/orange"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/textView10"
-            app:layout_constraintHorizontal_bias="0.536"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="52dp"
-            android:layout_marginBottom="28dp"
-            android:text="@string/squats"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView10"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="96dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/mixed_text"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toTopOf="@+id/textView12"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="52dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/lunges"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="94dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/mixed_text"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/colorful_rectangle"
-            android:src="@drawable/blue"
-            app:layout_constraintBottom_toTopOf="@+id/imageView2"
-            app:layout_constraintEnd_toStartOf="@+id/textView7"
-            app:layout_constraintHorizontal_bias="0.543"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.347" />
+            tools:listitem="@layout/card_recent_activity"/>
+    </androidx.core.widget.NestedScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/plans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plan_today"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/margin_large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/no_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/margin_large"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plans"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/today_plans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plans"
+            tools:listitem="@layout/plan_list_item"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/plans"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/plan_today"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/black"
-        android:layout_marginTop="16dp" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/today_plans"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/plans"
-        tools:listitem="@layout/plan_list_item"/>
 
-<!--        <ScrollView-->
-<!--            android:id="@+id/todayPlanScrollView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content">-->
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical">-->
 
-<!--            &lt;!&ndash; First Card &ndash;&gt;-->
-<!--            <androidx.cardview.widget.CardView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:cardCornerRadius="12dp"-->
-<!--                app:cardElevation="4dp"-->
-<!--                app:cardUseCompatPadding="true"-->
-<!--                android:layout_margin="8dp">-->
-
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <ImageView-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:scaleType="centerCrop"-->
-<!--                        android:src="@drawable/push_up" />-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_weight="2"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:padding="16dp">-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="@string/push_up"-->
-<!--                            android:textSize="16sp"-->
-<!--                            android:textStyle="bold"-->
-<!--                            android:textColor="@android:color/black"-->
-<!--                            android:layout_marginBottom="8dp"/>-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="@string/sub_header"-->
-<!--                            android:layout_marginBottom="12dp"-->
-<!--                            android:textSize="14sp"-->
-<!--                            android:textColor="@color/textGray" />-->
-
-<!--                        <ProgressBar-->
-<!--                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="8dp"-->
-<!--                            android:backgroundTint="#F2F2F2"-->
-<!--                            android:progress="45"-->
-<!--                            android:progressDrawable="@drawable/custom_progress_bar"-->
-<!--                            android:progressTint="@color/primaryColor" />-->
-<!--                    </LinearLayout>-->
-<!--                </LinearLayout>-->
-
-<!--            </androidx.cardview.widget.CardView>-->
-
-<!--                &lt;!&ndash; Second Card &ndash;&gt;-->
-<!--            <androidx.cardview.widget.CardView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:cardCornerRadius="12dp"-->
-<!--                app:cardElevation="4dp"-->
-<!--                app:cardUseCompatPadding="true"-->
-<!--                android:layout_margin="8dp">-->
-
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="horizontal">-->
-
-<!--                    <ImageView-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:scaleType="centerCrop"-->
-<!--                        android:src="@drawable/sit_up" />-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_weight="2"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:padding="16dp">-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginBottom="8dp"-->
-<!--                            android:text="@string/sit_up"-->
-<!--                            android:textColor="@android:color/black"-->
-<!--                            android:textSize="16sp"-->
-<!--                            android:textStyle="bold" />-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginBottom="12dp"-->
-<!--                            android:text="@string/sit_up_a_day"-->
-<!--                            android:textColor="@color/textGray"-->
-<!--                            android:textSize="14sp" />-->
-
-<!--                        <ProgressBar-->
-<!--                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="8dp"-->
-<!--                            android:backgroundTint="#F2F2F2"-->
-<!--                            android:progress="75"-->
-<!--                            android:progressDrawable="@drawable/custom_progress_bar"-->
-<!--                            android:progressTint="@color/primaryColor" />-->
-<!--                    </LinearLayout>-->
-<!--                </LinearLayout>-->
-
-<!--            </androidx.cardview.widget.CardView>-->
-
-<!--                &lt;!&ndash; Third Card &ndash;&gt;-->
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    app:cardCornerRadius="12dp"-->
-<!--                    app:cardElevation="4dp"-->
-<!--                    app:cardUseCompatPadding="true"-->
-<!--                    android:layout_margin="8dp">-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="horizontal">-->
-
-<!--                        <ImageView-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="match_parent"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:scaleType="centerCrop"-->
-<!--                            android:src="@drawable/push_up" />-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="match_parent"-->
-<!--                            android:layout_weight="2"-->
-<!--                            android:orientation="vertical"-->
-<!--                            android:padding="16dp">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/push_up"-->
-<!--                                android:textSize="16sp"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:textColor="@android:color/black"-->
-<!--                                android:layout_marginBottom="8dp"/>-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="@string/sub_header"-->
-<!--                                android:layout_marginBottom="12dp"-->
-<!--                                android:textSize="14sp"-->
-<!--                                android:textColor="@color/textGray" />-->
-
-<!--                            <ProgressBar-->
-<!--                                style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="8dp"-->
-<!--                                android:backgroundTint="#F2F2F2"-->
-<!--                                android:progress="45"-->
-<!--                                android:progressDrawable="@drawable/custom_progress_bar"-->
-<!--                                android:progressTint="@color/primaryColor" />-->
-<!--                        </LinearLayout>-->
-<!--                    </LinearLayout>-->
-
-<!--                </androidx.cardview.widget.CardView>-->
-
-<!--            </LinearLayout>-->
-<!--</ScrollView>-->
 </LinearLayout>

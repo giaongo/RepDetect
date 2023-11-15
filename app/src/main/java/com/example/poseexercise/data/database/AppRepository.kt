@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.plan.PlanDataDao
+import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.data.results.WorkoutResultDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,11 +29,18 @@ class AppRepository(application: Application): CoroutineScope {
         planDao?.insert(plan)
     }
 
+    suspend fun getAllResult(): List<WorkoutResult>? =
+        resultDao?.getAll()
+
     fun getPlanByDay(day: String): List<Plan>? {
         return planDao?.getPlansByDay(day)
     }
 
     fun getNotCompletePlanByDay(day: String): List<Plan>? {
         return planDao?.getNotCompletePlanByDay(day)
+    }
+
+    suspend fun insertResult(result: WorkoutResult){
+        resultDao?.insert(result)
     }
 }

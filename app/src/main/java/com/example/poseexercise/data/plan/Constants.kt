@@ -32,6 +32,20 @@ object Constants {
                 image = R.drawable.sit_ups,
                 calorie = 45,
                 level = "Advance"
+            ),
+            Exercise(
+                id = 5,
+                name = "Shoulder Press",
+                image = R.drawable.shoulder_press,
+                calorie = 30,
+                level = "Intermediate"
+            ),
+            Exercise(
+                id = 6,
+                name = "Chest Press",
+                image = R.drawable.chest_press,
+                calorie = 30,
+                level = "Advance"
             )
         )
     }

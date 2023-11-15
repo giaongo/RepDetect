@@ -1,7 +1,6 @@
 package com.example.poseexercise.adapters
 
 import android.content.Context
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,19 +8,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.poseexercise.R
 import com.example.poseexercise.data.plan.Plan
-import com.example.poseexercise.viewmodels.HomeViewModel
-import java.util.Date
 
-class PlanAdapter internal constructor(context: Context, homeViewModel: HomeViewModel):
+class PlanAdapter internal constructor(context: Context):
     RecyclerView.Adapter<PlanAdapter.ViewHolder>(){
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private val homeViewModel: HomeViewModel = homeViewModel
     private var planList: List<Plan> = emptyList()
-    var today : String = DateFormat.format("EEEE" , Date()) as String
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val workoutName = itemView.findViewById<TextView>(R.id.exercise_title)
-        val repeat = itemView.findViewById<TextView>(R.id.exercise_rep)
+        val workoutName: TextView = itemView.findViewById(R.id.exercise_title)
+        val repeat: TextView = itemView.findViewById(R.id.exercise_rep)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = inflater.inflate(R.layout.plan_list_item, parent, false)
