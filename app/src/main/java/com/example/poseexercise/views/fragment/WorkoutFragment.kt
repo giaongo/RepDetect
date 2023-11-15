@@ -38,6 +38,7 @@ import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
@@ -70,7 +71,7 @@ class WorkOutFragment : Fragment() {
     private var mRecHours = 0
     private lateinit var timerTextView: TextView
     private lateinit var timerRecordIcon: ImageView
-    private lateinit var haha: TextToSpeech
+    private lateinit var ttf: TextToSpeech
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,11 +104,6 @@ class WorkOutFragment : Fragment() {
         exerciseTextView = view.findViewById(R.id.exerciseText)
         confIndicatorView.visibility = View.INVISIBLE
 
-        /*haha = TextToSpeech(this, TextToSpeech.OnInitListener {
-
-        })*/
-
-
         return view
     }
 
@@ -120,6 +116,7 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener {
+            //textToSpeech("Workout Started")
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
 
@@ -136,6 +133,7 @@ class WorkOutFragment : Fragment() {
             cameraViewModel.triggerClassification.value = true
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
 
 
         }
@@ -189,8 +187,15 @@ class WorkOutFragment : Fragment() {
         // Initialize Exercise Log
         val exerciseLog = ExerciseLog()
 
+        // get information from database
+        val databaseExercise = listOf<String>("pushUp", "Lunges")
+        val databaseRepetition = listOf<Int>(10, 10)
+
+        //Declare all the only pose exercise
+        val onlyPose = listOf("yoga", "Plank")
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
-            val onlyPose = listOf("yoga", "Plank")
+
 
             for ((key, value) in mapResult) {
                 Log.d(
@@ -198,13 +203,16 @@ class WorkOutFragment : Fragment() {
                     "Posture: ${value.postureType} Repetition: ${value.repetition}"
                 )
 
+                // Visualize the exercise data
                 if (key !in onlyPose) {
                     val data = exerciseLog.getExerciseData(key)
 
                     if (data == null) {
                         exerciseLog.addExercise(key, value.repetition, value.confidence)
-                    } else if (value.repetition == data?.repetitions?.plus(1)) {
+                    } else if (value.repetition == data.repetitions?.plus(1)) {
                         exerciseLog.addExercise(key, value.repetition, value.confidence)
+
+                        // display Current result
                         displayResult(key, exerciseLog)
                     } else {
 
@@ -228,6 +236,17 @@ class WorkOutFragment : Fragment() {
 
             }
         }
+    }
+
+
+    private fun textToSpeech(name: String){
+        ttf = TextToSpeech(context, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS){
+                ttf.language = Locale.US
+                ttf.setSpeechRate(1.0f)
+                ttf.speak(name,TextToSpeech.QUEUE_ADD, null)
+            }
+        })
     }
 
 
