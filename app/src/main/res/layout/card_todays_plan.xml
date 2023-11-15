@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Media -->
+            <!-- ImageView for displaying exercise image -->
             <ImageView
                 android:id="@+id/exercise_image"
                 android:layout_width="150dp"
@@ -35,6 +35,7 @@
                 android:layout_toEndOf="@id/exercise_image"
                 android:orientation="vertical">
 
+                <!-- TextView for exercise name -->
                 <TextView
                     android:id="@+id/exercise_name"
                     android:layout_width="wrap_content"
@@ -45,6 +46,7 @@
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="8dp"/>
 
+                <!-- TextView for exercise repetition information -->
                 <TextView
                     android:id="@+id/exercise_reptition"
                     android:layout_width="wrap_content"
@@ -56,6 +58,7 @@
 
             </LinearLayout>
 
+            <!-- Chip for additional information on acute, intermediate or advance -->
             <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

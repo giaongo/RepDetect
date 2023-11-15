@@ -187,6 +187,7 @@
     <string name="example_time">120 minutes</string>
     <string name="example_exercise">10 exercises</string>
     <string name="example_percentage">110 %</string>
+    <string name="exercise_type">Exercise Type</string>
 
     <!-- Strings for exercise name -->
 <!--    <string name="push_up">Push up</string>-->
