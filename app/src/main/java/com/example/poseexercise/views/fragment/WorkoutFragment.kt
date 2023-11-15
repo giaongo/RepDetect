@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -69,6 +70,7 @@ class WorkOutFragment : Fragment() {
     private var mRecHours = 0
     private lateinit var timerTextView: TextView
     private lateinit var timerRecordIcon: ImageView
+    private lateinit var haha: TextToSpeech
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,6 +102,11 @@ class WorkOutFragment : Fragment() {
         confIndicatorView = view.findViewById(R.id.confidenceIndicatorView)
         exerciseTextView = view.findViewById(R.id.exerciseText)
         confIndicatorView.visibility = View.INVISIBLE
+
+        /*haha = TextToSpeech(this, TextToSpeech.OnInitListener {
+
+        })*/
+
 
         return view
     }
@@ -183,75 +190,71 @@ class WorkOutFragment : Fragment() {
         val exerciseLog = ExerciseLog()
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
-
             val onlyPose = listOf("yoga", "Plank")
 
             for ((key, value) in mapResult) {
-                Log.d("PostureType","Posture: $key Repetition: ${value.repetition} Confidence: ${value.confidence}")
+                Log.d(
+                    "PostureType",
+                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
+                )
 
-                if (key !in onlyPose){
+                if (key !in onlyPose) {
                     val data = exerciseLog.getExerciseData(key)
 
-                    if (data==null){
+                    if (data == null) {
                         exerciseLog.addExercise(key, value.repetition, value.confidence)
-                    } else if(value.repetition == data?.repetitions?.plus(1)) {
+                    } else if (value.repetition == data?.repetitions?.plus(1)) {
                         exerciseLog.addExercise(key, value.repetition, value.confidence)
                         displayResult(key, exerciseLog)
-                    }else{
+                    } else {
 
                     }
 
+                    /*if (key == "squat" && value.repetition < 10) {
+                        exerciseLog.addExercise(key, value.repetition, value.confidence)
+                        displayResult(exerciseLog)
+                    }
 
+
+                    if (key == "neutral_standing") {
+                        confIndicatorView.visibility = View.VISIBLE
+                        displayConfidence(value.confidence)
+                    } else {
+                        confIndicatorView.visibility = View.INVISIBLE
+                    }*/
 
                     //displayResult(exerciseLog)
                 }
 
-                /*if(key=="squat" && value.repetition < 10){
-                    exerciseLog.addExercise(key, value.repetition, value.confidence)
-                    displayResult(exerciseLog)
-                }*/
-
-                /*if(key=="neutral_standing"){
-                    confIndicatorView.visibility = View.VISIBLE
-                    displayConfidence(value.confidence)
-                }else{
-                    confIndicatorView.visibility = View.INVISIBLE
-                }*/
-
-            for ((_, value) in mapResult) {
-                Log.d(
-                    "PostureType",
-                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
-                )
-
-            for ((_, value) in mapResult) {
-                Log.d(
-                    "PostureType",
-                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
-                )
             }
         }
     }
 
 
-    private fun displayResult(key: String, exerciseLog: ExerciseLog){
+
+    private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         exerciseTextView.visibility = View.VISIBLE
         val pushUpData = exerciseLog.getExerciseData(key)
-        exerciseTextView.text = pushUpData?.repetitions.toString()
+        exerciseTextView.text = key +": "+ pushUpData?.repetitions.toString()
     }
 
 
-    private fun displayConfidence(confidence: Float){
+    private fun displayConfidence(confidence: Float) {
         if (confidence < 0.5) {
-            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red)
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.red)
         } else if (confidence > 0.5 && confidence <= 0.6) {
-            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.orange)
-        }else if (confidence > 0.6 && confidence <= 0.75) {
-            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.yellow)
-        }else if (confidence > 0.75 && confidence <= 0.85) {
-            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
-        }else {
-            confIndicatorView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green)
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.orange)
+        } else if (confidence > 0.6 && confidence <= 0.75) {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.yellow)
+        } else if (confidence > 0.75 && confidence <= 0.85) {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
+        } else {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.green)
         }
     }
 
