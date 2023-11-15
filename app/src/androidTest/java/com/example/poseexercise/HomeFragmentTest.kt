@@ -19,7 +19,7 @@ class HomeFragmentTest {
         val scenario = launchFragmentInContainer<HomeFragment>(initialState = Lifecycle.State.INITIALIZED)
         scenario.moveToState(Lifecycle.State.RESUMED)
         onView(withId(R.id.progress_layout)).check(matches(isDisplayed()))
-        onView(withId(R.id.recentActivityLayout)).check(matches(isDisplayed()))
-        onView(withId(R.id.todayPlanScrollView)).check(matches(isDisplayed()))
+        onView(withId(R.id.today_plans)).check(matches(isDisplayed()))
+        onView(withId(R.id.recentActivityRecyclerView)).check(matches(isDisplayed()))
     }
 }
