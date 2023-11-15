@@ -29,7 +29,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import androidx.test.core.app.ActivityScenario.launch
 import com.example.poseexercise.R
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
@@ -150,7 +149,7 @@ class WorkOutFragment : Fragment() {
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener {
             cameraViewModel.postureLiveData.value?.let {
-                val builder = StringBuilder()
+                //val builder = StringBuilder()
                 for((_,value) in it) {
                     if (value.repetition != 0) {
                         lifecycleScope.launch {
