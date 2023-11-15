@@ -11,7 +11,7 @@ data class Plan(
     val calories: Int,
     val repeatCount: Int,
     val selectedDays: String,
-    var completed: Boolean = false
+    var completed: Boolean = false,
 )
 
 

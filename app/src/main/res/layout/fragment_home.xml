@@ -125,6 +125,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <TextView
+        android:id="@+id/plans"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/plan_today"
@@ -133,6 +134,15 @@
         android:layout_marginStart="16dp"
         android:textColor="@color/black"
         android:layout_marginTop="16dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/today_plans"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/plans"
+        tools:listitem="@layout/plan_list_item"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -143,4 +153,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:listitem="@layout/card_todays_plan" />
+
 </LinearLayout>
