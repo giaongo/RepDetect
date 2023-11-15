@@ -1,6 +1,7 @@
 package com.example.poseexercise.views.fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -30,10 +31,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.example.poseexercise.R
-import com.example.poseexercise.data.ExerciseLog
+import com.example.poseexercise.data.plan.ExerciseLog
+import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
+import com.example.poseexercise.views.activity.MainActivity
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -41,6 +44,7 @@ import com.google.mlkit.common.MlKitException
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import kotlin.text.StringBuilder
 
 class WorkOutFragment : Fragment() {
 
@@ -61,7 +65,8 @@ class WorkOutFragment : Fragment() {
     private lateinit var buttonCancelExercise: Button
     private lateinit var cameraFlipFAB: FloatingActionButton
     private lateinit var confIndicatorView: ImageView
-    private lateinit var exerciseTextView: TextView
+    private lateinit var currentExerciseTextView: TextView
+    private lateinit var currentRepetitionTextView: TextView
 
     private lateinit var cameraViewModel: CameraXViewModel
 
@@ -101,7 +106,8 @@ class WorkOutFragment : Fragment() {
         timerTextView = view.findViewById(R.id.timerTV)
         timerRecordIcon = view.findViewById(R.id.timerRecIcon)
         confIndicatorView = view.findViewById(R.id.confidenceIndicatorView)
-        exerciseTextView = view.findViewById(R.id.exerciseText)
+        currentExerciseTextView = view.findViewById(R.id.currentExerciseText)
+        currentRepetitionTextView = view.findViewById(R.id.currentRepetitionText)
         confIndicatorView.visibility = View.INVISIBLE
 
         return view
@@ -154,12 +160,32 @@ class WorkOutFragment : Fragment() {
 
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener {
+
+            // update the workoutTimer in MainActivity
+            val currentTimer = timerTextView.text.toString()
+            MainActivity.workoutTimer = currentTimer
+
             stopMediaTimer()
+
             // Set the screenOn flag to false, allowing the screen to turn off
             screenOn = false
 
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // update MainActivity static postureResultData based on the postureLiveData
+            Log.d("WorkoutFragment","complete button clicked")
+
+            // update the workoutResultData in MainActivity
+            cameraViewModel.postureLiveData.value?.let {
+                val builder = StringBuilder()
+                for((_,value) in it) {
+                    if (value.repetition != 0) {
+                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
+                    }
+                }
+                if(builder.toString().isNotEmpty()) MainActivity.workoutResultData = builder.toString()
+            }
 
             // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
@@ -188,11 +214,13 @@ class WorkOutFragment : Fragment() {
         val exerciseLog = ExerciseLog()
 
         // get information from database
-        val databaseExercise = listOf<String>("pushUp", "Lunges")
-        val databaseRepetition = listOf<Int>(10, 10)
+        val databaseExercisePlan = listOf(
+            ExercisePlan("squats", 5),
+            ExercisePlan("pushup-down", 10))
+
 
         //Declare all the only pose exercise
-        val onlyPose = listOf("yoga", "Plank")
+        val onlyPose = listOf("squats")
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
@@ -203,17 +231,42 @@ class WorkOutFragment : Fragment() {
                     "Posture: ${value.postureType} Repetition: ${value.repetition}"
                 )
 
-                // Visualize the exercise data
-                if (key !in onlyPose) {
+                // Visualize the repetition exercise data
+                if (key in onlyPose) {
                     val data = exerciseLog.getExerciseData(key)
 
                     if (data == null) {
-                        exerciseLog.addExercise(key, value.repetition, value.confidence)
-                    } else if (value.repetition == data.repetitions?.plus(1)) {
-                        exerciseLog.addExercise(key, value.repetition, value.confidence)
+                        // Adding exercise for the first time
+                        exerciseLog.addExercise(key, value.repetition, value.confidence, false)
 
-                        // display Current result
+                    } else if (value.repetition == data.repetitions?.plus(1)) {
+
+                        // check if the exercise target is complete
+                        val repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
+
+                        if(!data.isComplete && value.repetition >= repetition!!) {
+                            // Adding data only when the increment happen
+                            exerciseLog.addExercise(key, value.repetition, value.confidence, true)
+
+                            // inform the user about completion only once
+                            //TODO
+                            Toast.makeText(context, "Completed", Toast.LENGTH_SHORT).show()
+
+                        } else if (data.isComplete){
+                            // Adding data only when the increment happen
+                            exerciseLog.addExercise(key, value.repetition, value.confidence, true)
+                        } else{
+                            // Adding data only when the increment happen
+                            exerciseLog.addExercise(key, value.repetition, value.confidence, false)
+                        }
+
+
+
+                        // display Current result when the increment happen
                         displayResult(key, exerciseLog)
+
+
+
                     } else {
 
                     }
@@ -235,6 +288,12 @@ class WorkOutFragment : Fragment() {
                 }
 
             }
+
+            // Visualize list of all planned result
+            //TODO
+
+            // Visualize list of all unplanned result
+            //TODO
         }
     }
 
@@ -251,10 +310,13 @@ class WorkOutFragment : Fragment() {
 
 
 
+    @SuppressLint("SetTextI18n")
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
-        exerciseTextView.visibility = View.VISIBLE
+        currentExerciseTextView.visibility = View.VISIBLE
+        currentRepetitionTextView.visibility = View.VISIBLE
         val pushUpData = exerciseLog.getExerciseData(key)
-        exerciseTextView.text = key +": "+ pushUpData?.repetitions.toString()
+        currentExerciseTextView.text = key
+        currentRepetitionTextView.text = "count: "+pushUpData?.repetitions.toString()
     }
 
 
@@ -588,6 +650,20 @@ class WorkOutFragment : Fragment() {
             mBuilder.append(seconds)
         }
         return mBuilder.toString()
+    }
+
+    /**
+     * Transform the posture result text to be displayed in the CompletedFragment
+     */
+    internal fun transformText(input:String): String {
+        val regex = Regex("_")
+        if (regex.containsMatchIn(input)) {
+            return regex.replace(input.lowercase(), " ")
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        } else {
+            print("No match found")
+        }
+        return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
     }
 
 

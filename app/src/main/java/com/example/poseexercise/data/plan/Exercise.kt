@@ -1,4 +1,4 @@
-package com.example.poseexercise.data
+package com.example.poseexercise.data.plan
 
 import androidx.annotation.DrawableRes
 
@@ -11,13 +11,13 @@ data class Exercise (
     val level: String
 )
 
-data class ExerciseData(val repetitions: Int, val confidence: Float)
+data class ExerciseData(val repetitions: Int, val confidence: Float, val isComplete: Boolean)
 
 class ExerciseLog {
     private val exerciseMap = mutableMapOf<String, ExerciseData>()
 
-    fun addExercise(exerciseName: String, repetitions: Int, confidence: Float) {
-        val exerciseData = ExerciseData(repetitions, confidence)
+    fun addExercise(exerciseName: String, repetitions: Int, confidence: Float, isComplete: Boolean) {
+        val exerciseData = ExerciseData(repetitions, confidence, isComplete)
         exerciseMap[exerciseName] = exerciseData
     }
 
@@ -25,3 +25,5 @@ class ExerciseLog {
         return exerciseMap[exerciseName]
     }
 }
+
+data class ExercisePlan(val exerciseName: String, val repetitions: Int)
