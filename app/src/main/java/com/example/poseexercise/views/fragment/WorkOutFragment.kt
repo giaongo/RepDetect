@@ -9,8 +9,8 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -34,21 +34,17 @@ import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.VisionImageProcessor
-import com.example.poseexercise.viewmodels.AddPlanViewModel
-import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.viewmodels.CameraXViewModel
+import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.views.activity.MainActivity
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
-import java.util.Locale
-import kotlin.text.StringBuilder
 
 class WorkOutFragment : Fragment() {
     private lateinit var resultViewModel: ResultViewModel
@@ -153,7 +149,7 @@ class WorkOutFragment : Fragment() {
                 for((_,value) in it) {
                     if (value.repetition != 0) {
                         lifecycleScope.launch {
-                            val workOutResult = WorkoutResult(0,value.postureType,value.repetition,value.confidence)
+                            val workOutResult = WorkoutResult(0,value.postureType,value.repetition,value.confidence, System.currentTimeMillis())
                             resultViewModel.insert(workOutResult)
                         }
                     }

@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -30,7 +31,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 class HomeFragment : Fragment(), CoroutineScope {
-    val TAG = "RepDetect Debug"
+    val TAG = "RepDetect Home Fragment"
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var resultViewModel: ResultViewModel
     private lateinit var recentActivityRecyclerView: RecyclerView
@@ -38,6 +39,7 @@ class HomeFragment : Fragment(), CoroutineScope {
     private var planList: List<Plan>? = emptyList()
     private var notCompletePlanList: List<Plan>? = emptyList()
     private var today : String = DateFormat.format("EEEE" , Date()) as String
+    private var percentage: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,6 +81,8 @@ class HomeFragment : Fragment(), CoroutineScope {
         val progressText = view.findViewById<TextView>(R.id.exercise_left)
         val recyclerView= view.findViewById<RecyclerView>(R.id.today_plans)
         val noPlanTV = view.findViewById<TextView>(R.id.no_plan)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progress_bar)
+        val progressPercentage = view.findViewById<TextView>(R.id.progress_text)
         val adapter = PlanAdapter(activity)
         recyclerView.adapter = adapter
 
@@ -95,7 +99,13 @@ class HomeFragment : Fragment(), CoroutineScope {
                 recyclerView.isVisible = false
                 noPlanTV.text = "There is no plan set at the moment"
             }
+            if(planList?.size!! > 0  && notCompletePlanList != null){
+                percentage = ((planList!!.size.minus(notCompletePlanList!!.size))/ planList!!.size)*100
+            }
         }
+        progressBar.progress = percentage
+        progressPercentage.text = percentage.toString()
+        Log.d(TAG, "Progress is $percentage")
         // Return the inflated view
         return view
     }

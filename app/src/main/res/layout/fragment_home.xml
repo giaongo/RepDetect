@@ -63,22 +63,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/workout_progress" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/progress_image"
-            android:indeterminateOnly="false"
-            android:progressDrawable="@drawable/circle"
+            android:indeterminate="true"
+            app:trackColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.796"
-            app:layout_constraintStart_toEndOf="@+id/exercise_left"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.313"
-            tools:progress="80" />
+            app:layout_constraintStart_toEndOf="@+id/exercise_left"
+            android:layout_marginStart="@dimen/margin_xlarge"/>
 
         <TextView
+            android:id="@+id/progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -87,8 +86,7 @@
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
-            app:layout_constraintTop_toTopOf="@+id/progress_bar"
-            tools:text="80%" />
+            app:layout_constraintTop_toTopOf="@+id/progress_bar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -145,8 +143,9 @@
             android:textColor="@color/primaryColor"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:layout_marginTop="@dimen/margin_large"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/plans"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/plans"/>
 
         <androidx.recyclerview.widget.RecyclerView
