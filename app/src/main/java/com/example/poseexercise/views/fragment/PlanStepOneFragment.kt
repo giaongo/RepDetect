@@ -34,15 +34,15 @@ class PlanStepOneFragment : Fragment() {
         val activity = activity as Context
         // Get all the layout item
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
-        val chipGroup: ChipGroup = view.findViewById(R.id.chip_group)
+        val levelGroup: ChipGroup = view.findViewById(R.id.chip_group)
         val adapter = ExerciseAdapter(activity, findNavController(this))
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
         adapter.setExercises(exerciseList)
 
         // Set on click listener for chip
-        chipGroup.isSingleSelection = true
-        chipGroup.setOnCheckedStateChangeListener { chipGroup, id ->
+        levelGroup.isSingleSelection = true
+        levelGroup.setOnCheckedStateChangeListener { chipGroup, _ ->
             // Get the chip from the checked chip id
             val checkedChipId = chipGroup.checkedChipId
             val chip = chipGroup.findViewById<Chip>(checkedChipId)
