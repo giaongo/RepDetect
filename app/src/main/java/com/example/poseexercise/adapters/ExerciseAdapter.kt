@@ -1,15 +1,15 @@
 package com.example.poseexercise.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.poseexercise.R
-import com.example.poseexercise.data.Exercise
+import com.example.poseexercise.data.plan.Exercise
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 
@@ -38,8 +38,13 @@ class ExerciseAdapter(
 
         // Set a click event listener for the CardView
         holder.cardView.setOnClickListener {
+            // Create a bundle to hold data that need to pass to next fragment
+            val bundle = bundleOf(
+                "exerciseName" to currentExercise.name,
+                "caloriesPerRep" to currentExercise.calorie
+            )
             // Navigate to another fragment using the NavController
-            navController.navigate(R.id.action_planStepOneFragment_to_planStepTwoFragment)
+            navController.navigate(R.id.action_planStepOneFragment_to_planStepTwoFragment, bundle)
         }
     }
 

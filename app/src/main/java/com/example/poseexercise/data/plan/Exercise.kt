@@ -1,4 +1,4 @@
-package com.example.poseexercise.data
+package com.example.poseexercise.data.plan
 
 import androidx.annotation.DrawableRes
 

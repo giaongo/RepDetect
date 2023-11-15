@@ -29,19 +29,19 @@
 
         <action
             android:id="@+id/action_planStepOneFragment_to_planStepTwoFragment"
-            app:destination="@id/planStepTwoFragment" />
-
+            app:destination="@id/planStepTwoFragment" >
+        </action>
     </fragment>
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.poseexercise.views.fragment.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
-
+        android:id="@+id/planStepTwoFragment"
+        android:name="com.example.poseexercise.views.fragment.PlanStepTwoFragment"
+        android:label="fragment_plan_step_two"
+        tools:layout="@layout/fragment_plan_step_two">
         <action
-            android:id="@+id/action_profileFragment_to_homeFragment"
+            android:id="@+id/action_planStepTwoFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/workoutFragment"
         android:name="com.example.poseexercise.views.fragment.WorkOutFragment"
@@ -71,15 +71,18 @@
         tools:layout="@layout/fragment_completed" >
         <action
             android:id="@+id/action_completedFragment_to_homeFragment2"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment" >
+        </action>
     </fragment>
     <fragment
-        android:id="@+id/planStepTwoFragment"
-        android:name="com.example.poseexercise.views.fragment.PlanStepTwoFragment"
-        android:label="fragment_plan_step_two"
-        tools:layout="@layout/fragment_plan_step_two">
+        android:id="@+id/profileFragment"
+        android:name="com.example.poseexercise.views.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+
         <action
-            android:id="@+id/action_planStepTwoFragment_to_homeFragment"
+            android:id="@+id/action_profileFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+
 </navigation>
