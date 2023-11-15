@@ -11,18 +11,22 @@ data class Exercise (
     val level: String
 )
 
-data class ExerciseData(val repetitions: Int, val confidence: Float, val isComplete: Boolean)
+data class ExerciseData(val exerciseName: String, val repetitions: Int, val confidence: Float, val isComplete: Boolean)
 
 class ExerciseLog {
     private val exerciseMap = mutableMapOf<String, ExerciseData>()
 
     fun addExercise(exerciseName: String, repetitions: Int, confidence: Float, isComplete: Boolean) {
-        val exerciseData = ExerciseData(repetitions, confidence, isComplete)
+        val exerciseData = ExerciseData(exerciseName, repetitions, confidence, isComplete)
         exerciseMap[exerciseName] = exerciseData
     }
 
     fun getExerciseData(exerciseName: String): ExerciseData? {
         return exerciseMap[exerciseName]
+    }
+
+    fun getExerciseDataList(): List<ExerciseData> {
+        return exerciseMap.values.toList()
     }
 }
 

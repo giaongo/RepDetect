@@ -30,10 +30,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.poseexercise.R
+import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.views.activity.MainActivity
@@ -77,6 +81,8 @@ class WorkOutFragment : Fragment() {
     private lateinit var timerTextView: TextView
     private lateinit var timerRecordIcon: ImageView
     private lateinit var ttf: TextToSpeech
+    private lateinit var workoutRecyclerView: RecyclerView
+    private lateinit var workoutAdapter: WorkoutAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,6 +116,9 @@ class WorkOutFragment : Fragment() {
         currentRepetitionTextView = view.findViewById(R.id.currentRepetitionText)
         confIndicatorView.visibility = View.INVISIBLE
 
+        workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
+        workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
+
         return view
     }
 
@@ -122,7 +131,7 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener {
-            //textToSpeech("Workout Started")
+            textToSpeech("Workout Started")
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
 
@@ -146,6 +155,7 @@ class WorkOutFragment : Fragment() {
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
+            textToSpeech("Workout Cancelled")
             stopMediaTimer()
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_cancelFragment)
@@ -160,7 +170,7 @@ class WorkOutFragment : Fragment() {
 
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener {
-
+            textToSpeech("Workout Complete")
             // update the workoutTimer in MainActivity
             val currentTimer = timerTextView.text.toString()
             MainActivity.workoutTimer = currentTimer
@@ -210,26 +220,25 @@ class WorkOutFragment : Fragment() {
             toggleCameraLens()
         }
 
+        // get information from database
+        val databaseExercisePlan = listOf(
+            ExercisePlan("squats", 8),
+            ExercisePlan("pushups_down", 7))
+
         // Initialize Exercise Log
         val exerciseLog = ExerciseLog()
 
-        // get information from database
-        val databaseExercisePlan = listOf(
-            ExercisePlan("squats", 5),
-            ExercisePlan("pushup-down", 10))
+        // Push the planned exercise name in exercise Log with
+        databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName,0,0f,false) }
 
 
         //Declare all the only pose exercise
-        val onlyPose = listOf("squats")
+        val onlyPose = listOf("squats", "pushups_down", "lunges")
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
 
             for ((key, value) in mapResult) {
-                Log.d(
-                    "PostureType",
-                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
-                )
 
                 // Visualize the repetition exercise data
                 if (key in onlyPose) {
@@ -239,18 +248,20 @@ class WorkOutFragment : Fragment() {
                         // Adding exercise for the first time
                         exerciseLog.addExercise(key, value.repetition, value.confidence, false)
 
-                    } else if (value.repetition == data.repetitions?.plus(1)) {
+                    } else if (value.repetition == data.repetitions.plus(1)) {
 
                         // check if the exercise target is complete
-                        val repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
-
-                        if(!data.isComplete && value.repetition >= repetition!!) {
+                        var repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
+                        if (repetition==null){
+                            repetition = 9999999
+                        }
+                        if(!data.isComplete && (value.repetition >= repetition)) {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
 
                             // inform the user about completion only once
-                            //TODO
-                            Toast.makeText(context, "Completed", Toast.LENGTH_SHORT).show()
+                            textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
+                            //Toast.makeText(context, "Completed", Toast.LENGTH_SHORT).show()
 
                         } else if (data.isComplete){
                             // Adding data only when the increment happen
@@ -289,11 +300,11 @@ class WorkOutFragment : Fragment() {
 
             }
 
-            // Visualize list of all planned result
-            //TODO
+            // Visualize list of all exercise result
 
-            // Visualize list of all unplanned result
-            //TODO
+            val exerciseList = exerciseLog.getExerciseDataList()
+            workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
+            workoutRecyclerView.adapter = workoutAdapter
         }
     }
 
@@ -315,7 +326,7 @@ class WorkOutFragment : Fragment() {
         currentExerciseTextView.visibility = View.VISIBLE
         currentRepetitionTextView.visibility = View.VISIBLE
         val pushUpData = exerciseLog.getExerciseData(key)
-        currentExerciseTextView.text = key
+        currentExerciseTextView.text = exerciseNameToDisplay(key)
         currentRepetitionTextView.text = "count: "+pushUpData?.repetitions.toString()
     }
 
@@ -681,5 +692,15 @@ class WorkOutFragment : Fragment() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
+
+/*        fun exerciseToDisplay(exerciseName: String): String {
+            return when (exerciseName) {
+                "squats" -> "Squats"
+                "pushups_down" -> "Pushups"
+                "lunges" -> "Lunges"
+                // Add more cases as needed
+                else -> exerciseName
+            }
+        }*/
     }
 }
