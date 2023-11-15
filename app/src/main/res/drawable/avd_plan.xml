@@ -24,7 +24,7 @@
         </vector>
     </aapt:attr>
 
-    <target android:name="rotationGroup"> *
+    <target android:name="rotationGroup">
         <aapt:attr name="android:animation">
             <objectAnimator
                 android:duration="300"

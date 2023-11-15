@@ -77,7 +77,7 @@ class HomeFragment : Fragment(), CoroutineScope {
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         val progressText = view.findViewById<TextView>(R.id.exercise_left)
         val recyclerView= view.findViewById<RecyclerView>(R.id.today_plans)
-        val adapter = PlanAdapter(activity, homeViewModel)
+        val adapter = PlanAdapter(activity)
         recyclerView.adapter = adapter
 
         // get the list of plans from database]
