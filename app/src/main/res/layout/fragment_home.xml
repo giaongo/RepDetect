@@ -102,7 +102,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="338dp"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:layout_marginTop="16dp"
         android:layout_gravity="center"
         android:background="@drawable/rounded_bigrectangle">
@@ -119,49 +119,50 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/card_recent_activity"/>
     </androidx.core.widget.NestedScrollView>
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginTop="@dimen/margin_large"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large">
 
         <TextView
             android:id="@+id/plans"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_large"
             android:text="@string/plan_today"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginStart="@dimen/margin_large"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/no_plan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
             android:textColor="@color/primaryColor"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginTop="@dimen/margin_large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/plans"/>
+            app:layout_constraintTop_toBottomOf="@+id/plans" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/today_plans"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="70dp"
+            android:visibility="visible"
             app:layoutManager="LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/plans"
-            tools:listitem="@layout/plan_list_item"/>
+            tools:listitem="@layout/plan_list_item" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
 </LinearLayout>
