@@ -60,11 +60,14 @@ class HomeFragment : Fragment(), CoroutineScope {
         lifecycleScope.launch {
             val workoutResults = resultViewModel.getAllResult()
 
+            // Sort WorkoutResult objects by timestamp in descending order
+            val sortedWorkoutResults = workoutResults?.sortedByDescending { it.timestamp }
+
             // Transform WorkoutResult objects into RecentActivityItem objects
             val imageResources = arrayOf(R.drawable.blue, R.drawable.green, R.drawable.orange)
 
             // Transform WorkoutResult objects into RecentActivityItem objects
-            val recentActivityItems = workoutResults?.mapIndexed { index, it ->
+            val recentActivityItems = sortedWorkoutResults?.mapIndexed { index, it ->
                 RecentActivityItem(
                     imageResId = imageResources[index % imageResources.size],
                     exerciseType = it.exerciseName,

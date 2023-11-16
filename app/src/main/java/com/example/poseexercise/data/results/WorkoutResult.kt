@@ -14,7 +14,8 @@ data class WorkoutResult(
     val repeatedCount: Int,
     var confidence: Float,
     @TypeConverters(DateConverters::class)
-    val timestamp: Long
+    val timestamp: Long,
+    val calorie: Double,
     )
 
 

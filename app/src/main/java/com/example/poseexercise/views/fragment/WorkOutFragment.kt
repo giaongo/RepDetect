@@ -142,6 +142,10 @@ class WorkOutFragment : Fragment() {
             cameraViewModel.triggerClassification.value = false
         }
 
+        // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
+        // Posture: squats Repetition: 2
+        // Posture: lunges Repetition: 1
+        // Posture: squats
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener {
             cameraViewModel.postureLiveData.value?.let {
@@ -149,8 +153,8 @@ class WorkOutFragment : Fragment() {
                 for((_,value) in it) {
                     if (value.repetition != 0) {
                         lifecycleScope.launch {
-                            val workOutResult = WorkoutResult(0,value.postureType,value.repetition,value.confidence, System.currentTimeMillis())
-                            resultViewModel.insert(workOutResult)
+                            //val workOutResult = WorkoutResult(0,value.postureType,value.repetition,value.confidence, System.currentTimeMillis())
+                            //resultViewModel.insert(workOutResult)
                         }
                     }
                 }
