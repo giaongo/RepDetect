@@ -49,7 +49,7 @@ class AutomatedUITest {
 
         // wait until the app'sUI displays
         device.wait(
-            Until.hasObject(By.pkg("com.example.airbuswear").depth(0)),
+            Until.hasObject(By.pkg("com.example.poseexercise").depth(0)),
             5000
         )
     }

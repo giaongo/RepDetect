@@ -7,5 +7,9 @@
     <color name="gray">#C4C4C4</color>
     <color name="blueButton">#5362F6</color>
     <color name="textGray">#8C9092</color>
-    <color name="red">#FF0000</color>
+    <color name="red">#FF0909</color>
+    <color name="orange">#FD812E</color>
+    <color name="yellow">#F9FD2E</color>
+    <color name="lightGreen">#95FD2E</color>
+    <color name="green">#00B312</color>
 </resources>
