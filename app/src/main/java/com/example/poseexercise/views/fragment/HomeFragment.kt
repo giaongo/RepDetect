@@ -74,6 +74,17 @@ class HomeFragment : Fragment(), CoroutineScope {
 
             // Update the adapter with the transformed data
             recentActivityAdapter.updateData(recentActivityItems ?: emptyList())
+
+            // Check if the recentActivityItems list is empty
+            if (recentActivityItems.isNullOrEmpty()) {
+                recentActivityRecyclerView.isVisible = false
+                // Show a message or handle the empty case as per your UI requirements
+                val noActivityMessage = view.findViewById<TextView>(R.id.no_activity_message)
+                noActivityMessage.text = "No activities yet"
+                noActivityMessage.isVisible = true
+            } else {
+                recentActivityRecyclerView.isVisible = true
+            }
         }
 
         // Initialize home view model, RecyclerView and its adapter for today's plans
