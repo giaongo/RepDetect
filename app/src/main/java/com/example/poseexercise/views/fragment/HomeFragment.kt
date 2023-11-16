@@ -96,7 +96,9 @@ class HomeFragment : Fragment() {
 
             val result1 =  withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
             val result2 = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
-            updateResultFromDatabase(result1, result2)
+            requireActivity().runOnUiThread {
+                updateResultFromDatabase(result1, result2)
+            }
         }
 
     }
