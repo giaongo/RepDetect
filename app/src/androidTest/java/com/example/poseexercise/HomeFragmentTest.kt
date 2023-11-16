@@ -17,8 +17,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class HomeFragmentTest {
-    @get:Rule
-    val mActivityRule = ActivityScenarioRule(MainActivity::class.java)
     @Test
     fun homeFragmentTest() {
         val scenario = launchFragmentInContainer<HomeFragment>(initialState = Lifecycle.State.INITIALIZED)
