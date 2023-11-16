@@ -1,11 +1,13 @@
 package com.example.poseexercise.views.fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +31,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.poseexercise.R
+import com.example.poseexercise.adapters.WorkoutAdapter
+import com.example.poseexercise.data.plan.ExerciseLog
+import com.example.poseexercise.data.plan.ExercisePlan
+import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyApplication
@@ -60,6 +69,13 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private lateinit var startButton: Button
+    private lateinit var buttonCompleteExercise: Button
+    private lateinit var buttonCancelExercise: Button
+    private lateinit var cameraFlipFAB: FloatingActionButton
+    private lateinit var confIndicatorView: ImageView
+    private lateinit var currentExerciseTextView: TextView
+    private lateinit var currentRepetitionTextView: TextView
 
     private lateinit var cameraViewModel: CameraXViewModel
 
@@ -69,6 +85,10 @@ class WorkOutFragment : Fragment() {
     private var mRecHours = 0
     private lateinit var timerTextView: TextView
     private lateinit var timerRecordIcon: ImageView
+    private lateinit var ttf: TextToSpeech
+    private lateinit var workoutRecyclerView: RecyclerView
+    private lateinit var workoutAdapter: WorkoutAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,27 +107,37 @@ class WorkOutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_workout, container, false)
+
+        val view: View = inflater.inflate(R.layout.fragment_workout, container, false)
+
+        // Linking all button and controls
+        cameraFlipFAB = view.findViewById(R.id.facing_switch)
+        startButton = view.findViewById(R.id.button_start_exercise)
+        buttonCompleteExercise = view.findViewById(R.id.button_complete_exercise)
+        buttonCancelExercise = view.findViewById(R.id.button_cancel_exercise)
+        timerTextView = view.findViewById(R.id.timerTV)
+        timerRecordIcon = view.findViewById(R.id.timerRecIcon)
+        confIndicatorView = view.findViewById(R.id.confidenceIndicatorView)
+        currentExerciseTextView = view.findViewById(R.id.currentExerciseText)
+        currentRepetitionTextView = view.findViewById(R.id.currentRepetitionText)
+        confIndicatorView.visibility = View.INVISIBLE
+
+        workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
+        workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        return view
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        // Linking all button and controls
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
-        val cameraFlipFAB: FloatingActionButton = view.findViewById(R.id.facing_switch)
-        val startButton: Button = view.findViewById(R.id.button_start_exercise)
-        val buttonCompleteExercise: Button = view.findViewById(R.id.button_complete_exercise)
-        val buttonCancelExercise:Button = view.findViewById(R.id.button_cancel_exercise)
-        timerTextView = view.findViewById(R.id.timerTV)
-        timerRecordIcon = view.findViewById(R.id.timerRecIcon)
-
         cameraFlipFAB.visibility = View.VISIBLE
 
         // start exercise button
         startButton.setOnClickListener {
+            textToSpeech("Workout Started")
 
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
@@ -126,10 +156,13 @@ class WorkOutFragment : Fragment() {
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+
+
         }
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
+            textToSpeech("Workout Cancelled")
             stopMediaTimer()
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_cancelFragment)
@@ -144,6 +177,7 @@ class WorkOutFragment : Fragment() {
 
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener {
+            textToSpeech("Workout Complete")
             cameraViewModel.postureLiveData.value?.let {
                 //val builder = StringBuilder()
                 for((_,value) in it) {
@@ -196,7 +230,6 @@ class WorkOutFragment : Fragment() {
             Log.d(TAG, "graphicOverlay is null")
         }
 
-
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
             cameraProvider = provider
             bindAllCameraUseCases()
@@ -205,15 +238,137 @@ class WorkOutFragment : Fragment() {
         cameraFlipFAB.setOnClickListener {
             toggleCameraLens()
         }
+
+        // get information from database
+        val databaseExercisePlan = listOf(
+            ExercisePlan("squats", 8),
+            ExercisePlan("pushups_down", 7))
+
+        // Initialize Exercise Log
+        val exerciseLog = ExerciseLog()
+
+        // Push the planned exercise name in exercise Log with
+        databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName,0,0f,false) }
+
+
+        //Declare all the only pose exercise
+        val onlyPose = listOf("squats", "pushups_down", "lunges")
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
-            for ((_, value) in mapResult) {
-                Log.d(
-                    "PostureType",
-                    "Posture: ${value.postureType} Repetition: ${value.repetition}"
-                )
+
+
+            for ((key, value) in mapResult) {
+
+                // Visualize the repetition exercise data
+                if (key in onlyPose) {
+                    val data = exerciseLog.getExerciseData(key)
+
+                    if (data == null) {
+                        // Adding exercise for the first time
+                        exerciseLog.addExercise(key, value.repetition, value.confidence, false)
+
+                    } else if (value.repetition == data.repetitions.plus(1)) {
+
+                        // check if the exercise target is complete
+                        var repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
+                        if (repetition==null){
+                            repetition = 9999999
+                        }
+                        if(!data.isComplete && (value.repetition >= repetition)) {
+                            // Adding data only when the increment happen
+                            exerciseLog.addExercise(key, value.repetition, value.confidence, true)
+
+                            // inform the user about completion only once
+                            textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
+                            //Toast.makeText(context, "Completed", Toast.LENGTH_SHORT).show()
+
+                        } else if (data.isComplete){
+                            // Adding data only when the increment happen
+                            exerciseLog.addExercise(key, value.repetition, value.confidence, true)
+                        } else{
+                            // Adding data only when the increment happen
+                            exerciseLog.addExercise(key, value.repetition, value.confidence, false)
+                        }
+
+
+
+                        // display Current result when the increment happen
+                        displayResult(key, exerciseLog)
+
+
+
+                    } else {
+
+                    }
+
+                    /*if (key == "squat" && value.repetition < 10) {
+                        exerciseLog.addExercise(key, value.repetition, value.confidence)
+                        displayResult(exerciseLog)
+                    }
+
+
+                    if (key == "neutral_standing") {
+                        confIndicatorView.visibility = View.VISIBLE
+                        displayConfidence(value.confidence)
+                    } else {
+                        confIndicatorView.visibility = View.INVISIBLE
+                    }*/
+
+                    //displayResult(exerciseLog)
+                }
+
             }
+
+            // Visualize list of all exercise result
+
+            val exerciseList = exerciseLog.getExerciseDataList()
+            workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
+            workoutRecyclerView.adapter = workoutAdapter
         }
     }
+
+
+    private fun textToSpeech(name: String){
+        ttf = TextToSpeech(context, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS){
+                ttf.language = Locale.US
+                ttf.setSpeechRate(1.0f)
+                ttf.speak(name,TextToSpeech.QUEUE_ADD, null)
+            }
+        })
+    }
+
+
+
+    @SuppressLint("SetTextI18n")
+    private fun displayResult(key: String, exerciseLog: ExerciseLog) {
+        currentExerciseTextView.visibility = View.VISIBLE
+        currentRepetitionTextView.visibility = View.VISIBLE
+        val pushUpData = exerciseLog.getExerciseData(key)
+        currentExerciseTextView.text = exerciseNameToDisplay(key)
+        currentRepetitionTextView.text = "count: "+pushUpData?.repetitions.toString()
+    }
+
+
+    private fun displayConfidence(confidence: Float) {
+        if (confidence < 0.5) {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.red)
+        } else if (confidence > 0.5 && confidence <= 0.6) {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.orange)
+        } else if (confidence > 0.6 && confidence <= 0.75) {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.yellow)
+        } else if (confidence > 0.75 && confidence <= 0.85) {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
+        } else {
+            confIndicatorView.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.green)
+        }
+    }
+
 
     private fun bindAllCameraUseCases() {
         bindPreviewUseCase()
@@ -555,5 +710,15 @@ class WorkOutFragment : Fragment() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
+
+/*        fun exerciseToDisplay(exerciseName: String): String {
+            return when (exerciseName) {
+                "squats" -> "Squats"
+                "pushups_down" -> "Pushups"
+                "lunges" -> "Lunges"
+                // Add more cases as needed
+                else -> exerciseName
+            }
+        }*/
     }
 }
