@@ -1,6 +1,7 @@
 package com.example.poseexercise.views.fragment
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("DEPRECATION")
 class PlanStepTwoFragment: Fragment(), CoroutineScope {
     val TAG = "RepDetect Debug"
     private lateinit var addPlanViewModel: AddPlanViewModel
@@ -47,10 +49,6 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
                 mKcal = it.getInt("caloriesPerRep")
             }
         }
-//        val listView = view.findViewById<ListView>(R.id.days_list)
-//        val listAdapter = ArrayAdapter(this.requireContext(),android.R.layout.simple_list_item_multiple_choice, days)
-//        listView.adapter = listAdapter
-
         return view
     }
 
@@ -66,6 +64,8 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
 
         // Set the default value for the exercise
         exerciseEditText.setText(mExerciseName)
+        // Set the min and max value for Repeat count
+        setEditTextLimit(repeatEditText, 1, 100)
         // Option list for days in week
         val listAdapter = ArrayAdapter(this.requireContext(),android.R.layout.simple_list_item_multiple_choice, days)
         listOfDays.adapter = listAdapter
@@ -85,7 +85,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
         }
         // Saving plan
         addPlanButton.setOnClickListener {
-            if(repeatEditText.text.isEmpty() ){
+            if(repeatEditText.text.isEmpty() || selectedDays.size == 0){
                 showErrorMessage()
             }else {
                 addPlanViewModel = ViewModelProvider(this).get(AddPlanViewModel::class.java)
@@ -109,6 +109,24 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
             "Please fill the form",
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun setEditTextLimit(editText: EditText, minValue: Int, maxValue: Int) {
+        val inputFilter = InputFilter { source, _, _, dest, _, _ ->
+            try {
+                val input = (dest.toString() + source.toString()).toIntOrNull()
+                if (input != null && input in minValue..maxValue) {
+                    null // Input is within the range, allow the input
+                } else {
+                    "" // Input is outside the range, disallow the input by returning an empty string
+                }
+            } catch (nfe: NumberFormatException) {
+                nfe.printStackTrace()
+                "" // Return empty string for non-integer input
+            }
+        }
+        val filters = arrayOf(inputFilter)
+        editText.filters = filters
     }
 
     override val coroutineContext: CoroutineContext

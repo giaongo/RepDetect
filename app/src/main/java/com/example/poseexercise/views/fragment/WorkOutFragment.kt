@@ -29,6 +29,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,20 +39,24 @@ import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
+import com.example.poseexercise.data.results.WorkoutResult
+import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
+import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.views.activity.MainActivity
 import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
+import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import kotlin.text.StringBuilder
 
 class WorkOutFragment : Fragment() {
-
+    private lateinit var resultViewModel: ResultViewModel
     private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -95,6 +100,7 @@ class WorkOutFragment : Fragment() {
             this, ViewModelProvider.AndroidViewModelFactory
                 .getInstance(requireActivity().application)
         )[CameraXViewModel::class.java]
+        resultViewModel =  ResultViewModel(MyApplication.getInstance())
     }
 
     override fun onCreateView(
@@ -132,6 +138,7 @@ class WorkOutFragment : Fragment() {
         // start exercise button
         startButton.setOnClickListener {
             textToSpeech("Workout Started")
+
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
 
@@ -171,6 +178,18 @@ class WorkOutFragment : Fragment() {
         // Complete the exercise
         buttonCompleteExercise.setOnClickListener {
             textToSpeech("Workout Complete")
+            cameraViewModel.postureLiveData.value?.let {
+                //val builder = StringBuilder()
+                for((_,value) in it) {
+                    if (value.repetition != 0) {
+                        lifecycleScope.launch {
+                            val workOutResult = WorkoutResult(0,value.postureType,value.repetition,value.confidence, System.currentTimeMillis())
+                            resultViewModel.insert(workOutResult)
+                        }
+                    }
+                }
+            }
+
             // update the workoutTimer in MainActivity
             val currentTimer = timerTextView.text.toString()
             MainActivity.workoutTimer = currentTimer
@@ -676,7 +695,6 @@ class WorkOutFragment : Fragment() {
         }
         return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
     }
-
 
     companion object {
         private const val TAG = "CameraXLivePreview"
