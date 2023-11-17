@@ -2,10 +2,11 @@ package com.example.poseexercise.views.fragment
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.widget.TextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.poseexercise.R
@@ -57,31 +58,30 @@ class ProfileFragment : Fragment() {
     }
 
     private fun calculateTotalCaloriesPerDay(workoutResults: List<WorkoutResult>): Map<String, Double> {
-        val totalCaloriesPerWeek = mutableMapOf<String, Double>()
+        val totalCaloriesPerDay = mutableMapOf<String, Double>()
 
         // Initialize entries for each day of the week
         val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         for (day in daysOfWeek) {
-            totalCaloriesPerWeek[day] = 0.0
+            totalCaloriesPerDay[day] = 0.0
         }
 
         for (result in workoutResults) {
-            val startDate = getStartOfWeek(result.timestamp)
+            val startDate = getStartOfDay(result.timestamp)
             val key = formatDate(startDate)
-            val totalCalories = totalCaloriesPerWeek.getOrDefault(key, 0.0) + result.calorie
-            totalCaloriesPerWeek[key] = totalCalories
+            val totalCalories = totalCaloriesPerDay.getOrDefault(key, 0.0) + result.calorie
+            totalCaloriesPerDay[key] = totalCalories
         }
 
-        return totalCaloriesPerWeek
+        return totalCaloriesPerDay
     }
 
-    // Assign Sunday as starting day of the week
-    private fun getStartOfWeek(timestamp: Long): Long {
+    // Function to get the start of the day
+    private fun getStartOfDay(timestamp: Long): Long {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timestamp
 
-        // Set the calendar to the start of the week (Sunday)
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+        // Set the calendar to the start of the day
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
@@ -89,6 +89,7 @@ class ProfileFragment : Fragment() {
 
         return calendar.timeInMillis
     }
+
 
     // Returns starting day of the bar as Sun
     private fun formatDate(timestamp: Long): String {
@@ -103,6 +104,13 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateChart(totalCaloriesPerWeek: Map<String, Double>) {
+        val totalCalories = totalCaloriesPerWeek.values.sum()
+
+        // Update the total calories TextView
+        val totalCaloriesTextView = view?.findViewById<TextView>(R.id.totalCaloriesTextView)
+        totalCaloriesTextView?.text =
+            String.format(Locale.getDefault(), getString(R.string.total_calories), totalCalories)
+
         val entries = totalCaloriesPerWeek.entries.mapIndexed { index, entry ->
             BarEntry(index.toFloat(), entry.value.toFloat())
         }
@@ -156,9 +164,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getBarColors(totalCaloriesPerWeek: Map<String, Double>): List<Int> {
+        val primaryColor = ContextCompat.getColor(requireContext(), R.color.primaryColor)
+
         return totalCaloriesPerWeek
-            .filter { it.value > 0 }
-            .values
-            .map { Color.RED }
+            .map { (key, value) -> if (value > 0) primaryColor else Color.TRANSPARENT }
     }
 }
+

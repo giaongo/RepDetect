@@ -182,7 +182,6 @@
         <item>Sunday</item>
     </string-array>
 
-
     <!-- Strings for Profile fragment -->
     <string name="content_description">User avatar</string>
     <string name="default_user">Adline Castelino</string>
@@ -193,12 +192,9 @@
     <string name="example_percentage">110 %</string>
     <string name="exercise_type">Exercise Type</string>
     <string name="no_activities_yet">No activities yet</string>
+    <string name="total_calories"> %s Kcal this week</string>
 
     <!-- Strings for exercise name -->
-<!--    <string name="push_up">Push up</string>-->
-
-
-
-
-
+    <!--    <string name="push_up">Push up</string>-->
 </resources>
+
