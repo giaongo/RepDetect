@@ -149,33 +149,31 @@ class WorkOutFragment : Fragment() {
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
         cameraFlipFAB.visibility = View.VISIBLE
-        cameraViewModel.triggerClassification.value = true
+
 
         // start exercise button
         startButton.setOnClickListener {
-            if (runOnce) {
-                textToSpeech("Workout Started")
 
-                // Set the screenOn flag to true, preventing the screen from turning off
-                screenOn = true
+            // showing loading AI pose detection Model inforamtion to user
+            loadingTV.visibility = View.VISIBLE
+            loadProgress.visibility = View.VISIBLE
 
-                // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
-                activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            // Set the screenOn flag to true, preventing the screen from turning off
+            screenOn = true
 
-                cameraFlipFAB.visibility = View.GONE
-                buttonCancelExercise.visibility = View.VISIBLE
-                buttonCompleteExercise.visibility = View.VISIBLE
-                startButton.visibility = View.GONE
-                timerTextView.visibility = View.VISIBLE
-                timerRecordIcon.visibility = View.VISIBLE
-                startMediaTimer()
+            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-                // To disable screen timeout
-                //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
+            cameraFlipFAB.visibility = View.GONE
+            buttonCancelExercise.visibility = View.VISIBLE
+            buttonCompleteExercise.visibility = View.VISIBLE
+            startButton.visibility = View.GONE
 
+            // To disable screen timeout
+            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            cameraViewModel.triggerClassification.value = true
         }
-
 
 
         // Cancel the exercise
@@ -236,6 +234,8 @@ class WorkOutFragment : Fragment() {
 
             // stop triggering classification process
             cameraViewModel.triggerClassification.value = false
+
+            // Navigation to complete fragment
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_completedFragment)
         }
@@ -254,7 +254,7 @@ class WorkOutFragment : Fragment() {
         }
 
         cameraFlipFAB.setOnClickListener {
-            if (runOnce) toggleCameraLens()
+            toggleCameraLens()
         }
 
 
@@ -354,7 +354,6 @@ class WorkOutFragment : Fragment() {
                 } else{
                     confIndicatorView.visibility = View.INVISIBLE
                 }
-
             }
 
             // Visualize list of all exercise result for the first time, to show the target exercise
@@ -362,14 +361,12 @@ class WorkOutFragment : Fragment() {
                 val exerciseList = exerciseLog.getExerciseDataList()
                 workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                 workoutRecyclerView.adapter = workoutAdapter
-                //Log.d("loadingComplete", "loadingComplete")
                 runOnce = true
                 loadingTV.visibility = View.GONE
                 loadProgress.visibility = View.GONE
+                textToSpeech("Workout Started")
             }
-
         }
-
     }
 
 
@@ -381,6 +378,11 @@ class WorkOutFragment : Fragment() {
                 ttf.speak(name,TextToSpeech.QUEUE_ADD, null)
             }
         })
+        if(name == "Workout Started"){
+            startMediaTimer()
+            timerTextView.visibility = View.VISIBLE
+            timerRecordIcon.visibility = View.VISIBLE
+        }
     }
 
 
