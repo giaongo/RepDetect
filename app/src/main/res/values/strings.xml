@@ -192,6 +192,7 @@
     <string name="example_exercise">10 exercises</string>
     <string name="example_percentage">110 %</string>
     <string name="exercise_type">Exercise Type</string>
+    <string name="loading">Loading Pose AI model in camera preview..</string>
 
     <!-- Strings for exercise name -->
 <!--    <string name="push_up">Push up</string>-->

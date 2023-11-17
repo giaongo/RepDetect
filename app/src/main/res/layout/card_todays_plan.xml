@@ -60,14 +60,16 @@
 
             <!-- Chip for additional information on acute, intermediate or advance -->
             <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/chip"
                 style="@style/Widget.Material3.Chip.Suggestion"
-                android:checked="true"
-                android:layout_margin="@dimen/margin_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                />
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:checked="true" />
 
         </RelativeLayout>
 
