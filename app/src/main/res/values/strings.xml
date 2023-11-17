@@ -187,8 +187,8 @@
     <string name="default_user">Adline Castelino</string>
     <string name="result">Weekly result</string>
     <string name="summary">Weekly summary</string>
-    <string name="example_time">120 minutes</string>
-    <string name="example_exercise">10 exercises</string>
+    <string name="total_time">%d minutes</string>
+    <string name="total_exercise">%d exercises</string>
     <string name="example_percentage">110 %</string>
     <string name="exercise_type">Exercise Type</string>
     <string name="no_activities_yet">No activities yet</string>

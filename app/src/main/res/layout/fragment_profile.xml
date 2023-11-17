@@ -132,9 +132,10 @@
                         app:srcCompat="@drawable/time" />
 
                     <TextView
+                        android:id="@+id/total_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/example_time" />
+                        android:text="@string/total_time" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -159,9 +160,10 @@
                         app:srcCompat="@drawable/dumbell" />
 
                     <TextView
+                        android:id="@+id/total_exercise"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/example_exercise" />
+                        android:text="@string/total_exercise" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
