@@ -193,6 +193,7 @@
     <string name="exercise_type">Exercise Type</string>
     <string name="no_activities_yet">No activities yet</string>
     <string name="total_calories"> %s Kcal this week</string>
+    <string name="loading">Loading Pose AI model in camera preview..</string>
 
     <!-- Strings for exercise name -->
     <!--    <string name="push_up">Push up</string>-->

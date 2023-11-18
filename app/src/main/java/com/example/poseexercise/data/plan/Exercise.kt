@@ -30,4 +30,4 @@ class ExerciseLog {
     }
 }
 
-data class ExercisePlan(val exerciseName: String, val repetitions: Int)
+data class ExercisePlan(val exerciseName: String, var repetitions: Int)
