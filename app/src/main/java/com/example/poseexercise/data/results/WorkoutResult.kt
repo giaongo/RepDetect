@@ -16,6 +16,7 @@ data class WorkoutResult(
     @TypeConverters(DateConverters::class)
     val timestamp: Long,
     val calorie: Double,
+    val workoutTimeInMin: Double
     )
 
 

@@ -22,6 +22,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -31,7 +32,7 @@ class ProfileFragment : Fragment() {
     private lateinit var resultViewModel: ResultViewModel
     private lateinit var chart: BarChart
     private var workoutResults: List<WorkoutResult>? = null
-
+    private lateinit var workOutTime: TextView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,21 +43,51 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         resultViewModel = ResultViewModel(MyApplication.getInstance())
         chart = view.findViewById(R.id.chart)
+        workOutTime = view.findViewById(R.id.total_time)
         loadDataAndSetupChart()
     }
 
     private fun loadDataAndSetupChart() {
         lifecycleScope.launch(Dispatchers.IO) {
             workoutResults = resultViewModel.getAllResult()
-            workoutResults?.forEach {
-                val date = formattedDate(it.timestamp)
-                // Log.d("my_date", it.toString())
-            }
-            val totalCaloriesPerDay = workoutResults?.let { calculateTotalCaloriesPerDay(it) }
-            if (totalCaloriesPerDay != null) {
-                updateChart(totalCaloriesPerDay, workoutResults)
+            val currentWeek = getCurrentCalendarWeek()
+            val decimalFormat = DecimalFormat("#.##")
+            val totalWorkoutTimeForCurrentWeek =
+                workoutResults?.let { calculateTotalWorkoutTimeForWeek(it, currentWeek) }
+            val formattedWorkoutTime = decimalFormat.format(totalWorkoutTimeForCurrentWeek)
+
+            // Use launch(Dispatchers.Main) to switch to the main thread for UI updates
+            lifecycleScope.launch(Dispatchers.Main) {
+                workOutTime.text = formattedWorkoutTime
+                Log.d("my_date and workout time", formattedWorkoutTime)
+
+                val totalCaloriesPerDay = workoutResults?.let { calculateTotalCaloriesPerDay(it) }
+                if (totalCaloriesPerDay != null) {
+                    updateChart(totalCaloriesPerDay, workoutResults)
+                }
             }
         }
+    }
+
+
+    private fun getCurrentCalendarWeek(): Int {
+        val calendar = Calendar.getInstance(Locale.getDefault())
+        return calendar.get(Calendar.WEEK_OF_YEAR)
+    }
+
+    private fun calculateTotalWorkoutTimeForWeek(
+        workoutResults: List<WorkoutResult>,
+        targetWeek: Int
+    ): Double {
+        return workoutResults
+            .filter { getCalendarWeek(it.timestamp) == targetWeek }
+            .sumByDouble { it.workoutTimeInMin }
+    }
+
+    private fun getCalendarWeek(timestamp: Long): Int {
+        val calendar = Calendar.getInstance(Locale.getDefault())
+        calendar.timeInMillis = timestamp
+        return calendar.get(Calendar.WEEK_OF_YEAR)
     }
 
     private fun calculateTotalCaloriesPerDay(workoutResults: List<WorkoutResult>): Map<String, Double> {
@@ -98,13 +129,16 @@ class ProfileFragment : Fragment() {
         return dateFormat.format(Date(timestamp))
     }
 
-    // Format days in this sample format: 2023-11-16 15:51:54
+    /*// Format days in this sample format: 2023-11-16 15:51:54
     private fun formattedDate(timestamp: Long): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(Date(timestamp))
-    }
+    }*/
 
-    private fun updateChart(totalCaloriesPerWeek: Map<String, Double>, workoutResults: List<WorkoutResult>?) {
+    private fun updateChart(
+        totalCaloriesPerWeek: Map<String, Double>,
+        workoutResults: List<WorkoutResult>?
+    ) {
         val totalCalories = totalCaloriesPerWeek.values.sum()
 
         // Update the total calories TextView
@@ -113,7 +147,11 @@ class ProfileFragment : Fragment() {
         val formattedTotalCalories = String.format(Locale.getDefault(), "%.2f", totalCalories)
 
         totalCaloriesTextView?.text =
-            String.format(Locale.getDefault(), getString(R.string.total_calories), formattedTotalCalories)
+            String.format(
+                Locale.getDefault(),
+                getString(R.string.total_calories),
+                formattedTotalCalories
+            )
 
         val entries = totalCaloriesPerWeek.entries.mapIndexed { index, entry ->
             BarEntry(index.toFloat(), entry.value.toFloat())
@@ -121,7 +159,11 @@ class ProfileFragment : Fragment() {
 
         val totalExerciseCount = calculateTotalExerciseCountForWeek(workoutResults)
         val totalExerciseTextView = view?.findViewById<TextView>(R.id.total_exercise)
-        totalExerciseTextView?.text = String.format(getString(R.string.total_exercise), totalExerciseCount)
+        totalExerciseTextView?.text =
+            String.format(getString(R.string.total_exercise), totalExerciseCount)
+
+        // Update the total time TextView
+        val totalWorkoutTimeTextView = view?.findViewById<TextView>(R.id.total_time)
 
         val labels = totalCaloriesPerWeek.keys.toList()
         val dataSet = BarDataSet(entries, "Total Calories per Week")

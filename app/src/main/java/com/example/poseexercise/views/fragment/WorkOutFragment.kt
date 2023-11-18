@@ -41,6 +41,7 @@ import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.util.MyApplication
+import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
@@ -157,7 +158,6 @@ class WorkOutFragment : Fragment() {
 
 
         }
-
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
             textToSpeech("Workout Cancelled")
@@ -193,13 +193,16 @@ class WorkOutFragment : Fragment() {
                                 squats.type -> squats.value / 10
                                 else -> 0.0
                             }
-                            val workOutResult = WorkoutResult(
+                            val workoutTime = convertTimeStringToMinutes(timerTextView.text.toString())
+
+                           val workOutResult = WorkoutResult(
                                 0,
                                 value.postureType,
                                 value.repetition,
                                 value.confidence,
                                 System.currentTimeMillis(),
-                                calorie * value.repetition
+                                calorie * value.repetition,
+                               workoutTime
                             )
                             resultViewModel.insert(workOutResult)
                         }
