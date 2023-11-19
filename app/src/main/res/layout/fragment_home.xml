@@ -68,21 +68,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/progress_image"
-            android:indeterminate="true"
-            android:indeterminateTint="@android:color/white"
+            android:indeterminateOnly="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@+id/exercise_left"
             android:layout_marginStart="@dimen/margin_xlarge"/>
-
         <TextView
             android:id="@+id/progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/white"
+            android:textColor="@color/primaryColor"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
