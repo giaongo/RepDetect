@@ -13,7 +13,7 @@ import com.example.poseexercise.data.results.WorkoutResultDao
 
 @Database(
     entities = [Plan::class, WorkoutResult::class],
-    version = 2,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(DateConverters::class)

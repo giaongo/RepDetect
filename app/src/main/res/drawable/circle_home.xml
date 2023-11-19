@@ -5,19 +5,19 @@
             android:shape="ring"
             android:thicknessRatio="8"
             android:useLevel="false">
-            <solid android:color="@color/gray"/>
+            <solid android:color="@color/primaryColor"/>
         </shape>
     </item>
     <item>
         <rotate
             android:fromDegrees="270"
             android:toDegrees="270">
-    <shape
-        android:shape="ring"
-        android:thicknessRatio="8"
-        android:useLevel="true">
-        <solid android:color="@color/primaryColor"/>
-    </shape>
+            <shape
+                android:shape="ring"
+                android:thicknessRatio="8"
+                android:useLevel="true">
+                <solid android:color="@color/white"/>
+            </shape>
         </rotate>
     </item>
 </layer-list>

@@ -67,24 +67,28 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_xlarge"
             android:contentDescription="@string/progress_image"
-            android:indeterminate="true"
-            android:indeterminateTint="@android:color/white"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/circle_home"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.802"
             app:layout_constraintStart_toEndOf="@+id/exercise_left"
-            android:layout_marginStart="@dimen/margin_xlarge"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.47" />
 
         <TextView
             android:id="@+id/progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:textSize="11sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
-            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintHorizontal_bias="0.50"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
             app:layout_constraintTop_toTopOf="@+id/progress_bar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -100,12 +104,27 @@
         android:layout_marginTop="@dimen/margin_medium"
         tools:listitem="@layout/card_recent_activity"/>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="338dp"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
         android:layout_gravity="center"
+        android:orientation="vertical"
         android:background="@drawable/rounded_bigrectangle">
+
+        <!-- TextView for No Activity Message -->
+        <TextView
+            android:id="@+id/no_activity_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_activities_yet"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/recentActivityRecyclerView"
+            app:layout_constraintEnd_toEndOf="@+id/recentActivityRecyclerView" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recentActivityRecyclerView"
@@ -117,8 +136,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/card_recent_activity"/>
-    </androidx.core.widget.NestedScrollView>
+            tools:listitem="@layout/card_recent_activity" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

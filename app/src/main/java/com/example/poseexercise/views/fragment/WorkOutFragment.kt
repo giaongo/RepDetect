@@ -43,6 +43,7 @@ import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.util.MyApplication
+import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.MyUtils.Companion.databaseNameToClassification
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
@@ -112,7 +113,7 @@ class WorkOutFragment : Fragment() {
             this, ViewModelProvider.AndroidViewModelFactory
                 .getInstance(requireActivity().application)
         )[CameraXViewModel::class.java]
-        resultViewModel =  ResultViewModel(MyApplication.getInstance())
+        resultViewModel = ResultViewModel(MyApplication.getInstance())
     }
 
     override fun onCreateView(
@@ -172,6 +173,7 @@ class WorkOutFragment : Fragment() {
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+
             cameraViewModel.triggerClassification.value = true
         }
 
@@ -191,15 +193,37 @@ class WorkOutFragment : Fragment() {
             cameraViewModel.triggerClassification.value = false
         }
 
+        // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
         // Complete the exercise
+        val sitUp = Postures.sitUp
+        val pushUps = Postures.pushups
+        val lunges = Postures.lunges
+        val squats = Postures.squats
         buttonCompleteExercise.setOnClickListener {
             textToSpeech("Workout Complete")
             cameraViewModel.postureLiveData.value?.let {
                 //val builder = StringBuilder()
-                for((_,value) in it) {
+                for ((_, value) in it) {
                     if (value.repetition != 0) {
                         lifecycleScope.launch {
-                            val workOutResult = WorkoutResult(0,value.postureType,value.repetition,value.confidence, System.currentTimeMillis())
+                            val calorie = when (value.postureType) {
+                                sitUp.type -> sitUp.value / 10
+                                pushUps.type -> pushUps.value / 10
+                                lunges.type -> lunges.value / 10
+                                squats.type -> squats.value / 10
+                                else -> 0.0
+                            }
+                            val workoutTime = convertTimeStringToMinutes(timerTextView.text.toString())
+
+                           val workOutResult = WorkoutResult(
+                                0,
+                                value.postureType,
+                                value.repetition,
+                                value.confidence,
+                                System.currentTimeMillis(),
+                                calorie * value.repetition,
+                               workoutTime
+                            )
                             resultViewModel.insert(workOutResult)
                         }
                     }
@@ -219,17 +243,18 @@ class WorkOutFragment : Fragment() {
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             // update MainActivity static postureResultData based on the postureLiveData
-            Log.d("WorkoutFragment","complete button clicked")
+            Log.d("WorkoutFragment", "complete button clicked")
 
             // update the workoutResultData in MainActivity
             cameraViewModel.postureLiveData.value?.let {
                 val builder = StringBuilder()
-                for((_,value) in it) {
+                for ((_, value) in it) {
                     if (value.repetition != 0) {
                         builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
                     }
                 }
-                if(builder.toString().isNotEmpty()) MainActivity.workoutResultData = builder.toString()
+                if (builder.toString().isNotEmpty()) MainActivity.workoutResultData =
+                    builder.toString()
             }
 
             // stop triggering classification process
@@ -256,7 +281,6 @@ class WorkOutFragment : Fragment() {
         cameraFlipFAB.setOnClickListener {
             toggleCameraLens()
         }
-
 
         // initialize the list of plan exercise to be filled from database
         val databaseExercisePlan = mutableListOf<ExercisePlan>()
@@ -291,7 +315,6 @@ class WorkOutFragment : Fragment() {
 
         }
 
-
         //Declare all the only pose exercise
         val onlyExercise = listOf("squats", "pushups_down", "lunges", "situp_up")
         val onlyPose = listOf("yoga")
@@ -322,17 +345,17 @@ class WorkOutFragment : Fragment() {
                         if (repetition==null || repetition==0){
                             repetition = HighCount
                         }
-                        if(!data.isComplete && (value.repetition >= repetition)) {
+                        if (!data.isComplete && (value.repetition >= repetition)) {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
 
                             // inform the user about completion only once
                             textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
 
-                        } else if (data.isComplete){
+                        } else if (data.isComplete) {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
-                        } else{
+                        } else {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, false)
                         }
@@ -345,7 +368,6 @@ class WorkOutFragment : Fragment() {
                         val exerciseList = exerciseLog.getExerciseDataList()
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
-
                     }
                 } else if (key in onlyPose){
                     // Implementation of pose confidence
@@ -370,12 +392,12 @@ class WorkOutFragment : Fragment() {
     }
 
 
-    private fun textToSpeech(name: String){
+    private fun textToSpeech(name: String) {
         ttf = TextToSpeech(context, TextToSpeech.OnInitListener {
-            if (it == TextToSpeech.SUCCESS){
+            if (it == TextToSpeech.SUCCESS) {
                 ttf.language = Locale.US
                 ttf.setSpeechRate(1.0f)
-                ttf.speak(name,TextToSpeech.QUEUE_ADD, null)
+                ttf.speak(name, TextToSpeech.QUEUE_ADD, null)
             }
         })
         if(name == "Workout Started"){
@@ -386,14 +408,13 @@ class WorkOutFragment : Fragment() {
     }
 
 
-
     @SuppressLint("SetTextI18n")
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         currentExerciseTextView.visibility = View.VISIBLE
         currentRepetitionTextView.visibility = View.VISIBLE
         val pushUpData = exerciseLog.getExerciseData(key)
         currentExerciseTextView.text = exerciseNameToDisplay(key)
-        currentRepetitionTextView.text = "count: "+pushUpData?.repetitions.toString()
+        currentRepetitionTextView.text = "count: " + pushUpData?.repetitions.toString()
     }
 
 
@@ -732,7 +753,7 @@ class WorkOutFragment : Fragment() {
     /**
      * Transform the posture result text to be displayed in the CompletedFragment
      */
-    internal fun transformText(input:String): String {
+    internal fun transformText(input: String): String {
         val regex = Regex("_")
         if (regex.containsMatchIn(input)) {
             return regex.replace(input.lowercase(), " ")
@@ -758,5 +779,13 @@ class WorkOutFragment : Fragment() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
+    }
+
+    class TypedConstant(val type: String, val value: Double)
+    object Postures {
+        val pushups = TypedConstant("pushups_down", 3.2)
+        val lunges = TypedConstant("lunges", 3.0)
+        val squats = TypedConstant("squats", 3.8)
+        val sitUp = TypedConstant("situp_up", 5.0)
     }
 }

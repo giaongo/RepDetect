@@ -9,30 +9,30 @@ object Constants {
                 id = 1,
                 name = "Push up",
                 image = R.drawable.push_up,
-                calorie = 47,
+                calorie = 3.2,
                 level = "Intermediate"
             ),
             Exercise(
                 id = 2,
                 name = "Lunges",
                 image = R.drawable.reverse_lunges,
-                calorie = 35,
+                calorie = 3.0,
                 level = "Beginner"
             ),
             Exercise(
                 id = 3,
                 name = "Squats",
                 image = R.drawable.squats,
-                calorie = 32,
+                calorie = 3.8,
                 level = "Beginner"
             ),
             Exercise(
                 id = 4,
                 name = "Sit Up",
                 image = R.drawable.sit_ups,
-                calorie = 45,
+                calorie = 5.0,
                 level = "Advance"
-            )
+            ),
         )
     }
 }
