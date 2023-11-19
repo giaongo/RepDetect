@@ -5,7 +5,7 @@
             android:shape="ring"
             android:thicknessRatio="8"
             android:useLevel="false">
-            <solid android:color="@color/primaryColor"/>
+            <solid android:color="@color/gray"/>
         </shape>
     </item>
     <item>
@@ -16,7 +16,7 @@
         android:shape="ring"
         android:thicknessRatio="8"
         android:useLevel="true">
-        <solid android:color="#DDD"/>
+        <solid android:color="@color/primaryColor"/>
     </shape>
         </rotate>
     </item>
