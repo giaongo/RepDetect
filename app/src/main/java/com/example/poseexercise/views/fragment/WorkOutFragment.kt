@@ -319,8 +319,6 @@ class WorkOutFragment : Fragment() {
         val onlyExercise = listOf("squats", "pushups_down", "lunges", "situp_up")
         val onlyPose = listOf("yoga")
 
-
-
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
             for ((key, value) in mapResult) {
