@@ -39,12 +39,12 @@ import com.example.poseexercise.R
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
-import com.example.poseexercise.posedetector.PoseDetectorProcessor
-import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.data.results.WorkoutResult
+import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.MyUtils.Companion.databaseNameToClassification
+import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.util.VisionImageProcessor
 import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.viewmodels.HomeViewModel
@@ -392,14 +392,15 @@ class WorkOutFragment : Fragment() {
     }
 
 
+    @Suppress("DEPRECATION")
     private fun textToSpeech(name: String) {
-        ttf = TextToSpeech(context, TextToSpeech.OnInitListener {
+        ttf = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
                 ttf.language = Locale.US
                 ttf.setSpeechRate(1.0f)
                 ttf.speak(name, TextToSpeech.QUEUE_ADD, null)
             }
-        })
+        }
         if(name == "Workout Started"){
             startMediaTimer()
             timerTextView.visibility = View.VISIBLE
