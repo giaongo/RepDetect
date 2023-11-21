@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,29 +8,31 @@
     tools:context=".views.activity.MainActivity"
     tools:ignore="MissingClass">
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-    >
+        android:layout_height="match_parent">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph" />
-    </FrameLayout>
+            app:navGraph="@navigation/nav_graph"
+            app:layout_constraintBottom_toTopOf="@id/nav_view"/>
 
     <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cbn_selectedColor="@color/white"
-        app:cbn_fabBg="@color/primaryColor"
         app:cbn_bg="@color/black"
+        app:cbn_fabBg="@color/primaryColor"
+        app:cbn_selectedColor="@color/white"
         app:cbn_unSelectedColor="@color/white"
-       android:layout_alignBottom="@id/fragmentContainer"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</RelativeLayout>
+</FrameLayout>
