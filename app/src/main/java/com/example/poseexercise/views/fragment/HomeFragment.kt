@@ -22,6 +22,7 @@ import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.RecentActivityItem
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.util.MyApplication
+import com.example.poseexercise.util.MyUtils
 import com.example.poseexercise.viewmodels.HomeViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import kotlinx.coroutines.Dispatchers
@@ -91,7 +92,7 @@ class HomeFragment : Fragment() {
             val recentActivityItems = sortedWorkoutResults?.mapIndexed { index, it ->
                 RecentActivityItem(
                     imageResId = imageResources[index % imageResources.size],
-                    exerciseType = it.exerciseName,
+                    exerciseType = MyUtils.exerciseNameToDisplay(it.exerciseName),
                     reps = "${it.repeatedCount} reps"
                 )
             }
