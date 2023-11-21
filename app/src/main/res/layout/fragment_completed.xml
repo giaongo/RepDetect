@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/backgroundFill"
     tools:context=".views.fragment.CompletedFragment">
 
+    <!-- Main ConstraintLayout for the CompletedFragment -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
-        >
+        android:orientation="vertical">
 
+        <!-- ImageView for the Completed Icon -->
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -27,35 +28,38 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ImageContrastCheck" />
 
+        <!-- Title TextView for Completed-->
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
+            android:text="@string/completed_title"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:text="@string/completed_title"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintHorizontal_bias="0.511"
             app:layout_constraintStart_toStartOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+        <!-- Body TextView -->
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:textSize="20sp"
             android:text="@string/good_job_body"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/textView4"
             app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toStartOf="@+id/textView4"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
+        <!-- Body TextView with motivational text-->
         <TextView
             android:id="@+id/textView5"
-            android:layout_width="215dp"
-            android:layout_height="39dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/completed_announcement"
             android:textAlignment="center"
@@ -65,9 +69,10 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3"
             tools:ignore="TextSizeCheck" />
 
+        <!-- CardView for Workout Results -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="250dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:backgroundTint="@color/black"
@@ -77,11 +82,14 @@
             app:layout_constraintStart_toStartOf="@+id/textView5"
             app:layout_constraintTop_toBottomOf="@+id/textView5">
 
+            <!-- LinearLayout for Workout Timer and Results -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="20dp">
+
+                <!-- TextView for Workout Timer -->
                 <TextView
                     android:id="@+id/workoutTimer_textView"
                     android:layout_width="match_parent"
@@ -93,23 +101,26 @@
                     android:textStyle="bold"
                     tools:ignore="UseCompatTextViewDrawableXml"
                     tools:text="30 mins" />
+
+                <!-- TextView for Workout Results -->
                 <TextView
                     android:id="@+id/workoutResult_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:padding="10dp"
-                    android:textColor="@color/white"
-                    android:singleLine="false"
                     android:maxLines="10"
+                    android:padding="10dp"
+                    android:singleLine="false"
+                    android:textColor="@color/white"
                     tools:text="Squat: 50, Push-up: 50, Sit-up: 50" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Button to Go to Home -->
         <Button
             android:id="@+id/goToHomeFromComplete"
-            android:layout_width="158dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:layout_marginBottom="90dp"

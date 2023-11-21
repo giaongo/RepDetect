@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.activity.MainActivity"
@@ -19,20 +18,21 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph"
-            app:layout_constraintBottom_toTopOf="@id/nav_view"/>
+            app:layout_constraintBottom_toTopOf="@id/nav_view"
+            app:navGraph="@navigation/nav_graph" />
 
-    <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cbn_bg="@color/black"
-        app:cbn_fabBg="@color/primaryColor"
-        app:cbn_selectedColor="@color/white"
-        app:cbn_unSelectedColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Custom CurvedBottomNavigationView -->
+        <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cbn_bg="@color/black"
+            app:cbn_fabBg="@color/primaryColor"
+            app:cbn_selectedColor="@color/white"
+            app:cbn_unSelectedColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

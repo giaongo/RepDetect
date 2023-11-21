@@ -1,59 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".onboarding.FirstOnboardingFragment">
 
-    <RelativeLayout
+    <!-- FrameLayout to contain background image and overlay -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <!-- Background image -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/equipment_description"
+            android:scaleType="fitXY"
+            android:src="@drawable/equipment2" />
+
+        <!-- ImageView for the overlay -->
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_marginTop="350dp"
+            android:alpha="0.4"
+            android:contentDescription="@string/overlay"
+            android:scaleType="fitXY"
+            android:src="@drawable/overlay" />
+    </FrameLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="534dp">
+    <!-- Main title -->
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:text="@string/elevate_your_workout_experience"
+        android:textSize="32sp"
+        android:textStyle="bold" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/equipment2" />
+    <!-- Sub title -->
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="0dp"
+        android:gravity="center"
+        android:text="@string/empower_your_fitness_journey"
+        android:textSize="22sp" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="137dp"
-                    android:layout_marginTop="430dp"
-                    android:alpha="0.9"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/overlay" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="377dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="5dp"
-                android:gravity="center"
-                android:text="@string/elevate_your_workout_experience"
-                android:textSize="33sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="382dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="0dp"
-                android:gravity="center"
-                android:text="@string/empower_your_fitness_journey"
-                android:textSize="22sp" />
-        </LinearLayout>
-
-    </RelativeLayout>
-</FrameLayout>
+</LinearLayout>

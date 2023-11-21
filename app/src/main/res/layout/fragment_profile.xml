@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profileFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundFill"
-    tools:context=".views.fragment.ProfileFragment">
+    android:background="@color/backgroundFill">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="767dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        <!-- CardView -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/list_item_height"
+        app:cardForegroundColor="@color/primaryColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/list_item_height"
-            app:cardForegroundColor="@color/primaryColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+    </com.google.android.material.card.MaterialCardView>
 
-        </com.google.android.material.card.MaterialCardView>
-
+        <!-- ImageView for user profile image -->
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -36,6 +31,7 @@
             app:layout_constraintStart_toStartOf="@+id/card"
             app:layout_constraintTop_toBottomOf="@+id/card" />
 
+        <!-- TextView for user name -->
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
@@ -49,6 +45,7 @@
             app:layout_constraintStart_toStartOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+        <!-- TextView for weekly result information -->
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
@@ -60,33 +57,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
-        <TextView
-            android:id="@+id/totalCaloriesTextView"
-            android:layout_width="408dp"
-            android:layout_height="37dp"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="@string/total_calories"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+    <!-- Total Calories TextView -->
+    <TextView
+        android:id="@+id/totalCaloriesTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/total_calories"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart"
-            android:layout_width="412dp"
-            android:layout_height="318dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2">
+    <!-- BarChart for visual representation of data -->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+    </com.github.mikephil.charting.charts.BarChart>
 
-            <!-- Your chart configurations go here -->
-
-        </com.github.mikephil.charting.charts.BarChart>
-
+        <!-- TextView for summary -->
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
@@ -101,6 +98,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chart" />
 
+        <!-- LinearLayout for summary information -->
         <LinearLayout
             android:id="@+id/summary_container"
             android:layout_width="wrap_content"
@@ -111,12 +109,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3">
 
+            <!-- CardView for total time -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card1"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/margin_small">
+                android:layout_margin="@dimen/margin_small"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -125,12 +125,14 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
+                    <!-- ImageView for time icon -->
                     <ImageView
-                        android:layout_width="50dp"
+                        android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:contentDescription="@string/content_description_media"
                         app:srcCompat="@drawable/time" />
 
+                    <!-- TextView for total time -->
                     <TextView
                         android:id="@+id/total_time"
                         android:layout_width="wrap_content"
@@ -139,6 +141,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- CardView for total exercise -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card2"
                 android:layout_width="100dp"
@@ -153,12 +156,14 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
+                    <!-- ImageView for dumbbell icon -->
                     <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:contentDescription="@string/content_description_media"
                         app:srcCompat="@drawable/dumbell" />
 
+                    <!-- TextView for total exercise -->
                     <TextView
                         android:id="@+id/total_exercise"
                         android:layout_width="wrap_content"
@@ -167,6 +172,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- CardView for progress information -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card3"
                 android:layout_width="100dp"
@@ -181,12 +187,7 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <!--<ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:contentDescription="@string/content_description_media"
-                        app:srcCompat="@drawable/progressimg" />-->
-
+                    <!-- ProgressBar for progress -->
                     <ProgressBar
                         android:id="@+id/progress_bar"
                         android:layout_width="wrap_content"
@@ -199,9 +200,9 @@
                         app:layout_constraintHorizontal_bias="0.796"
                         app:layout_constraintStart_toEndOf="@+id/exercise_left"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.313"
-                        tools:progress="80" />
+                        app:layout_constraintVertical_bias="0.313"/>
 
+                    <!-- TextView for progress percentage -->
                     <TextView
                         android:id="@+id/percentage"
                         android:layout_width="wrap_content"
@@ -214,5 +215,3 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</FrameLayout>
