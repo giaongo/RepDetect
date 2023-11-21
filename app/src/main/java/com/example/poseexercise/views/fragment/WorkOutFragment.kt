@@ -288,7 +288,7 @@ class WorkOutFragment : Fragment() {
         // Initialize Exercise Log
         val exerciseLog = ExerciseLog()
 
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         // get the list of plans from database
         lifecycleScope.launch (Dispatchers.IO) {
@@ -754,7 +754,7 @@ class WorkOutFragment : Fragment() {
     /**
      * Transform the posture result text to be displayed in the CompletedFragment
      */
-    internal fun transformText(input: String): String {
+    private fun transformText(input: String): String {
         val regex = Regex("_")
         if (regex.containsMatchIn(input)) {
             return regex.replace(input.lowercase(), " ")

@@ -47,7 +47,6 @@ class HomeFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var progressPercentage: TextView
     private var workoutResults: List<WorkoutResult>? = null
-    private lateinit var workOutTime: TextView
     private lateinit var appRepository: AppRepository
 
     override fun onCreateView(
@@ -62,8 +61,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Initialize RecyclerView and its adapter for recent activity
-        progressText = view.findViewById<TextView>(R.id.exercise_left)
-        recyclerView = view.findViewById<RecyclerView>(R.id.today_plans)
+        progressText = view.findViewById(R.id.exercise_left)
+        recyclerView = view.findViewById(R.id.today_plans)
         recentActivityRecyclerView = view.findViewById(R.id.recentActivityRecyclerView)
         recentActivityAdapter = RecentActivityAdapter(emptyList())
         recentActivityRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -104,7 +103,7 @@ class HomeFragment : Fragment() {
                 recentActivityRecyclerView.isVisible = false
                 // Show a message or handle the empty case as per your UI requirements
                 val noActivityMessage = view.findViewById<TextView>(R.id.no_activity_message)
-                noActivityMessage.text = "No activities yet"
+                noActivityMessage.text = getString(R.string.no_activities_yet)
                 noActivityMessage.isVisible = true
             } else {
                 recentActivityRecyclerView.isVisible = true
@@ -143,7 +142,7 @@ class HomeFragment : Fragment() {
         progressText.text = "${notCompletePlanList?.size} exercise left"
 
         if (planList?.isEmpty() == true) {
-            noPlanTV.text = "There is no plan set at the moment"
+            noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
         }
 
         recyclerView.adapter = adapter
@@ -215,7 +214,7 @@ class HomeFragment : Fragment() {
             val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
             val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
 
-            progressBar?.progress = cappedProgress.toInt()
+            progressBar?.progress = cappedProgress
             progressTextView?.text = String.format("%d%%", cappedProgress)
         } else {
             // If progressPercentage is 0 or less, hide the progress views

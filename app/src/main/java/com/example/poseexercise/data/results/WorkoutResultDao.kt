@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-
 interface WorkoutResultDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: WorkoutResult)

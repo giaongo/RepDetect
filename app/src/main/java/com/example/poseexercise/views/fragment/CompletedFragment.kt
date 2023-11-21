@@ -19,13 +19,9 @@ class CompletedFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         val view: View = inflater.inflate(R.layout.fragment_completed, container, false)
-
         navigateToHomeButton = view.findViewById(R.id.goToHomeFromComplete)
-
         navigateToHomeButton.setOnClickListener {
-
             Navigation.findNavController(view)
                 .navigate(R.id.action_completedFragment_to_homeFragment2)
         }

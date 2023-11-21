@@ -55,7 +55,7 @@ class OnboardingActivity : AppCompatActivity() {
             }
             //Update the button text to "Get Started" on the last fragment
             if (viewPager.currentItem == fragments.size - 1) {
-                nextButton.text = "Get Started"
+                nextButton.text = getString(R.string.get_started)
             }
         }
     }

@@ -22,8 +22,6 @@ import android.graphics.Paint
 import com.example.poseexercise.views.graphic.GraphicOverlay.Graphic
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
-import java.lang.Math.max
-import java.lang.Math.min
 import java.util.Locale
 
 /** Draw the detected pose in preview. */
@@ -38,13 +36,12 @@ internal constructor(
 ) : Graphic(overlay) {
   private var zMin = java.lang.Float.MAX_VALUE
   private var zMax = java.lang.Float.MIN_VALUE
-  private val classificationTextPaint: Paint
+  private val classificationTextPaint: Paint = Paint()
   private val leftPaint: Paint
   private val rightPaint: Paint
   private val whitePaint: Paint
 
   init {
-    classificationTextPaint = Paint()
     classificationTextPaint.color = Color.WHITE
     classificationTextPaint.textSize = POSE_CLASSIFICATION_TEXT_SIZE
     classificationTextPaint.setShadowLayer(5.0f, 0f, 0f, Color.BLACK)
@@ -85,8 +82,8 @@ internal constructor(
     for (landmark in landmarks) {
       drawPoint(canvas, landmark, whitePaint)
       if (visualizeZ && rescaleZForVisualization) {
-        zMin = min(zMin, landmark.position3D.z)
-        zMax = max(zMax, landmark.position3D.z)
+        zMin = kotlin.math.min(zMin, landmark.position3D.z)
+        zMax = kotlin.math.max(zMax, landmark.position3D.z)
       }
     }
 
@@ -179,7 +176,7 @@ internal constructor(
     }
   }
 
-  internal fun drawPoint(canvas: Canvas, landmark: PoseLandmark, paint: Paint) {
+  private fun drawPoint(canvas: Canvas, landmark: PoseLandmark, paint: Paint) {
     val point = landmark.position3D
     updatePaintColorByZValue(
       paint,
@@ -193,7 +190,7 @@ internal constructor(
     canvas.drawCircle(translateX(point.x), translateY(point.y), DOT_RADIUS, paint)
   }
 
-  internal fun drawLine(
+  private fun drawLine(
     canvas: Canvas,
     startLandmark: PoseLandmark?,
     endLandmark: PoseLandmark?,
@@ -225,9 +222,9 @@ internal constructor(
 
   companion object {
 
-    private val DOT_RADIUS = 6.0f
-    private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 0.0f
-    private val STROKE_WIDTH = 5.0f
-    private val POSE_CLASSIFICATION_TEXT_SIZE = 0.0f
+    private const val DOT_RADIUS = 6.0f
+    private const val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 0.0f
+    private const val STROKE_WIDTH = 5.0f
+    private const val POSE_CLASSIFICATION_TEXT_SIZE = 0.0f
   }
 }
