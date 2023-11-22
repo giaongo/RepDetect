@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/margin_small"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
@@ -12,7 +12,7 @@
     <!-- Horizontal LinearLayout to contain image and text -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="@dimen/list_item_small"
         android:orientation="horizontal">
 
         <!-- ImageView for displaying the exercise image -->
@@ -37,10 +37,10 @@
                 android:id="@+id/exercise_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/margin_small"
                 android:text="@string/sit_up"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_normal"
                 android:textStyle="bold" />
 
             <!-- Exercise repetition details -->
@@ -48,10 +48,10 @@
                 android:id="@+id/exercise_rep"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="@dimen/margin_medium"
                 android:text="@string/sit_up_a_day"
                 android:textColor="@color/textGray"
-                android:textSize="14sp" />
+                android:textSize="@dimen/text_normal" />
 
         </LinearLayout>
     </LinearLayout>

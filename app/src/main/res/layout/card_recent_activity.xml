@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingHorizontal="20dp"
-    android:paddingVertical="10dp">
+    android:paddingHorizontal="@dimen/padding_medium"
+    android:paddingVertical="@dimen/padding_small">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="23dp"
         android:layout_height="23dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/margin_small"
         android:src="@drawable/blue" />
 
     <!-- Exercise Details -->
@@ -19,7 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/padding_small"
         android:layout_gravity="center_vertical">
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/textViewExerciseType"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/margin_small"
             android:layout_marginEnd="@dimen/text_normal"
             android:text="@string/reps"
             android:textSize="@dimen/text_normal" />
