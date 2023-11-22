@@ -12,5 +12,9 @@
     <dimen name="text_label">18sp</dimen>
     <dimen name="text_normal">16sp</dimen>
 
+<!--    padding-->
+    <dimen name="padding_small">10dp</dimen>
+    <dimen name="padding_medium">20dp</dimen>
+    <dimen name="padding_large">30dp</dimen>
 
 </resources>
