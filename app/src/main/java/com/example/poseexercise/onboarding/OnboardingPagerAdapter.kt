@@ -4,7 +4,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-// Define the OnboardingPagerAdapter class, responsible for managing onboarding fragments
+/**
+ * Define the OnboardingPagerAdapter class, responsible for managing onboarding fragments
+ */
 class OnboardingPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
     // List of fragments to be displayed in the view pager

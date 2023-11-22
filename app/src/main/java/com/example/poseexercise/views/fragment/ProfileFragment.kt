@@ -288,6 +288,6 @@ class ProfileFragment : Fragment() {
         val primaryColor = ContextCompat.getColor(requireContext(), R.color.primaryColor)
 
         return totalCaloriesPerWeek
-            .map { (key, value) -> if (value > 0) primaryColor else Color.TRANSPARENT }
+            .map { (_, value) -> if (value > 0) primaryColor else Color.TRANSPARENT }
     }
 }
