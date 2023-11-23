@@ -10,7 +10,7 @@ data class Plan(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val exercise: String,
-    val calories: Int,
+    val calories: Double,
     val repeatCount: Int,
     val selectedDays: String,
     var completed: Boolean = false,
