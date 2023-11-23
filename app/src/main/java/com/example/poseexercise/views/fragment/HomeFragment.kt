@@ -23,11 +23,13 @@ import com.example.poseexercise.data.results.RecentActivityItem
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.MyUtils
+import com.example.poseexercise.viewmodels.AddPlanViewModel
 import com.example.poseexercise.viewmodels.HomeViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import kotlin.math.min
@@ -50,6 +52,7 @@ class HomeFragment : Fragment() {
     private var workoutResults: List<WorkoutResult>? = null
     private lateinit var workOutTime: TextView
     private lateinit var appRepository: AppRepository
+    private lateinit var addPlanViewModel: AddPlanViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,6 +78,7 @@ class HomeFragment : Fragment() {
         appRepository = AppRepository(requireActivity().application)
         // Initialize ViewModel
         resultViewModel = ResultViewModel(MyApplication.getInstance())
+        addPlanViewModel = AddPlanViewModel(MyApplication.getInstance())
         lifecycleScope.launch {
             val workoutResults = resultViewModel.getAllResult()
             // Call the function to load data and set up the chart
@@ -123,12 +127,20 @@ class HomeFragment : Fragment() {
         planList?.let {
             if (it.isNotEmpty()) {
                 it.map { plan ->
+                    if(plan.timeCompleted?.let { it1 -> getDayCompleted(it1) } != today){
+                        lifecycleScope.launch {
+                            addPlanViewModel.updateComplete(false, null, plan.id)
+                            Log.d(TAG, "update complete status for plan")
+                        }
+                    }
                     Log.d(TAG, "Exercise is ${plan.exercise}")
+                    Log.d(TAG, "plan completed on ${plan.timeCompleted?.let { it1 -> getDayCompleted(it1) }}")
                 }
             } else {
                 Log.d(TAG, "plan list is empty")
             }
         }
+
 //        Display the not completed plans
         notCompletePlanList?.let { adapter.setPlans(it) }
         progressText.text = "${notCompletePlanList?.size} exercise left"
@@ -204,6 +216,17 @@ class HomeFragment : Fragment() {
             val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
             progressBar?.visibility = View.GONE
             progressTextView?.visibility = View.GONE
+        }
+    }
+
+    // Get the day from which the plan was marked as complete
+    private fun getDayCompleted(time: Long): String? {
+        return try {
+            val sdf = SimpleDateFormat("EEEE")
+            val netDate = Date(time)
+            sdf.format(netDate)
+        } catch (e: Exception) {
+            e.toString()
         }
     }
 
