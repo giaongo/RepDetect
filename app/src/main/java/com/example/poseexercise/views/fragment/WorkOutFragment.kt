@@ -317,27 +317,28 @@ class WorkOutFragment : Fragment() {
 
         //Declare all the only pose exercise
         val onlyExercise = listOf("squats", "pushups_down", "lunges", "situp_up")
-        val onlyPose = listOf("yoga")
+        val onlyPose = listOf("warrior")
+        val allExercise = listOf("squats", "pushups_down", "lunges", "situp_up", "warrior")
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
             for ((key, value) in mapResult) {
 
-                // Visualize the repetition exercise data
-                if (key in onlyExercise) {
+                Log.d("logging_key: ", "${key}: ${value.confidence}")
 
-                    // make confidence marker invisible
-                    confIndicatorView.visibility = View.INVISIBLE
+                // Visualize the repetition exercise data
+                if (key in allExercise) {
 
                     // get the data from exercise log of specific exercise
                     val data = exerciseLog.getExerciseData(key)
 
-                    if (data == null) {
+                    if (key in onlyExercise && data == null) {
                         // Adding exercise for the first time
                         exerciseLog.addExercise(key, value.repetition, value.confidence, false)
 
-                    } else if (value.repetition == data.repetitions.plus(1)) {
+                    } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
 
+                        confIndicatorView.visibility = View.INVISIBLE
                         // check if the exercise target is complete
                         var repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
                         if (repetition==null || repetition==0){
@@ -358,7 +359,6 @@ class WorkOutFragment : Fragment() {
                             exerciseLog.addExercise(key, value.repetition, value.confidence, false)
                         }
 
-
                         // display Current result when the increment happen
                         displayResult(key, exerciseLog)
 
@@ -366,13 +366,19 @@ class WorkOutFragment : Fragment() {
                         val exerciseList = exerciseLog.getExerciseDataList()
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
+                    }else if (key in onlyPose && value.confidence > 0.5){
+                        // Implementation of pose confidence
+                        confIndicatorView.visibility = View.VISIBLE
+                        displayConfidence(value.confidence)
+
+                        currentExerciseTextView.visibility = View.VISIBLE
+                        currentRepetitionTextView.visibility = View.VISIBLE
+                        currentExerciseTextView.text = exerciseNameToDisplay(key)
+                        currentRepetitionTextView.text = (value.confidence*100).toString() + " %"
+
+                    }else if (key in onlyPose && value.confidence < 0.6){
+                        confIndicatorView.visibility = View.INVISIBLE
                     }
-                } else if (key in onlyPose){
-                    // Implementation of pose confidence
-                    confIndicatorView.visibility = View.VISIBLE
-                    displayConfidence(value.confidence)
-                } else{
-                    confIndicatorView.visibility = View.INVISIBLE
                 }
             }
 
@@ -388,7 +394,6 @@ class WorkOutFragment : Fragment() {
             }
         }
     }
-
 
     private fun textToSpeech(name: String) {
         ttf = TextToSpeech(context, TextToSpeech.OnInitListener {
@@ -410,9 +415,9 @@ class WorkOutFragment : Fragment() {
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         currentExerciseTextView.visibility = View.VISIBLE
         currentRepetitionTextView.visibility = View.VISIBLE
-        val pushUpData = exerciseLog.getExerciseData(key)
+        val data = exerciseLog.getExerciseData(key)
         currentExerciseTextView.text = exerciseNameToDisplay(key)
-        currentRepetitionTextView.text = "count: " + pushUpData?.repetitions.toString()
+        currentRepetitionTextView.text = "count: " + data?.repetitions.toString()
     }
 
 
