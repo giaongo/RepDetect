@@ -73,21 +73,16 @@ class HomeFragment : Fragment() {
         progressBar = view.findViewById(R.id.progress_bar)
         progressPercentage = view.findViewById(R.id.progress_text)
         appRepository = AppRepository(requireActivity().application)
-
         // Initialize ViewModel
         resultViewModel = ResultViewModel(MyApplication.getInstance())
         lifecycleScope.launch {
             val workoutResults = resultViewModel.getAllResult()
-
             // Call the function to load data and set up the chart
             loadDataAndSetupChart()
-
             // Sort WorkoutResult objects by timestamp in descending order
             val sortedWorkoutResults = workoutResults?.sortedByDescending { it.timestamp }
-
             // Transform WorkoutResult objects into RecentActivityItem objects
             val imageResources = arrayOf(R.drawable.blue, R.drawable.green, R.drawable.orange)
-
             // Transform WorkoutResult objects into RecentActivityItem objects
             val recentActivityItems = sortedWorkoutResults?.mapIndexed { index, it ->
                 RecentActivityItem(
@@ -96,10 +91,8 @@ class HomeFragment : Fragment() {
                     reps = "${it.repeatedCount} reps"
                 )
             }
-
             // Update the adapter with the transformed data
             recentActivityAdapter.updateData(recentActivityItems ?: emptyList())
-
             // Check if the recentActivityItems list is empty
             if (recentActivityItems.isNullOrEmpty()) {
                 recentActivityRecyclerView.isVisible = false
@@ -111,10 +104,8 @@ class HomeFragment : Fragment() {
                 recentActivityRecyclerView.isVisible = true
             }
         }
-
         // Initialize home view model, RecyclerView and its adapter for today's plans
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-
         // get the list of plans from database
         lifecycleScope.launch(Dispatchers.IO) {
             val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
@@ -129,7 +120,6 @@ class HomeFragment : Fragment() {
         planList = plan
         notCompletePlanList = notCompleted
         val adapter = PlanAdapter(requireContext())
-
         planList?.let {
             if (it.isNotEmpty()) {
                 it.map { plan ->
@@ -139,17 +129,15 @@ class HomeFragment : Fragment() {
                 Log.d(TAG, "plan list is empty")
             }
         }
-
-        planList?.let { adapter.setPlans(it) }
+//        Display the not completed plans
+        notCompletePlanList?.let { adapter.setPlans(it) }
         progressText.text = "${notCompletePlanList?.size} exercise left"
 
         if (planList?.isEmpty() == true) {
             noPlanTV.text = "There is no plan set at the moment"
         }
-
         recyclerView.adapter = adapter
         recyclerView.visibility = if (planList?.isNotEmpty() == true) View.VISIBLE else View.GONE
-
         progressBar.progress = percentage
         progressPercentage.text = percentage.toString()
         Log.d(TAG, "Progress is $percentage")
@@ -160,12 +148,10 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Fetch workout results asynchronously
             workoutResults = resultViewModel.getAllResult()
-
             // Filter workout results for today
             val todayWorkoutResults = workoutResults?.filter {
                 isToday()
             }
-
             // Observe exercise plans from the database
             withContext(Dispatchers.Main) {
                 appRepository.allPlans.observe(viewLifecycleOwner) { exercisePlans ->
@@ -190,18 +176,14 @@ class HomeFragment : Fragment() {
 
     private fun isToday(): Boolean {
         val todayCalendar = Calendar.getInstance()
-
         // Compare the current day with the day of the plans
         return isDaySelected(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
     }
-
     private fun isTodayPlan(selectedDays: String): Boolean {
         return isDaySelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK).toString())
     }
-
     private fun isDaySelected(day: String): Boolean {
         val todayCalendar = Calendar.getInstance()
-
         // Check if the selected day matches the current day of the week
         return day.contains(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
     }
@@ -212,17 +194,14 @@ class HomeFragment : Fragment() {
         if (progressPercentage > 0) {
             // Update progress views (ProgressBar and TextView)
             val cappedProgress = min(progressPercentage, 100)
-
             val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
             val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
-
             progressBar?.progress = cappedProgress.toInt()
             progressTextView?.text = String.format("%d%%", cappedProgress)
         } else {
             // If progressPercentage is 0 or less, hide the progress views
             val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
             val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
-
             progressBar?.visibility = View.GONE
             progressTextView?.visibility = View.GONE
         }
