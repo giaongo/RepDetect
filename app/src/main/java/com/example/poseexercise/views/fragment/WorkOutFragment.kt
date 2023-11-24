@@ -153,7 +153,7 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener {
-            // showing loading AI pose detection Model inforamtion to user
+            // showing loading AI pose detection Model information to user
             loadingTV.visibility = View.VISIBLE
             loadProgress.visibility = View.VISIBLE
             // Set the screenOn flag to true, preventing the screen from turning off
@@ -209,7 +209,6 @@ class WorkOutFragment : Fragment() {
         val databaseExercisePlan = mutableListOf<ExercisePlan>()
         // Initialize Exercise Log
         val exerciseLog = ExerciseLog()
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         // get the list of plans from database
         lifecycleScope.launch (Dispatchers.IO) {
             // get not completed exercise from database using coroutine
@@ -362,14 +361,15 @@ class WorkOutFragment : Fragment() {
     }
 
 
+    @Suppress("DEPRECATION")
     private fun textToSpeech(name: String) {
-        ttf = TextToSpeech(context, TextToSpeech.OnInitListener {
+        ttf = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
                 ttf.language = Locale.US
                 ttf.setSpeechRate(1.0f)
                 ttf.speak(name, TextToSpeech.QUEUE_ADD, null)
             }
-        })
+        }
         if(name == "Workout Started"){
             startMediaTimer()
             timerTextView.visibility = View.VISIBLE
@@ -716,7 +716,7 @@ class WorkOutFragment : Fragment() {
     /**
      * Transform the posture result text to be displayed in the CompletedFragment
      */
-    internal fun transformText(input: String): String {
+    private fun transformText(input: String): String {
         val regex = Regex("_")
         if (regex.containsMatchIn(input)) {
             return regex.replace(input.lowercase(), " ")

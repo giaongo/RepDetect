@@ -52,7 +52,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
     private lateinit var progressBar: ProgressBar
     private lateinit var progressPercentage: TextView
     private var workoutResults: List<WorkoutResult>? = null
-    private lateinit var workOutTime: TextView
     private lateinit var appRepository: AppRepository
     private lateinit var addPlanViewModel: AddPlanViewModel
     private lateinit var adapter: PlanAdapter
@@ -69,8 +68,8 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Initialize RecyclerView and its adapter for recent activity
-        progressText = view.findViewById<TextView>(R.id.exercise_left)
-        recyclerView = view.findViewById<RecyclerView>(R.id.today_plans)
+        progressText = view.findViewById(R.id.exercise_left)
+        recyclerView = view.findViewById(R.id.today_plans)
         recentActivityRecyclerView = view.findViewById(R.id.recentActivityRecyclerView)
         recentActivityAdapter = RecentActivityAdapter(emptyList())
         recentActivityRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -105,7 +104,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
                 recentActivityRecyclerView.isVisible = false
                 // Show a message or handle the empty case as per your UI requirements
                 val noActivityMessage = view.findViewById<TextView>(R.id.no_activity_message)
-                noActivityMessage.text = "No activities yet"
+                noActivityMessage.text = getString(R.string.no_activities_yet)
                 noActivityMessage.isVisible = true
             } else {
                 recentActivityRecyclerView.isVisible = true
@@ -149,9 +148,8 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
 
 //        Display the not completed plans
         progressText.text = "${notCompletePlanList?.size} exercise left"
-
         if (notCompletePlanList?.isEmpty() == true) {
-            noPlanTV.text = "There is no plan set at the moment"
+            noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
         }
         recyclerView.adapter = adapter
         adapter.setListener(this)
@@ -176,11 +174,10 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
                 appRepository.allPlans.observe(viewLifecycleOwner) { exercisePlans ->
                     // Filter exercise plans for today
                     val todayExercisePlans = exercisePlans?.filter { isTodayPlan(it.selectedDays) }
-
                     // Calculate progress and update UI
-                    val totalPlannedRepetitions = todayExercisePlans?.sumBy { it.repeatCount } ?: 0
+                    val totalPlannedRepetitions = todayExercisePlans?.sumOf { it.repeatCount } ?: 0
                     val totalCompletedRepetitions =
-                        todayWorkoutResults?.sumBy { it.repeatedCount } ?: 0
+                        todayWorkoutResults?.sumOf { it.repeatedCount } ?: 0
                     val progressPercentage = if (totalPlannedRepetitions != 0) {
                         ((totalCompletedRepetitions.toDouble() / totalPlannedRepetitions) * 100).toInt()
                     } else {
@@ -217,7 +214,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
             val cappedProgress = min(progressPercentage, 100)
             val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
             val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
-            progressBar?.progress = cappedProgress.toInt()
+            progressBar?.progress = cappedProgress
             progressTextView?.text = String.format("%d%%", cappedProgress)
         } else {
             // If progressPercentage is 0 or less, hide the progress views

@@ -18,8 +18,6 @@ package com.example.poseexercise.views.graphic;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import com.example.poseexercise.views.graphic.GraphicOverlay;
-
 
 /** Draw camera image to background. */
 public class CameraImageGraphic extends GraphicOverlay.Graphic {

@@ -27,12 +27,9 @@ import java.util.PriorityQueue;
 
 /**
  * Classifies {link Pose} based on given {@link PoseSample}s.
- *
  * <p>Inspired by K-Nearest Neighbors Algorithm with outlier filtering.
- * https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm
  */
 public class PoseClassifier {
-  private static final String TAG = "PoseClassifier";
   private static final int MAX_DISTANCE_TOP_K = 30;
   private static final int MEAN_DISTANCE_TOP_K = 10;
   // Note Z has a lower weight as it is generally less accurate than X & Y.

@@ -9,9 +9,11 @@
     <string name="kick_start">Kick start your journey by crafting a tailored workout plan that suits your needs and goals</string>
     <string name="create_a_workout">Create a workout plan to stay fit</string>
     <string name="next_onboarding">Next</string>
+    <string name="get_started">Get Started</string>
 
     <!-- Strings for homescreen -->
     <string name="mixed_text">20 <font fgcolor="#A9A9A9">x 3</font></string>
+    <string name="there_is_no_plan_set_at_the_moment">There is no plan set at the moment</string>
     <!--<string name="orange_rectangle">Progress Image</string>
     <string name="squats">Squats</string>
     <string name="lunges">Lunges</string>
