@@ -21,7 +21,7 @@ interface PlanDataDao {
 
     /** Get not completed plans from day of the week */
     @Query("SELECT * FROM plan_items WHERE selectedDays LIKE '%' || :day || '%' AND completed = 0")
-    fun getNotCompletePlanByDay(day: String?): List<Plan>
+    fun getNotCompletePlanByDay(day: String?): MutableList<Plan>
 
     /** Updating only time completed and complete value By plan id */
     @Query("UPDATE plan_items SET timeCompleted=:time, completed= :completed WHERE id = :id")
@@ -32,7 +32,6 @@ interface PlanDataDao {
     /** Delete a plan from the database */
     @Query("DELETE FROM plan_items WHERE id = :id")
     fun deletePlan(id: Int)
-
 
 }
 

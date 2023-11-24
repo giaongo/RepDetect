@@ -1,5 +1,6 @@
 package com.example.poseexercise.views.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
@@ -31,17 +32,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Collections
 import java.util.Date
 import kotlin.math.min
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), PlanAdapter.ItemListener {
     val TAG = "RepDetect Home Fragment"
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var resultViewModel: ResultViewModel
     private lateinit var recentActivityRecyclerView: RecyclerView
     private lateinit var recentActivityAdapter: RecentActivityAdapter
     private var planList: List<Plan>? = emptyList()
-    private var notCompletePlanList: List<Plan>? = emptyList()
+    private var notCompletePlanList: MutableList<Plan>? = Collections.emptyList()
     private var today: String = DateFormat.format("EEEE", Date()) as String
     private var percentage: Int = 0
     private lateinit var progressText: TextView
@@ -53,6 +55,7 @@ class HomeFragment : Fragment() {
     private lateinit var workOutTime: TextView
     private lateinit var appRepository: AppRepository
     private lateinit var addPlanViewModel: AddPlanViewModel
+    private lateinit var adapter: PlanAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,21 +123,24 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun updateResultFromDatabase(plan: List<Plan>?, notCompleted: List<Plan>?) {
+    private fun updateResultFromDatabase(plan: List<Plan>?, notCompleted: MutableList<Plan>?) {
         planList = plan
         notCompletePlanList = notCompleted
-        val adapter = PlanAdapter(requireContext())
+        adapter = PlanAdapter(requireContext())
         planList?.let {
             if (it.isNotEmpty()) {
                 it.map { plan ->
-                    if(plan.timeCompleted?.let { it1 -> getDayCompleted(it1) } != today){
+                    if (plan.timeCompleted?.let { it1 -> getDayCompleted(it1) } != today) {
                         lifecycleScope.launch {
                             addPlanViewModel.updateComplete(false, null, plan.id)
                             Log.d(TAG, "update complete status for plan")
                         }
                     }
                     Log.d(TAG, "Exercise is ${plan.exercise}")
-                    Log.d(TAG, "plan completed on ${plan.timeCompleted?.let { it1 -> getDayCompleted(it1) }}")
+                    Log.d(
+                        TAG,
+                        "plan completed on ${plan.timeCompleted?.let { it1 -> getDayCompleted(it1) }}"
+                    )
                 }
             } else {
                 Log.d(TAG, "plan list is empty")
@@ -142,14 +148,15 @@ class HomeFragment : Fragment() {
         }
 
 //        Display the not completed plans
-        notCompletePlanList?.let { adapter.setPlans(it) }
         progressText.text = "${notCompletePlanList?.size} exercise left"
 
-        if (planList?.isEmpty() == true) {
+        if (notCompletePlanList?.isEmpty() == true) {
             noPlanTV.text = "There is no plan set at the moment"
         }
         recyclerView.adapter = adapter
-        recyclerView.visibility = if (planList?.isNotEmpty() == true) View.VISIBLE else View.GONE
+        adapter.setListener(this)
+        notCompletePlanList?.let { adapter.setPlans(it) }
+        recyclerView.visibility = if (notCompletePlanList?.isNotEmpty() == true) View.VISIBLE else View.GONE
         progressBar.progress = percentage
         progressPercentage.text = percentage.toString()
         Log.d(TAG, "Progress is $percentage")
@@ -191,9 +198,11 @@ class HomeFragment : Fragment() {
         // Compare the current day with the day of the plans
         return isDaySelected(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
     }
+
     private fun isTodayPlan(selectedDays: String): Boolean {
         return isDaySelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK).toString())
     }
+
     private fun isDaySelected(day: String): Boolean {
         val todayCalendar = Calendar.getInstance()
         // Check if the selected day matches the current day of the week
@@ -230,4 +239,25 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // Delete the plan when user click on delete icon
+    override fun onItemClicked(planId: Int) {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        // Show a dialog for user to confirm the choice
+        builder
+            .setMessage("Are you sure you want to delete the plan?")
+            .setTitle("Delete plan")
+            .setPositiveButton("Delete") { dialog, which ->
+                // Delete the plan from database
+                lifecycleScope.launch {
+                    addPlanViewModel.deletePlan(planId)
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, which ->
+                // Cancel the action
+                dialog.dismiss()
+            }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
 }
