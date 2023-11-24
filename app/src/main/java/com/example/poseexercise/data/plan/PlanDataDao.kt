@@ -2,7 +2,6 @@ package com.example.poseexercise.data.plan
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -31,8 +30,8 @@ interface PlanDataDao {
     @Update
     suspend fun update(plan: Plan)
     /** Delete a plan from the database */
-    @Delete
-    fun deletePlan(plan: Plan)
+    @Query("DELETE FROM plan_items WHERE id = :id")
+    fun deletePlan(id: Int)
 
 
 }

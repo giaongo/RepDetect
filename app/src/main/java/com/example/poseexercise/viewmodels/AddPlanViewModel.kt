@@ -22,7 +22,7 @@ class AddPlanViewModel(application: Application): AndroidViewModel(application) 
         repository.updateCompleted(completedState,timeComplete,planId)
     }
     /** Delete a plan */
-    suspend fun deletePlan(plan: Plan) = withContext(Dispatchers.IO){
-        repository.deletePlan(plan)
+    suspend fun deletePlan(planId: Int) = withContext(Dispatchers.IO){
+        repository.deletePlan(planId)
     }
 }

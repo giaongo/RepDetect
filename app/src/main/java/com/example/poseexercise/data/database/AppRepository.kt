@@ -32,8 +32,8 @@ class AppRepository(application: Application): CoroutineScope {
     suspend fun updateCompleted(state: Boolean, timestamp: Long?, planId: Int){
         planDao?.addCompletedTime(state,timestamp,planId)
     }
-    suspend fun deletePlan(plan: Plan){
-        planDao?.deletePlan(plan)
+    suspend fun deletePlan(planId: Int){
+        planDao?.deletePlan(planId)
     }
     suspend fun getAllResult(): List<WorkoutResult>? =
         resultDao?.getAll()
