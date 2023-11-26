@@ -158,23 +158,67 @@ class WorkOutFragment : Fragment() {
             notCompletePlanList = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
         }
 
-
         // start exercise button
         startButton.setOnClickListener {
-            // showing loading AI pose detection Model information to user
-            loadingTV.visibility = View.VISIBLE
-            loadProgress.visibility = View.VISIBLE
-            // Set the screenOn flag to true, preventing the screen from turning off
-            screenOn = true
-            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            cameraFlipFAB.visibility = View.GONE
-            buttonCancelExercise.visibility = View.VISIBLE
-            buttonCompleteExercise.visibility = View.VISIBLE
-            startButton.visibility = View.GONE
-            // To disable screen timeout
-            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            cameraViewModel.triggerClassification.value = true
+            lifecycleScope.launch(Dispatchers.IO) {
+                // Fetch the planned exercises for the day from the view model
+                val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                val plannedExerciseList: MutableSet<String> = mutableSetOf()
+                val newExerciseList = result1?.map {
+                    // Map the exercise names to their corresponding GIF names
+                    when (it.exercise) {
+                        "Sit Up" -> "situp_up"
+                        "Push up" -> "pushups_down"
+                        else -> it.exercise.lowercase(Locale.ROOT)
+                    }
+                }?.toMutableSet() ?: mutableSetOf()
+                // Clear and add the new exercise list to the set
+                plannedExerciseList.clear()
+                plannedExerciseList.addAll(newExerciseList)
+
+                withContext(Dispatchers.Main) {
+                    if (plannedExerciseList.isNotEmpty()) {
+                        // Show the GIF view and the skip button
+                        exerciseGifImageView.setBackgroundColor(Color.BLACK)
+                        exerciseGifImageView.visibility = View.VISIBLE
+                        skipButton.visibility = View.VISIBLE
+
+                        startButton.visibility = View.INVISIBLE
+
+                        for (exerciseName in plannedExerciseList) {
+                            showExerciseGif(exerciseName)
+                            // Check if the user pressed skip during the exercise
+                            if (userWantsToSkip) {
+                                // Hide the GIF view and exit the loop if the user wants to skip
+                                exerciseGifImageView.visibility = View.GONE
+                                break  // Exit the loop if the user wants to skip
+                            }
+                            // Delay for 3 seconds between GIF displays
+                            delay(3000)
+                        }
+                        exerciseGifImageView.visibility = View.GONE
+                        skipButton.visibility = View.GONE
+                        startButton.visibility = View.VISIBLE
+                    } else {
+                        // showing loading AI pose detection Model inforamtion to user
+                        loadingTV.visibility = View.VISIBLE
+                        loadProgress.visibility = View.VISIBLE
+                    }
+                    // Set the screenOn flag to true, preventing the screen from turning off
+                    screenOn = true
+
+                    // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+                    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+                    cameraFlipFAB.visibility = View.GONE
+                    buttonCancelExercise.visibility = View.VISIBLE
+                    buttonCompleteExercise.visibility = View.VISIBLE
+                    startButton.visibility = View.GONE
+
+                    // To disable screen timeout
+                    cameraViewModel.triggerClassification.value = true
+                }
+            }
         }
 
         // Cancel the exercise
