@@ -35,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.poseexercise.R
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
@@ -55,6 +56,7 @@ import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -96,11 +98,11 @@ class WorkOutFragment : Fragment() {
     private lateinit var workoutRecyclerView: RecyclerView
     private lateinit var workoutAdapter: WorkoutAdapter
     private lateinit var homeViewModel: HomeViewModel
-    private var today : String = DateFormat.format("EEEE" , Date()) as String
+    private var today: String = DateFormat.format("EEEE", Date()) as String
     private var runOnce: Boolean = false
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
-
+    private lateinit var exerciseGifImageView: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,7 +142,7 @@ class WorkOutFragment : Fragment() {
 
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
-
+        exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
         return view
     }
 
@@ -154,27 +156,50 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                val plannedExerciseList: MutableSet<String> = mutableSetOf()
+                val newExerciseList = result1?.map {
+                    when (it.exercise) {
+                        "Sit Up" -> "situp_up"
+                        "Push up" -> "pushups_down"
+                        else -> it.exercise.lowercase(Locale.ROOT)
+                    }
+                }?.toMutableSet() ?: mutableSetOf()
+                plannedExerciseList.clear()
+                plannedExerciseList.addAll(newExerciseList)
 
-            // showing loading AI pose detection Model inforamtion to user
-            loadingTV.visibility = View.VISIBLE
-            loadProgress.visibility = View.VISIBLE
+                withContext(Dispatchers.Main) {
+                    if (plannedExerciseList.isNotEmpty()) {
+                        exerciseGifImageView.visibility = View.VISIBLE
+                        for (exerciseName in plannedExerciseList) {
+                            showExerciseGif(exerciseName)
 
-            // Set the screenOn flag to true, preventing the screen from turning off
-            screenOn = true
+                        }
+                        // Delay for 3 seconds between GIF displays
+                        delay(3000)
+                        exerciseGifImageView.visibility = View.GONE
+                    } else {
+                        // showing loading AI pose detection Model inforamtion to user
+                        loadingTV.visibility = View.VISIBLE
+                        loadProgress.visibility = View.VISIBLE
+                    }
+                    // Set the screenOn flag to true, preventing the screen from turning off
+                    screenOn = true
 
-            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+                    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-            cameraFlipFAB.visibility = View.GONE
-            buttonCancelExercise.visibility = View.VISIBLE
-            buttonCompleteExercise.visibility = View.VISIBLE
-            startButton.visibility = View.GONE
+                    cameraFlipFAB.visibility = View.GONE
+                    buttonCancelExercise.visibility = View.VISIBLE
+                    buttonCompleteExercise.visibility = View.VISIBLE
+                    startButton.visibility = View.GONE
 
-            // To disable screen timeout
-            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-
-            cameraViewModel.triggerClassification.value = true
+                    // To disable screen timeout
+                    //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    cameraViewModel.triggerClassification.value = true
+                }
+            }
         }
 
 
@@ -213,16 +238,17 @@ class WorkOutFragment : Fragment() {
                                 squats.type -> squats.value / 10
                                 else -> 0.0
                             }
-                            val workoutTime = convertTimeStringToMinutes(timerTextView.text.toString())
+                            val workoutTime =
+                                convertTimeStringToMinutes(timerTextView.text.toString())
 
-                           val workOutResult = WorkoutResult(
+                            val workOutResult = WorkoutResult(
                                 0,
                                 value.postureType,
                                 value.repetition,
                                 value.confidence,
                                 System.currentTimeMillis(),
                                 calorie * value.repetition,
-                               workoutTime
+                                workoutTime
                             )
                             resultViewModel.insert(workOutResult)
                         }
@@ -291,15 +317,18 @@ class WorkOutFragment : Fragment() {
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         // get the list of plans from database
-        lifecycleScope.launch (Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
 
             // get not completed exercise from database using coroutine
-            val notCompletedExercise = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
+            val notCompletedExercise =
+                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
 
-            notCompletedExercise?.forEach {item ->
-                val exercisePlan = ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
+            notCompletedExercise?.forEach { item ->
+                val exercisePlan =
+                    ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
 
-                val existingExercisePlan = databaseExercisePlan.find { it.exerciseName == databaseNameToClassification(item.exercise) }
+                val existingExercisePlan =
+                    databaseExercisePlan.find { it.exerciseName == databaseNameToClassification(item.exercise) }
 
                 if (existingExercisePlan != null) {
                     // Update repetitions if ExercisePlan with the same exerciseName already exists
@@ -311,7 +340,7 @@ class WorkOutFragment : Fragment() {
             }
 
             // Push the planned exercise name in exercise Log
-            databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName,0,0f,false) }
+            databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName, 0, 0f, false) }
 
         }
 
@@ -341,8 +370,13 @@ class WorkOutFragment : Fragment() {
                     } else if (value.repetition == data.repetitions.plus(1)) {
 
                         // check if the exercise target is complete
-                        var repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
-                        if (repetition==null || repetition==0){
+                        var repetition: Int? = databaseExercisePlan.find {
+                            it.exerciseName.equals(
+                                key,
+                                ignoreCase = true
+                            )
+                        }?.repetitions
+                        if (repetition == null || repetition == 0) {
                             repetition = HighCount
                         }
                         if (!data.isComplete && (value.repetition >= repetition)) {
@@ -369,17 +403,17 @@ class WorkOutFragment : Fragment() {
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
                     }
-                } else if (key in onlyPose){
+                } else if (key in onlyPose) {
                     // Implementation of pose confidence
                     confIndicatorView.visibility = View.VISIBLE
                     displayConfidence(value.confidence)
-                } else{
+                } else {
                     confIndicatorView.visibility = View.INVISIBLE
                 }
             }
 
             // Visualize list of all exercise result for the first time, to show the target exercise
-            if(!runOnce){
+            if (!runOnce) {
                 val exerciseList = exerciseLog.getExerciseDataList()
                 workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                 workoutRecyclerView.adapter = workoutAdapter
@@ -401,7 +435,7 @@ class WorkOutFragment : Fragment() {
                 ttf.speak(name, TextToSpeech.QUEUE_ADD, null)
             }
         }
-        if(name == "Workout Started"){
+        if (name == "Workout Started") {
             startMediaTimer()
             timerTextView.visibility = View.VISIBLE
             timerRecordIcon.visibility = View.VISIBLE
@@ -749,6 +783,28 @@ class WorkOutFragment : Fragment() {
             mBuilder.append(seconds)
         }
         return mBuilder.toString()
+    }
+
+    private val exerciseGifs = mapOf(
+        Postures.pushups.type to R.drawable.pushup,
+        Postures.lunges.type to R.drawable.lunge,
+        Postures.squats.type to R.drawable.squats,
+        Postures.sitUp.type to R.drawable.situp
+    )
+
+    /**
+     * Check if exercise name matches the Postures type
+     * if matched plays the relative gif file
+     */
+    private fun showExerciseGif(exerciseName: String) {
+        val exerciseGifId = exerciseGifs[exerciseName]
+        if (exerciseGifId != null) {
+            // Use Glide to load the animated GIF
+            Glide.with(this)
+                .asGif()
+                .load(exerciseGifId)
+                .into(exerciseGifImageView)
+        }
     }
 
     /**

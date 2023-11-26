@@ -129,4 +129,10 @@ dependencies {
     // Chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    // Gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 }

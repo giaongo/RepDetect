@@ -199,6 +199,12 @@
             app:layout_constraintStart_toStartOf="@+id/preview_view"
             app:layout_constraintTop_toBottomOf="@+id/timerTV" />
 
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/exerciseGifImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"/>
+
         <ProgressBar
             android:id="@+id/loadingProgress"
             android:layout_width="wrap_content"
