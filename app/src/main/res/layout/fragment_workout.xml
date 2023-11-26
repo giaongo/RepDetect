@@ -143,7 +143,7 @@
             android:id="@+id/timerTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
+            android:text="@string/_00_00"
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -204,6 +204,14 @@
             app:layout_constraintEnd_toEndOf="@+id/preview_view"
             app:layout_constraintStart_toStartOf="@+id/preview_view"
             app:layout_constraintTop_toBottomOf="@+id/timerTV" />
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/exerciseGifImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"/>
+
+
 
         <!-- Loading Progress Bar -->
         <ProgressBar

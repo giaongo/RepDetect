@@ -201,6 +201,8 @@
     <string name="logo">logo for the app</string>
     <string name="counting_reps_made_simple">Counting Reps Made Simple</string>
     <string name="reps">Reps</string>
+    <string name="skip">Skip</string>
+    <string name="_00_00">00:00</string>
 
 </resources>
 

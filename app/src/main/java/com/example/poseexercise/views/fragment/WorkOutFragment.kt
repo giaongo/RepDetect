@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.speech.tts.TextToSpeech
@@ -35,6 +36,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.poseexercise.R
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
@@ -57,6 +59,7 @@ import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -102,6 +105,9 @@ class WorkOutFragment : Fragment() {
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
     private var notCompletePlanList: List<Plan>? = emptyList()
+    private lateinit var exerciseGifImageView: ImageView
+    private var userWantsToSkip: Boolean = false
+    private lateinit var skipButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +144,7 @@ class WorkOutFragment : Fragment() {
         loadProgress = view.findViewById(R.id.loadingProgress)
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
+        exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
         return view
     }
 
@@ -150,6 +157,7 @@ class WorkOutFragment : Fragment() {
         lifecycleScope.launch (Dispatchers.IO) {
             notCompletePlanList = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
         }
+
 
         // start exercise button
         startButton.setOnClickListener {
@@ -711,6 +719,28 @@ class WorkOutFragment : Fragment() {
             mBuilder.append(seconds)
         }
         return mBuilder.toString()
+    }
+
+    private val exerciseGifs = mapOf(
+        Postures.pushups.type to R.drawable.pushup,
+        Postures.lunges.type to R.drawable.lunge,
+        Postures.squats.type to R.drawable.squat,
+        Postures.sitUp.type to R.drawable.situp
+    )
+
+    /**
+     * Check if exercise name matches the Postures type
+     * if matched plays the relative gif file
+     */
+    private fun showExerciseGif(exerciseName: String) {
+        val exerciseGifId = exerciseGifs[exerciseName]
+        if (exerciseGifId != null) {
+            // Use Glide to load the animated GIF
+            Glide.with(this)
+                .asGif()
+                .load(exerciseGifId)
+                .into(exerciseGifImageView)
+        }
     }
 
     /**
