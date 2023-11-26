@@ -34,6 +34,10 @@ class WorkoutAdapter(
             )
         }?.repetitions
 
+        holder.exerciseNameTextView.textSize = 22f
+        holder.repetitionsTextView.textSize = 22f
+        holder.isCompleteTextView.textSize = 22f
+
         if (currentExercise.isComplete) {
             holder.exerciseNameTextView.setTextColor(Color.GREEN)
             holder.repetitionsTextView.setTextColor(Color.GREEN)

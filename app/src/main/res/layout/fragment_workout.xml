@@ -35,11 +35,44 @@
 
         <ImageView
             android:id="@+id/confidenceIndicatorView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.7"
+            android:layout_margin="10dp"
             android:background="@drawable/confidence_indicator"
-            />
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/confidenceIndicatorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="100sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/confidenceIndicatorView"
+            app:layout_constraintStart_toStartOf="@+id/confidenceIndicatorView"
+            app:layout_constraintBottom_toBottomOf="@+id/confidenceIndicatorView"
+            app:layout_constraintTop_toTopOf="@+id/confidenceIndicatorView"/>
+
+        <TextView
+            android:id="@+id/completedAllExerciseTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:padding="20dp"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:layout_marginBottom="30dp"
+            android:text="@string/completedAll"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/workoutRecycleViewArea"/>
 
         <Button
             android:id="@+id/button_cancel_exercise"
@@ -97,8 +130,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/exerciselist_background"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="3dp"
+            android:paddingHorizontal="15dp"
+            android:layout_marginEnd="20dp"
+            android:paddingVertical="5dp"
             app:layout_constraintBottom_toTopOf="@+id/facing_switch"
             app:layout_constraintEnd_toEndOf="@+id/preview_view"
             app:layout_constraintTop_toBottomOf="@+id/currentRepetitionText" />
@@ -143,12 +177,11 @@
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-
             app:layout_constraintVertical_bias="0.05" />
 
         <TextView

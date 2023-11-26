@@ -195,6 +195,7 @@
     <string name="total_calories"> %s Kcal this week</string>
     <string name="loading">Loading Pose AI model in camera preview..</string>
     <string name="skip">Skip</string>
+    <string name="completedAll">Congratulation!\nYou have completed all the planned exercise for today.</string>
 
     <!-- Strings for exercise name -->
     <!--    <string name="push_up">Push up</string>-->
