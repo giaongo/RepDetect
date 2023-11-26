@@ -105,6 +105,9 @@ class WorkOutFragment : Fragment() {
     private lateinit var loadProgress: ProgressBar
     private lateinit var exerciseGifImageView: ImageView
 
+    private var userWantsToSkip: Boolean = false
+    private lateinit var skipButton: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +144,8 @@ class WorkOutFragment : Fragment() {
         loadingTV = view.findViewById(R.id.loadingStatus)
         loadProgress = view.findViewById(R.id.loadingProgress)
 
+        skipButton = view.findViewById(R.id.skipButton)
+
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
         exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
@@ -154,36 +159,51 @@ class WorkOutFragment : Fragment() {
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
         cameraFlipFAB.visibility = View.VISIBLE
 
+        skipButton.setOnClickListener {
+            // Reset the flag before starting the exercise
+            userWantsToSkip = true
+        }
 
         // start exercise button
         startButton.setOnClickListener {
                 lifecycleScope.launch(Dispatchers.IO) {
+                    // Fetch the planned exercises for the day from the view model
                     val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
                     val plannedExerciseList: MutableSet<String> = mutableSetOf()
                     val newExerciseList = result1?.map {
+                        // Map the exercise names to their corresponding GIF names
                         when (it.exercise) {
                             "Sit Up" -> "situp_up"
                             "Push up" -> "pushups_down"
                             else -> it.exercise.lowercase(Locale.ROOT)
                         }
                     }?.toMutableSet() ?: mutableSetOf()
+                    // Clear and add the new exercise list to the set
                     plannedExerciseList.clear()
                     plannedExerciseList.addAll(newExerciseList)
 
                     withContext(Dispatchers.Main) {
                         if (plannedExerciseList.isNotEmpty()) {
+                            // Show the GIF view and the skip button
                             exerciseGifImageView.setBackgroundColor(Color.BLACK)
                             exerciseGifImageView.visibility = View.VISIBLE
+                            skipButton.visibility = View.VISIBLE
 
                             startButton.visibility = View.INVISIBLE
 
                             for (exerciseName in plannedExerciseList) {
                                 showExerciseGif(exerciseName)
+                                // Check if the user pressed skip during the exercise
+                                if (userWantsToSkip) {
+                                    // Hide the GIF view and exit the loop if the user wants to skip
+                                    exerciseGifImageView.visibility = View.GONE
+                                    break  // Exit the loop if the user wants to skip
+                                }
                                 // Delay for 3 seconds between GIF displays
                                 delay(3000)
                             }
                             exerciseGifImageView.visibility = View.GONE
-                            //textToSpeech("Workout Started")
+                            skipButton.visibility = View.GONE
                             startButton.visibility = View.VISIBLE
                         } else {
                             // showing loading AI pose detection Model inforamtion to user
@@ -202,11 +222,11 @@ class WorkOutFragment : Fragment() {
                         startButton.visibility = View.GONE
 
                         // To disable screen timeout
-                        //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         cameraViewModel.triggerClassification.value = true
                     }
                 }
         }
+
 
 
         // Cancel the exercise

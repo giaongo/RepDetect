@@ -205,6 +205,22 @@
             android:layout_height="match_parent"
             android:visibility="invisible"/>
 
+        <Button
+            android:id="@+id/skipButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/skip"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/button_start_exercise"
+            app:layout_constraintEnd_toEndOf="@id/button_start_exercise"
+            app:layout_constraintStart_toStartOf="@id/button_start_exercise"
+            app:layout_constraintTop_toTopOf="@id/button_start_exercise"
+            app:pressedTranslationZ="6dp"
+            app:backgroundTint="@color/primaryColor"
+            android:textColor="@color/white"
+            app:tint="@color/white" />
+
+
         <ProgressBar
             android:id="@+id/loadingProgress"
             android:layout_width="wrap_content"
