@@ -27,7 +27,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
     val TAG = "RepDetect Debug"
     private lateinit var addPlanViewModel: AddPlanViewModel
     private var mExerciseName : String? = null
-    private var mKcal: Int = 0
+    private var mKcal: Double = 0.0
     private val selectedDays = mutableListOf<String>()
     private lateinit var days: Array<String>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +46,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
                 mExerciseName = it.getString("exerciseName")
             }
             if (it["caloriesPerRep"] != null) {
-                mKcal = it.getInt("caloriesPerRep")
+                mKcal = it.getDouble("caloriesPerRep")
             }
         }
         return view

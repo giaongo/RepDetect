@@ -1,86 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
-    android:layout_marginLeft="@dimen/margin_medium"
-    android:layout_marginRight="@dimen/margin_medium"
-    android:gravity="center_vertical">
+    android:layout_margin="@dimen/margin_small"
+    android:clickable="true">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_small"
-        android:clickable="true">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <!-- Media -->
+        <ImageView
+            android:id="@+id/exercise_image"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/content_description_media"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/chip"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_toEndOf="@id/exercise_image"
+            android:orientation="vertical">
 
-            <!-- Media -->
-            <ImageView
-                android:id="@+id/exercise_image"
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/content_description_media"
-                />
+            <!-- Title, secondary and supporting text -->
+            <TextView
+                android:id="@+id/exercise_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/chip"
-                android:layout_marginStart="@dimen/margin_large"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_toEndOf="@id/exercise_image"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <!-- Title, secondary and supporting text -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/content_description_media"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/fire" />
+
                 <TextView
-                    android:id="@+id/exercise_name"
+                    android:id="@+id/exercise_calories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_margin="@dimen/margin_small"
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@string/content_description_media"
-                        android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/fire" />
-
-                    <TextView
-                        android:id="@+id/exercise_calories"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin_small"
-
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="?android:attr/textColorSecondary" />
-
-                </LinearLayout>
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?android:attr/textColorSecondary" />
 
             </LinearLayout>
 
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chip"
-                style="@style/Widget.Material3.Chip.Suggestion"
-                android:checked="true"
-                android:layout_margin="@dimen/margin_small"
-                android:layout_alignParentEnd="true"
-                />
+        </LinearLayout>
 
-        </RelativeLayout>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip"
+            style="@style/Widget.Material3.Chip.Suggestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:checked="true" />
 
-    </com.google.android.material.card.MaterialCardView>
-</FrameLayout>
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -196,8 +196,11 @@
     <string name="no_activities_yet">No activities yet</string>
     <string name="total_calories"> %s Kcal this week</string>
     <string name="loading">Loading Pose AI model in camera preview..</string>
+    <string name="overlay">Semi-transparent overlay for visual effect</string>
+    <string name="equipment_description">Image of workout equipment</string>
+    <string name="logo">logo for the app</string>
+    <string name="counting_reps_made_simple">Counting Reps Made Simple</string>
+    <string name="reps">Reps</string>
 
-    <!-- Strings for exercise name -->
-    <!--    <string name="push_up">Push up</string>-->
 </resources>
 
