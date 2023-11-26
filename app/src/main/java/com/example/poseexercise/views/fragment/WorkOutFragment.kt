@@ -145,17 +145,26 @@ class WorkOutFragment : Fragment() {
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
         exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
+        skipButton = view.findViewById(R.id.skipButton)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Initialize views
         super.onViewCreated(view, savedInstanceState)
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
         cameraFlipFAB.visibility = View.VISIBLE
+
         // Get the list of the not complete plan for today
         lifecycleScope.launch (Dispatchers.IO) {
             notCompletePlanList = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
+        }
+
+        // Set click listener for the skip button
+        skipButton.setOnClickListener {
+            // Reset the flag before starting the exercise
+            userWantsToSkip = true
         }
 
         // start exercise button
@@ -200,7 +209,7 @@ class WorkOutFragment : Fragment() {
                         skipButton.visibility = View.GONE
                         startButton.visibility = View.VISIBLE
                     } else {
-                        // showing loading AI pose detection Model inforamtion to user
+                        // showing loading AI pose detection Model information to user
                         loadingTV.visibility = View.VISIBLE
                         loadProgress.visibility = View.VISIBLE
                     }
@@ -415,6 +424,7 @@ class WorkOutFragment : Fragment() {
 
     @Suppress("DEPRECATION")
     private fun textToSpeech(name: String) {
+        // Initialize TextToSpeech
         ttf = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
                 ttf.language = Locale.US
@@ -440,6 +450,7 @@ class WorkOutFragment : Fragment() {
 
 
     private fun displayConfidence(confidence: Float) {
+        // Display confidence indicator based on the confidence level
         if (confidence < 0.5) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.red)
@@ -460,6 +471,7 @@ class WorkOutFragment : Fragment() {
 
 
     private fun bindAllCameraUseCases() {
+        // Bind all camera use cases (preview and analysis)
         bindPreviewUseCase()
         cameraViewModel.triggerClassification.observe(viewLifecycleOwner) { pressed ->
             bindAnalysisUseCase(pressed)
@@ -591,6 +603,7 @@ class WorkOutFragment : Fragment() {
     }
 
     private fun allRuntimePermissionsGranted(): Boolean {
+        // Check if all required runtime permissions are granted
         for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
             permission.let {
                 if (!isPermissionGranted(requireContext(), it)) {
@@ -602,6 +615,7 @@ class WorkOutFragment : Fragment() {
     }
 
     private fun isPermissionGranted(context: Context, permission: String): Boolean {
+        // Check if a specific permission is granted
         if (ContextCompat.checkSelfPermission(
                 context,
                 permission
@@ -614,6 +628,7 @@ class WorkOutFragment : Fragment() {
         return false
     }
 
+    // Request runtime permissions
     private fun getRuntimePermissions() {
         val permissionsToRequest = java.util.ArrayList<String>()
         for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
@@ -634,6 +649,7 @@ class WorkOutFragment : Fragment() {
     }
 
     /**
+    Toggle between front and back camera lenses
      *
      */
     private fun toggleCameraLens() {
