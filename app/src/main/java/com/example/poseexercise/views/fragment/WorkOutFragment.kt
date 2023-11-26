@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -156,50 +157,55 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
-                val plannedExerciseList: MutableSet<String> = mutableSetOf()
-                val newExerciseList = result1?.map {
-                    when (it.exercise) {
-                        "Sit Up" -> "situp_up"
-                        "Push up" -> "pushups_down"
-                        else -> it.exercise.lowercase(Locale.ROOT)
-                    }
-                }?.toMutableSet() ?: mutableSetOf()
-                plannedExerciseList.clear()
-                plannedExerciseList.addAll(newExerciseList)
-
-                withContext(Dispatchers.Main) {
-                    if (plannedExerciseList.isNotEmpty()) {
-                        exerciseGifImageView.visibility = View.VISIBLE
-                        for (exerciseName in plannedExerciseList) {
-                            showExerciseGif(exerciseName)
-
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                    val plannedExerciseList: MutableSet<String> = mutableSetOf()
+                    val newExerciseList = result1?.map {
+                        when (it.exercise) {
+                            "Sit Up" -> "situp_up"
+                            "Push up" -> "pushups_down"
+                            else -> it.exercise.lowercase(Locale.ROOT)
                         }
-                        // Delay for 3 seconds between GIF displays
-                        delay(3000)
-                        exerciseGifImageView.visibility = View.GONE
-                    } else {
-                        // showing loading AI pose detection Model inforamtion to user
-                        loadingTV.visibility = View.VISIBLE
-                        loadProgress.visibility = View.VISIBLE
+                    }?.toMutableSet() ?: mutableSetOf()
+                    plannedExerciseList.clear()
+                    plannedExerciseList.addAll(newExerciseList)
+
+                    withContext(Dispatchers.Main) {
+                        if (plannedExerciseList.isNotEmpty()) {
+                            exerciseGifImageView.setBackgroundColor(Color.BLACK)
+                            exerciseGifImageView.visibility = View.VISIBLE
+
+                            startButton.visibility = View.INVISIBLE
+
+                            for (exerciseName in plannedExerciseList) {
+                                showExerciseGif(exerciseName)
+                                // Delay for 3 seconds between GIF displays
+                                delay(3000)
+                            }
+                            exerciseGifImageView.visibility = View.GONE
+                            //textToSpeech("Workout Started")
+                            startButton.visibility = View.VISIBLE
+                        } else {
+                            // showing loading AI pose detection Model inforamtion to user
+                            loadingTV.visibility = View.VISIBLE
+                            loadProgress.visibility = View.VISIBLE
+                        }
+                        // Set the screenOn flag to true, preventing the screen from turning off
+                        screenOn = true
+
+                        // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+                        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+                        cameraFlipFAB.visibility = View.GONE
+                        buttonCancelExercise.visibility = View.VISIBLE
+                        buttonCompleteExercise.visibility = View.VISIBLE
+                        startButton.visibility = View.GONE
+
+                        // To disable screen timeout
+                        //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        cameraViewModel.triggerClassification.value = true
                     }
-                    // Set the screenOn flag to true, preventing the screen from turning off
-                    screenOn = true
-
-                    // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
-                    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-                    cameraFlipFAB.visibility = View.GONE
-                    buttonCancelExercise.visibility = View.VISIBLE
-                    buttonCompleteExercise.visibility = View.VISIBLE
-                    startButton.visibility = View.GONE
-
-                    // To disable screen timeout
-                    //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    cameraViewModel.triggerClassification.value = true
                 }
-            }
         }
 
 
