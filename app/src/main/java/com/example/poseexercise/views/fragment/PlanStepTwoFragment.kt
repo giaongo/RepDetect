@@ -27,7 +27,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
     val TAG = "RepDetect Debug"
     private lateinit var addPlanViewModel: AddPlanViewModel
     private var mExerciseName : String? = null
-    private var mKcal: Int = 0
+    private var mKcal: Double = 0.0
     private val selectedDays = mutableListOf<String>()
     private lateinit var days: Array<String>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +46,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
                 mExerciseName = it.getString("exerciseName")
             }
             if (it["caloriesPerRep"] != null) {
-                mKcal = it.getInt("caloriesPerRep")
+                mKcal = it.getDouble("caloriesPerRep")
             }
         }
         return view
@@ -54,8 +54,8 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "selectedExercise is ${mExerciseName}")
-        Log.d(TAG, "calories for each repeat is ${mKcal}")
+        Log.d(TAG, "selectedExercise is $mExerciseName")
+        Log.d(TAG, "calories for each repeat is $mKcal")
         // Get all the layout info
         val exerciseEditText = view.findViewById<EditText>(R.id.exercise_name)
         val repeatEditText = view.findViewById<EditText>(R.id.repeat_count)
@@ -70,16 +70,16 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
         val listAdapter = ArrayAdapter(this.requireContext(),android.R.layout.simple_list_item_multiple_choice, days)
         listOfDays.adapter = listAdapter
         // Get the selected days
-        listOfDays.setOnItemClickListener { parent, view, position, id ->
+        listOfDays.setOnItemClickListener { _, _, position, _ ->
             val element = listAdapter.getItem(position)// The item that was clicked
-            Log.d(TAG, "click is ${element}")
+            Log.d(TAG, "click is $element")
             if (element != null) {
                 if (element in selectedDays) {
                     selectedDays.remove(element)
-                    Log.d(TAG, "Removed $element from selectedDays, ${selectedDays}")
+                    Log.d(TAG, "Removed $element from selectedDays, $selectedDays")
                 } else {
                     selectedDays.add(element)
-                    Log.d(TAG, "Added $element to selectedDays, ${selectedDays}")
+                    Log.d(TAG, "Added $element to selectedDays, $selectedDays")
                 }
             }
         }

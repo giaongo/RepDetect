@@ -10,51 +10,65 @@
     app:cardUseCompatPadding="true">
 
     <!-- Horizontal LinearLayout to contain image and text -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_small"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
+
 
         <!-- ImageView for displaying the exercise image -->
         <ImageView
-            android:id="@+id/plannedExerciseImage"
+            android:id="@+id/imageView"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/logo" />
+            android:layout_height="0dp"
+            android:src="@drawable/logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".3"
+            app:layout_constraintDimensionRatio="1:1"/>
 
-        <!-- Vertical LinearLayout to contain exercise details -->
-        <LinearLayout
+        <!-- Exercise title -->
+        <TextView
+            android:id="@+id/exercise_title"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:padding="@dimen/margin_large">
+            android:layout_height="wrap_content"
+            android:text="@string/sit_up"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_label"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@id/delete_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/exercise_rep"/>
 
-            <!-- Exercise title -->
-            <TextView
-                android:id="@+id/exercise_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:text="@string/sit_up"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_normal"
-                android:textStyle="bold" />
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:background="@drawable/delete"
+            app:layout_constraintWidth_percent=".1"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Exercise repetition details -->
-            <TextView
-                android:id="@+id/exercise_rep"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_medium"
-                android:text="@string/sit_up_a_day"
-                android:textColor="@color/textGray"
-                android:textSize="@dimen/text_normal" />
 
-        </LinearLayout>
-    </LinearLayout>
-
+        <!-- Exercise repetition details -->
+        <TextView
+            android:id="@+id/exercise_rep"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sit_up_a_day"
+            android:textColor="@color/textGray"
+            android:textSize="@dimen/text_normal"
+            app:layout_constraintStart_toStartOf="@+id/exercise_title"
+            app:layout_constraintTop_toBottomOf="@+id/exercise_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@id/delete_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
 
