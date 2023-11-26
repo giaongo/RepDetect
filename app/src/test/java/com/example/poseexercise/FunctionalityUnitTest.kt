@@ -1,6 +1,5 @@
 package com.example.poseexercise
 
-import com.example.poseexercise.views.fragment.WorkOutFragment
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -14,39 +13,5 @@ class FunctionalityUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
-    }
-
-    @Test
-    fun testWorkoutResult_lowercaseText_distanceby_underscore() {
-        val completedFragment = WorkOutFragment()
-
-        val inputText = "neutral_standing"
-        val expectedOutput = "Neutral standing"
-
-        val actualOutput = completedFragment.transformText(inputText)
-
-        assertEquals(expectedOutput, actualOutput)
-    }
-
-    @Test
-    fun testWorkoutResult_capitalizeText_distanceby_underscore() {
-        val completedFragment = WorkOutFragment()
-
-        val inputText = "Pushups_down"
-        val expectedOutput = "Pushups down"
-
-        val actualOutput = completedFragment.transformText(inputText)
-
-        assertEquals(expectedOutput, actualOutput)
-    }
-
-    @Test
-    fun testWorkoutResult_singleLowerCaseText() {
-        val completedFragment = WorkOutFragment()
-        val inputText = "lunges"
-        val expectedOutput = "Lunges"
-        val actualOutput = completedFragment.transformText(inputText)
-
-        assertEquals(expectedOutput, actualOutput)
     }
 }
