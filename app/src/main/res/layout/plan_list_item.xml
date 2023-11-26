@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="@dimen/margin_small"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
@@ -13,6 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
 
         <!-- ImageView for displaying the exercise image -->
         <ImageView

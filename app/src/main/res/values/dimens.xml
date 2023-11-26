@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="list_item_height">150dp</dimen>
+    <dimen name="list_item_small">150dp</dimen>
+
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_medium">12dp</dimen>
     <dimen name="margin_large">20dp</dimen>
@@ -12,5 +14,9 @@
     <dimen name="text_label">18sp</dimen>
     <dimen name="text_normal">16sp</dimen>
 
+<!--    padding-->
+    <dimen name="padding_small">10dp</dimen>
+    <dimen name="padding_medium">20dp</dimen>
+    <dimen name="padding_large">30dp</dimen>
 
 </resources>

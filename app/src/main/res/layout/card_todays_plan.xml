@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
-    android:layout_marginLeft="@dimen/margin_medium"
-    android:layout_marginRight="@dimen/margin_medium"
-    android:gravity="center_vertical">
-
     <com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,12 +9,12 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/list_item_height">
 
             <!-- ImageView for displaying exercise image -->
             <ImageView
                 android:id="@+id/exercise_image"
-                android:layout_width="150dp"
+                android:layout_width="@dimen/list_item_height"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 />
@@ -41,10 +34,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/push_up"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_label"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="@dimen/margin_small"/>
 
                 <!-- TextView for exercise repetition information -->
                 <TextView
@@ -52,8 +45,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sub_header"
-                    android:layout_marginBottom="12dp"
-                    android:textSize="14sp"
+                    android:layout_marginBottom="@dimen/margin_medium"
+                    android:textSize="@dimen/text_normal"
                     android:textColor="@color/textGray" />
 
             </LinearLayout>
@@ -74,4 +67,3 @@
         </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
-</FrameLayout>

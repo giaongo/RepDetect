@@ -123,11 +123,11 @@
     <string name="completed_min">%1$d mins</string>
     <string name="completed_icon_content_description">Completed Icon</string>
     <string name="completed_title">Completed</string>
-    <string name="good_job_body">Good Job, Adeline</string>
+    <string name="good_job_body">Good Job</string>
     <string name="completed_announcement">Your activity is over, keep improving your training skills!</string>
     <string name="home_button">Home</string>
     <string name="canceled_workout_title">Canceled Workout</string>
-    <string name="no_worries_body">No Worries, Adeline</string>
+    <string name="no_worries_body">No Worries</string>
     <string name="canceled_announcement">Keep the motivation alive, and let\'s get back to it when you feel inspired!</string>
     <string name="workoutResultDisplay">%s</string>
     <string name="noWorkoutResultDisplay">No Exercise Performed</string>
