@@ -40,7 +40,7 @@ import java.util.Objects;
 public class PoseClassifierProcessor {
     private static final String TAG = "PoseClassifierProcessor";
 
-  private static final String POSE_SAMPLES_FILE = "pose/fitness_poses_csvs_out_v04.csv";
+  private static final String POSE_SAMPLES_FILE = "pose/fitness_four_exercise_one_yoga_v04.csv";
 
   // The class name for the pushups
   private static final String PUSHUPS_CLASS = "pushups_down";
