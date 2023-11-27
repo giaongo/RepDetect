@@ -237,7 +237,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
     }
 
     // Delete the plan when user click on delete icon
-    override fun onItemClicked(planId: Int) {
+    override fun onItemClicked(planId: Int, position: Int) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         // Show a dialog for user to confirm the choice
         builder
@@ -248,6 +248,12 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
                 lifecycleScope.launch {
                     addPlanViewModel.deletePlan(planId)
                 }
+                Log.d(TAG,"Delete plan $planId" )
+//                adapter.notifyItemRemoved(position)
+                Log.d(TAG, "Adapter position is $position")
+                notCompletePlanList?.removeAt(position)
+                adapter.notifyItemRemoved(position)
+                adapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { dialog, which ->

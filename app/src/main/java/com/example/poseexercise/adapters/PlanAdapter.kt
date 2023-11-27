@@ -38,15 +38,14 @@ class PlanAdapter internal constructor(context: Context):
         holder.workoutName.text = currentPlan.exercise
         holder.repeat.text = "${currentPlan.repeatCount} ${currentPlan.exercise} a day"
         holder.deleteButton.setOnClickListener {
-            planList.removeAt(position)
-            listener.onItemClicked(currentPlan.id)
+            listener.onItemClicked(currentPlan.id, position)
             notifyDataSetChanged()
-            Log.d(TAG,"Delete plan ${currentPlan.id}" )
+            Log.d(TAG, "adapater position is $position")
         }
     }
 
     interface ItemListener {
-        fun onItemClicked(planId: Int)
+        fun onItemClicked(planId: Int, position: Int)
     }
 
     fun setListener(listener: ItemListener){
