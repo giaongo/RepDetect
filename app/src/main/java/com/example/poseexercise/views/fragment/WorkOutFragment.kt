@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.poseexercise.R
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
@@ -44,7 +45,7 @@ import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyApplication
-import com.example.poseexercise.util.MyUtils
+import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.MyUtils.Companion.databaseNameToClassification
 import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.util.VisionImageProcessor
@@ -53,7 +54,6 @@ import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.viewmodels.HomeViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.views.activity.MainActivity
-import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
@@ -89,7 +89,6 @@ class WorkOutFragment : Fragment() {
     private lateinit var currentExerciseTextView: TextView
     private lateinit var currentRepetitionTextView: TextView
     private lateinit var confidenceTextView: TextView
-
     private lateinit var cameraViewModel: CameraXViewModel
     private var mRecTimer: Timer? = null
     private var mRecSeconds = 0
@@ -110,7 +109,6 @@ class WorkOutFragment : Fragment() {
     private var userWantsToSkip: Boolean = false
     private lateinit var exerciseGifImageView: ImageView
     private lateinit var completeAllExercise: TextView
-    private var userWantsToSkip: Boolean = false
     private lateinit var skipButton: Button
     private var isAllWorkoutFinished: Boolean = false
 
@@ -258,6 +256,7 @@ class WorkOutFragment : Fragment() {
         val pushUps = Postures.pushups
         val lunges = Postures.lunges
         val squats = Postures.squats
+
         buttonCompleteExercise.setOnClickListener {
             textToSpeech("Workout Complete")
             cameraViewModel.postureLiveData.value?.let {
@@ -477,64 +476,6 @@ class WorkOutFragment : Fragment() {
                 loadProgress.visibility = View.GONE
                 textToSpeech("AI model is ready for you to do some exercise")
             }
-        }
-        //When user click on complete button
-        buttonCompleteExercise.setOnClickListener {
-            textToSpeech("Workout Complete")
-            cameraViewModel.postureLiveData.value?.let {
-                //val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        lifecycleScope.launch {
-                            val calorie = when (value.postureType) {
-                                sitUp.type -> sitUp.value / 10
-                                pushUps.type -> pushUps.value / 10
-                                lunges.type -> lunges.value / 10
-                                squats.type -> squats.value / 10
-                                else -> 0.0
-                            }
-                            val workoutTime =
-                                MyUtils.convertTimeStringToMinutes(timerTextView.text.toString())
-                            val workOutResult = WorkoutResult(
-                                0,
-                                value.postureType,
-                                value.repetition,
-                                value.confidence,
-                                System.currentTimeMillis(),
-                                calorie * value.repetition,
-                                workoutTime
-                            )
-                            resultViewModel.insert(workOutResult)
-                        }
-                    }
-                }
-            }
-            // update the workoutTimer in MainActivity
-            val currentTimer = timerTextView.text.toString()
-            MainActivity.workoutTimer = currentTimer
-            stopMediaTimer()
-            // Set the screenOn flag to false, allowing the screen to turn off
-            screenOn = false
-            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
-            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            // update MainActivity static postureResultData based on the postureLiveData
-            Log.d(TAG, "complete button clicked")
-            // update the workoutResultData in MainActivity
-            cameraViewModel.postureLiveData.value?.let {
-                val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
-                    }
-                }
-                if (builder.toString().isNotEmpty()) MainActivity.workoutResultData =
-                    builder.toString()
-            }
-            // stop triggering classification process
-            cameraViewModel.triggerClassification.value = false
-            // Navigation to complete fragment
-            Navigation.findNavController(view)
-                .navigate(R.id.action_workoutFragment_to_completedFragment)
         }
     }
 
