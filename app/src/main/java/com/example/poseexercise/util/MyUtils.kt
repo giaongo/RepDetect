@@ -10,8 +10,9 @@ class MyUtils {
                 "squats" -> "Squat"
                 "pushups_down" -> "Push up"
                 "lunges" -> "Lunge"
-                "situp_up" -> "Sit up"
-                "warrior" -> "Warrior"
+                "situp_up" -> "Sit Up"
+                "warrior" -> "Warrior Yoga"
+                "tree_pose" -> "Tree Yoga"
                 // Add more cases as needed
                 else -> variableName // Default to the original name if not matched
             }
@@ -50,8 +51,9 @@ class MyUtils {
                 "Push up" -> "pushups_down"
                 "Lunges" -> "lunges"
                 "Squats" -> "squats"
-                "Sit up" -> "situp_up"
-                "Warrior" -> "warrior"
+                "Sit Up" -> "situp_up"
+                "Warrior Yoga" -> "warrior"
+                "Tree Yoga" -> "tree_pose"
                 // Add more cases as needed
                 else -> variableName // Default to the original name if not matched
             }

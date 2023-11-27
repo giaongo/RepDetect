@@ -1,6 +1,7 @@
 package com.example.poseexercise.views.fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -180,7 +181,7 @@ class WorkOutFragment : Fragment() {
                     val newExerciseList = todayPlan?.map {
                         // Map the exercise names to their corresponding GIF names
                         when (it.exercise) {
-                            "Sit up" -> "situp_up"
+                            "Sit Up" -> "situp_up"
                             "Push up" -> "pushups_down"
                             else -> it.exercise.lowercase(Locale.ROOT)
                         }
@@ -374,8 +375,8 @@ class WorkOutFragment : Fragment() {
 
         //Declare all the only pose exercise
         val onlyExercise = listOf("squats", "pushups_down", "lunges", "situp_up")
-        val onlyPose = listOf("warrior")
-        val allExercise = listOf("squats", "pushups_down", "lunges", "situp_up", "warrior")
+        val onlyPose = listOf("warrior", "tree_pose")
+        val allExercise = listOf("squats", "pushups_down", "lunges", "situp_up", "warrior", "tree_pose")
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
@@ -497,13 +498,14 @@ class WorkOutFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         currentExerciseTextView.visibility = View.VISIBLE
         currentRepetitionTextView.visibility = View.VISIBLE
-        //val data = exerciseLog.getExerciseData(key)
-        //currentExerciseTextView.text = exerciseNameToDisplay(key)
-        //currentRepetitionTextView.text = "count: " + data?.repetitions.toString()
-        val pushUpData = exerciseLog.getExerciseData(key)
+        val data = exerciseLog.getExerciseData(key)
+        currentExerciseTextView.text = exerciseNameToDisplay(key)
+        currentRepetitionTextView.text = "count: " + data?.repetitions.toString()
+        /*val pushUpData = exerciseLog.getExerciseData(key)
         val exerciseName = exerciseNameToDisplay(key)
         val repetitionCount = pushUpData?.repetitions ?: 0
 
@@ -511,7 +513,7 @@ class WorkOutFragment : Fragment() {
         val repetitionText = getString(R.string.current_repetition_format, repetitionCount)
 
         currentExerciseTextView.text = exerciseText
-        currentRepetitionTextView.text = repetitionText
+        currentRepetitionTextView.text = repetitionText*/
     }
 
 
@@ -850,7 +852,7 @@ class WorkOutFragment : Fragment() {
     private val exerciseGifs = mapOf(
         Postures.pushups.type to R.drawable.pushup,
         Postures.lunges.type to R.drawable.lunge,
-        Postures.squats.type to R.drawable.squat,
+        Postures.squats.type to R.drawable.squats,
         Postures.sitUp.type to R.drawable.situp
     )
 
