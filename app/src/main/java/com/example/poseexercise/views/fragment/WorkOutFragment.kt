@@ -1,7 +1,6 @@
 package com.example.poseexercise.views.fragment
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -100,7 +99,7 @@ class WorkOutFragment : Fragment() {
     private lateinit var workoutAdapter: WorkoutAdapter
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var addPlanViewModel: AddPlanViewModel
-    private var today : String = DateFormat.format("EEEE" , Date()) as String
+    private var today: String = DateFormat.format("EEEE", Date()) as String
     private var runOnce: Boolean = false
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
@@ -157,8 +156,9 @@ class WorkOutFragment : Fragment() {
         cameraFlipFAB.visibility = View.VISIBLE
 
         // Get the list of the not complete plan for today
-        lifecycleScope.launch (Dispatchers.IO) {
-            notCompletePlanList = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
+        lifecycleScope.launch(Dispatchers.IO) {
+            notCompletePlanList =
+                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
         }
 
         // Set click listener for the skip button
@@ -271,12 +271,15 @@ class WorkOutFragment : Fragment() {
         // Initialize Exercise Log
         val exerciseLog = ExerciseLog()
         // get the list of plans from database
-        lifecycleScope.launch (Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             // get not completed exercise from database using coroutine
-            val notCompletedExercise = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
-            notCompletedExercise?.forEach {item ->
-                val exercisePlan = ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
-                val existingExercisePlan = databaseExercisePlan.find { it.exerciseName == databaseNameToClassification(item.exercise) }
+            val notCompletedExercise =
+                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+            notCompletedExercise?.forEach { item ->
+                val exercisePlan =
+                    ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
+                val existingExercisePlan =
+                    databaseExercisePlan.find { it.exerciseName == databaseNameToClassification(item.exercise) }
                 if (existingExercisePlan != null) {
                     // Update repetitions if ExercisePlan with the same exerciseName already exists
                     existingExercisePlan.repetitions += item.repeatCount
@@ -286,7 +289,7 @@ class WorkOutFragment : Fragment() {
                 }
             }
             // Push the planned exercise name in exercise Log
-            databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName,0,0f,false) }
+            databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName, 0, 0f, false) }
         }
 
         //Declare all the only pose exercise
@@ -305,8 +308,13 @@ class WorkOutFragment : Fragment() {
                         exerciseLog.addExercise(key, value.repetition, value.confidence, false)
                     } else if (value.repetition == data.repetitions.plus(1)) {
                         // check if the exercise target is complete
-                        var repetition: Int? = databaseExercisePlan.find { it.exerciseName.equals(key, ignoreCase = true) }?.repetitions
-                        if (repetition==null || repetition==0){
+                        var repetition: Int? = databaseExercisePlan.find {
+                            it.exerciseName.equals(
+                                key,
+                                ignoreCase = true
+                            )
+                        }?.repetitions
+                        if (repetition == null || repetition == 0) {
                             repetition = HighCount
                         }
                         if (!data.isComplete && (value.repetition >= repetition)) {
@@ -315,15 +323,23 @@ class WorkOutFragment : Fragment() {
                             // inform the user about completion only once
                             textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
                             // get the plan from database for exercise
-                            val planForExercise = notCompletePlanList?.find { databaseNameToClassification(it.exercise) == data.exerciseName}
-                            Log.d(TAG, "plan for exercise ${value.postureType} 's id is ${planForExercise?.exercise}")
-                            if (planForExercise != null){
+                            val planForExercise =
+                                notCompletePlanList?.find { databaseNameToClassification(it.exercise) == data.exerciseName }
+                            Log.d(
+                                TAG,
+                                "plan for exercise ${value.postureType} 's id is ${planForExercise?.exercise}"
+                            )
+                            if (planForExercise != null) {
                                 // Update the plan's complete status
                                 lifecycleScope.launch {
-                                    addPlanViewModel.updateComplete(true,System.currentTimeMillis(),planForExercise.id)
+                                    addPlanViewModel.updateComplete(
+                                        true,
+                                        System.currentTimeMillis(),
+                                        planForExercise.id
+                                    )
                                     Log.d(TAG, "add time complete to database")
                                 }
-                            }else {
+                            } else {
                                 Log.d(TAG, "No plan found for exercise ${data.exerciseName}")
                             }
                         } else if (data.isComplete) {
@@ -341,17 +357,17 @@ class WorkOutFragment : Fragment() {
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
                     }
-                } else if (key in onlyPose){
+                } else if (key in onlyPose) {
                     // Implementation of pose confidence
                     confIndicatorView.visibility = View.VISIBLE
                     displayConfidence(value.confidence)
-                } else{
+                } else {
                     confIndicatorView.visibility = View.INVISIBLE
                 }
             }
 
             // Visualize list of all exercise result for the first time, to show the target exercise
-            if(!runOnce){
+            if (!runOnce) {
                 val exerciseList = exerciseLog.getExerciseDataList()
                 workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                 workoutRecyclerView.adapter = workoutAdapter
@@ -422,30 +438,35 @@ class WorkOutFragment : Fragment() {
     }
 
 
-    @Suppress("DEPRECATION")
     private fun textToSpeech(name: String) {
         // Initialize TextToSpeech
         ttf = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
                 ttf.language = Locale.US
                 ttf.setSpeechRate(1.0f)
-                ttf.speak(name, TextToSpeech.QUEUE_ADD, null)
+                val params = Bundle()
+                ttf.speak(name, TextToSpeech.QUEUE_ADD, params, null)
             }
         }
-        if(name == "Workout Started"){
+        if (name == "Workout Started") {
             startMediaTimer()
             timerTextView.visibility = View.VISIBLE
             timerRecordIcon.visibility = View.VISIBLE
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         currentExerciseTextView.visibility = View.VISIBLE
         currentRepetitionTextView.visibility = View.VISIBLE
         val pushUpData = exerciseLog.getExerciseData(key)
-        currentExerciseTextView.text = exerciseNameToDisplay(key)
-        currentRepetitionTextView.text = "count: " + pushUpData?.repetitions.toString()
+        val exerciseName = exerciseNameToDisplay(key)
+        val repetitionCount = pushUpData?.repetitions ?: 0
+
+        val exerciseText = getString(R.string.current_exercise_format, exerciseName)
+        val repetitionText = getString(R.string.current_repetition_format, repetitionCount)
+
+        currentExerciseTextView.text = exerciseText
+        currentRepetitionTextView.text = repetitionText
     }
 
 
@@ -692,6 +713,7 @@ class WorkOutFragment : Fragment() {
                     }
                     timerTextView.text = calculateTime(mRecSeconds, mRecMinute)
                 }
+
                 WHAT_STOP_TIMER -> {
                     timerTextView.text = calculateTime(0, 0)
                     timerRecordIcon.visibility = View.GONE

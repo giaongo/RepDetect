@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-@Suppress("DEPRECATION")
+
 class PlanStepTwoFragment: Fragment(), CoroutineScope {
     val TAG = "RepDetect Debug"
     private lateinit var addPlanViewModel: AddPlanViewModel
@@ -42,10 +42,10 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
         val view = inflater.inflate(R.layout.fragment_plan_step_two, container, false)
         // Set the values
         arguments?.let {
-            if (it["exerciseName"] != null) {
+            if (it.containsKey("exerciseName")) {
                 mExerciseName = it.getString("exerciseName")
             }
-            if (it["caloriesPerRep"] != null) {
+            if (it.containsKey("caloriesPerRep")) {
                 mKcal = it.getDouble("caloriesPerRep")
             }
         }
@@ -88,7 +88,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
             if(repeatEditText.text.isEmpty() || selectedDays.size == 0){
                 showErrorMessage()
             }else {
-                addPlanViewModel = ViewModelProvider(this).get(AddPlanViewModel::class.java)
+                addPlanViewModel = ViewModelProvider(this)[AddPlanViewModel::class.java]
                 var days = ""
                 for(i in selectedDays){
                     days += "$i "

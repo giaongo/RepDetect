@@ -123,6 +123,8 @@
     <string name="workoutResultDisplay">%s</string>
     <string name="noWorkoutResultDisplay">No Exercise Performed</string>
     <string name="workoutTimer">%s</string>
+    <string name="current_exercise_format">Exercise: %s</string>
+    <string name="current_repetition_format">Count: %d</string>
 
     <!-- Strings for Start&InProcess fragment -->
     <string name="cancel_button">Cancel</string>
