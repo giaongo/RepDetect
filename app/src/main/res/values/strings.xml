@@ -181,7 +181,7 @@
 
     <!-- Strings for Profile fragment -->
     <string name="content_description">User avatar</string>
-    <string name="default_user">Adline Castelino</string>
+    <string name="default_user">Adeline Castelino</string>
     <string name="result">Weekly result</string>
     <string name="summary">Weekly summary</string>
     <string name="total_time">%d minutes</string>
