@@ -75,8 +75,8 @@ class ProfileFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 appRepository.allPlans.observe(viewLifecycleOwner) { exercisePlans ->
                     // Calculate progress and update UI
-                    val totalPlannedRepetitions = exercisePlans?.sumBy { it.repeatCount } ?: 0
-                    val totalCompletedRepetitions = workoutResults?.sumBy { it.repeatedCount } ?: 0
+                    val totalPlannedRepetitions = exercisePlans.sumOf { it.repeatCount }
+                    val totalCompletedRepetitions = workoutResults?.sumOf { it.repeatedCount } ?: 0
                     val progressPercentage =
                         if (totalPlannedRepetitions != 0) {
                             (totalCompletedRepetitions.toDouble() / totalPlannedRepetitions) * 100
@@ -119,10 +119,6 @@ class ProfileFragment : Fragment() {
         val calendar = Calendar.getInstance(Locale.getDefault())
         // Set the first day of the week to Sunday
         calendar.firstDayOfWeek = Calendar.SUNDAY
-        // Get the current day of the week
-        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        // Calculate the offset to adjust for the current day
-        val offset = if (currentDayOfWeek != Calendar.SUNDAY) 1 else 0
         // Get the week of the year
         return calendar.get(Calendar.WEEK_OF_YEAR)
     }
@@ -134,7 +130,7 @@ class ProfileFragment : Fragment() {
     ): Double {
         return workoutResults
             .filter { getCalendarWeek(it.timestamp) == targetWeek }
-            .sumByDouble { it.workoutTimeInMin }
+            .sumOf { it.workoutTimeInMin }
     }
 
     // Function to get the week of the year from a timestamp
@@ -190,7 +186,7 @@ class ProfileFragment : Fragment() {
         workoutResults: List<WorkoutResult>?
     ) {
         // Use workoutResults for the present week
-        val totalCalories = workoutResults?.sumByDouble { it.calorie } ?: 0.0
+        val totalCalories = workoutResults?.sumOf { it.calorie } ?: 0.0
 
         // Update the total calories TextView
         val totalCaloriesTextView = view?.findViewById<TextView>(R.id.totalCaloriesTextView)
