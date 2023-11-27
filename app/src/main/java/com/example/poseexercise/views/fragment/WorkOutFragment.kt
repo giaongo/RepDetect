@@ -155,12 +155,6 @@ class WorkOutFragment : Fragment() {
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
         cameraFlipFAB.visibility = View.VISIBLE
 
-        // Get the list of the not complete plan for today
-        lifecycleScope.launch(Dispatchers.IO) {
-            notCompletePlanList =
-                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
-        }
-
         // Set click listener for the skip button
         skipButton.setOnClickListener {
             // Reset the flag before starting the exercise
@@ -273,9 +267,9 @@ class WorkOutFragment : Fragment() {
         // get the list of plans from database
         lifecycleScope.launch(Dispatchers.IO) {
             // get not completed exercise from database using coroutine
-            val notCompletedExercise =
-                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
-            notCompletedExercise?.forEach { item ->
+            notCompletePlanList =
+                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
+            notCompletePlanList?.forEach { item ->
                 val exercisePlan =
                     ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
                 val existingExercisePlan =
