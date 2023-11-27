@@ -1,107 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/planStepTwoFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundFill"
-    android:id="@+id/planStepTwoFragment"
+    android:fillViewport="true"
     tools:context=".views.fragment.PlanStepTwoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_xlarge"
-            android:text="@string/new_plan"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:id="@+id/top_part"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.4"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField1"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_xlarge"
-            android:hint="@string/label_exercise_name"
-            app:endIconMode="clear_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/exercise_name"
-                android:enabled="false"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="10"
-                />
+                android:gravity="center"
+                android:orientation="vertical">
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField2"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_xlarge"
-            android:hint="@string/label_rep"
-            app:endIconMode="clear_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textField1">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/repeat_count"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="3"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
+                <!-- New Plan Header -->
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_xxlarge"
+                    android:text="@string/new_plan"
+                    android:textSize="@dimen/text_header"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/textField1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:layout_marginEnd="4dp"
-            android:text="@string/label_days"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/textField2"
-            app:layout_constraintTop_toBottomOf="@+id/textField2" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xlarge"
+                    android:hint="@string/label_exercise_name"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView">
 
-        <ListView
-            android:id="@+id/days_list"
+                    <!-- Exercise Name TextInputLayout -->
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/exercise_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:enabled="false" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Repeat Count TextInputLayout -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xlarge"
+                    android:hint="@string/label_rep"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textField1">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/repeat_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="3" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Label for Days -->
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:text="@string/label_days"
+                    android:textSize="@dimen/text_label"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/textField2"
+                    app:layout_constraintTop_toBottomOf="@+id/textField2" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <!-- List of Days -->
+        <LinearLayout
+            android:id="@+id/second_part"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/textView2"
-            android:layout_margin="@dimen/margin_large"
-            app:layout_constraintBottom_toTopOf="@id/button"
-            android:choiceMode="multipleChoice"/>
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="158dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/primaryColor"
-            android:text="@string/create_button"
-            android:textSize="16sp"
-            android:textColor="@color/white"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/margin_xlarge"
+            android:layout_weight="0.4"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/third_part"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/days_list" />
+            app:layout_constraintTop_toBottomOf="@+id/top_part">
+
+            <ListView
+                android:id="@+id/days_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:choiceMode="multipleChoice"
+                android:scrollbarSize="@dimen/margin_small"
+                android:scrollbars="vertical" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/third_part"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/second_part">
+
+            <!-- Create Plan button -->
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/primaryColor"
+                android:text="@string/create_button"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_normal" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+
+</RelativeLayout>
+
+

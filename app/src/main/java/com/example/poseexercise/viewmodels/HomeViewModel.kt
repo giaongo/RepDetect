@@ -14,7 +14,7 @@ class HomeViewModel(application: Application): AndroidViewModel(application) {
         return repository.getPlanByDay(day)
     }
 
-    fun getNotCompletePlans(day: String): List<Plan>? {
+    fun getNotCompletePlans(day: String): MutableList<Plan>? {
         return repository.getNotCompletePlanByDay(day)
     }
 }

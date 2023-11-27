@@ -18,13 +18,10 @@ package com.example.poseexercise.views.fragment.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build.VERSION_CODES;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.camera.core.CameraSelector;
-
 import com.google.common.base.Preconditions;
 import com.example.poseexercise.R;
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase;
@@ -36,14 +33,6 @@ public class PreferenceUtils {
 
   private static final int POSE_DETECTOR_PERFORMANCE_MODE_FAST = 1;
 
- /* static void saveString(Context context, @StringRes int prefKeyId, @Nullable String value) {
-    PreferenceManager.getDefaultSharedPreferences(context)
-        .edit()
-        .putString(context.getString(prefKeyId), value)
-        .apply();
-  }*/
-
-  @RequiresApi(VERSION_CODES.LOLLIPOP)
   @Nullable
   public static android.util.Size getCameraXTargetResolution(Context context, int lensfacing) {
     Preconditions.checkArgument(
@@ -60,13 +49,6 @@ public class PreferenceUtils {
       return null;
     }
   }
-
-  public static boolean shouldHideDetectionInfo(Context context) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String prefKey = context.getString(R.string.pref_key_info_hide);
-    return sharedPreferences.getBoolean(prefKey, false);
-  }
-
 
   public static PoseDetectorOptionsBase getPoseDetectorOptionsForLivePreview(Context context) {
     int performanceMode =
@@ -106,13 +88,6 @@ public class PreferenceUtils {
     return sharedPreferences.getBoolean(prefKey, true);
   }
 
-/*  public static boolean shouldShowPoseDetectionInFrameLikelihoodStillImage(Context context) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String prefKey =
-        context.getString(R.string.pref_key_still_image_pose_detector_show_in_frame_likelihood);
-    return sharedPreferences.getBoolean(prefKey, true);
-  }*/
-
   public static boolean shouldPoseDetectionVisualizeZ(Context context) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefKey = context.getString(R.string.pref_key_pose_detector_visualize_z);
@@ -124,18 +99,6 @@ public class PreferenceUtils {
     String prefKey = context.getString(R.string.pref_key_pose_detector_rescale_z);
     return sharedPreferences.getBoolean(prefKey, true);
   }
-
-  public static boolean shouldPoseDetectionRunClassification(Context context) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String prefKey = context.getString(R.string.pref_key_pose_detector_run_classification);
-    return sharedPreferences.getBoolean(prefKey, true);
-  }
-
-/*  public static boolean shouldSegmentationEnableRawSizeMask(Context context) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String prefKey = context.getString(R.string.pref_key_segmentation_raw_size_mask);
-    return sharedPreferences.getBoolean(prefKey, false);
-  }*/
 
   /**
    * Mode type preference is backed by {@link android.preference.ListPreference} which only support
@@ -154,6 +117,4 @@ public class PreferenceUtils {
     String prefKey = context.getString(R.string.pref_key_camera_live_viewport);
     return sharedPreferences.getBoolean(prefKey, false);
   }
-
-  private PreferenceUtils() {}
 }

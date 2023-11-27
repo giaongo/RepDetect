@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
+        <!-- Camera Preview -->
         <androidx.camera.view.PreviewView
             android:id="@+id/preview_view"
             android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
-
+        <!-- Graphic Overlay for Pose Detection -->
         <com.example.poseexercise.views.graphic.GraphicOverlay
             android:id="@+id/graphic_overlay"
             android:layout_width="match_parent"
@@ -33,12 +33,14 @@
             app:layout_constraintRight_toRightOf="@id/preview_view"
             app:layout_constraintTop_toTopOf="@id/preview_view" />
 
+        <!-- Confidence Indicator -->
         <ImageView
             android:id="@+id/confidenceIndicatorView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:alpha="0.7"
             android:layout_margin="10dp"
+            android:contentDescription="@string/confidence_indicator"
             android:background="@drawable/confidence_indicator"
             app:layout_constraintDimensionRatio="1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,6 +76,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/workoutRecycleViewArea"/>
 
+        <!-- Cancel Exercise Button -->
         <Button
             android:id="@+id/button_cancel_exercise"
             android:layout_width="wrap_content"
@@ -91,6 +94,7 @@
             app:pressedTranslationZ="6dp"
             app:tint="@color/white" />
 
+        <!-- Start Exercise Button -->
         <Button
             android:id="@+id/button_start_exercise"
             android:layout_width="wrap_content"
@@ -107,13 +111,14 @@
             app:pressedTranslationZ="6dp"
             app:tint="@color/white" />
 
+        <!-- Complete Exercise Button -->
         <Button
             android:id="@+id/button_complete_exercise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/complete_button"
-            android:visibility="invisible"
             android:textColor="@color/white"
+            android:visibility="invisible"
             app:backgroundTint="@color/blueButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -124,7 +129,7 @@
             app:pressedTranslationZ="6dp"
             app:tint="@color/white" />
 
-
+        <!-- RecyclerView for Workout Exercise List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/workoutRecycleViewArea"
             android:layout_width="wrap_content"
@@ -137,43 +142,45 @@
             app:layout_constraintEnd_toEndOf="@+id/preview_view"
             app:layout_constraintTop_toBottomOf="@+id/currentRepetitionText" />
 
-
-
+        <!-- Camera Facing Switch Button -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/facing_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:importantForAccessibility="no"
-            app:srcCompat="@drawable/cameraflip"
-            app:pressedTranslationZ="6dp"
-            app:fabCustomSize="40dp"
             android:alpha="0.9"
-            app:elevation="15dp"
-            app:rippleColor="@color/white"
+            android:importantForAccessibility="no"
             app:backgroundTint="@color/primaryColor"
+            app:elevation="15dp"
+            app:fabCustomSize="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.92"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.87" />
+            app:layout_constraintVertical_bias="0.87"
+            app:pressedTranslationZ="6dp"
+            app:rippleColor="@color/white"
+            app:srcCompat="@drawable/cameraflip" />
 
+        <!-- Timer Recording Icon -->
         <ImageView
             android:id="@+id/timerRecIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/camera_rec_red_point"
             android:layout_marginEnd="5dp"
+            android:src="@drawable/camera_rec_red_point"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/timerTV"
             app:layout_constraintEnd_toStartOf="@+id/timerTV"
-            app:layout_constraintTop_toTopOf="@+id/timerTV" />
+            app:layout_constraintTop_toTopOf="@+id/timerTV"
+            android:contentDescription="@string/record_icon" />
 
+        <!-- Timer TextView -->
         <TextView
             android:id="@+id/timerTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
+            android:text="@string/_00_00"
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -184,15 +191,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05" />
 
+        <!-- Current Exercise Text -->
         <TextView
             android:id="@+id/currentExerciseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:text="@string/exercise_count"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.1"
@@ -200,15 +208,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05" />
 
+        <!-- Current Repetition Text -->
         <TextView
             android:id="@+id/currentRepetitionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:text="@string/exercise_count"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.9"
@@ -216,53 +225,57 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05" />
 
+        <!-- Loading Status TextView -->
         <TextView
             android:id="@+id/loadingStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/loading"
+            android:background="@drawable/exerciselist_background"
             android:paddingHorizontal="50dp"
             android:paddingVertical="100dp"
-            android:visibility="invisible"
-            android:background="@drawable/exerciselist_background"
-            android:textSize="20sp"
+            android:text="@string/loading"
             android:textColor="@color/white"
+            android:textSize="20sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/button_start_exercise"
             app:layout_constraintEnd_toEndOf="@+id/preview_view"
             app:layout_constraintStart_toStartOf="@+id/preview_view"
             app:layout_constraintTop_toBottomOf="@+id/timerTV" />
 
+        <!-- GifImageView for displaying exercise GIFs -->
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/exerciseGifImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"/>
 
+        <!-- Skip button -->
         <Button
             android:id="@+id/skipButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/skip"
             android:visibility="invisible"
+            android:text="@string/skip"
             app:layout_constraintBottom_toBottomOf="@id/button_start_exercise"
             app:layout_constraintEnd_toEndOf="@id/button_start_exercise"
             app:layout_constraintStart_toStartOf="@id/button_start_exercise"
             app:layout_constraintTop_toTopOf="@id/button_start_exercise"
-            app:pressedTranslationZ="6dp"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintVertical_bias="0.87"
             app:backgroundTint="@color/primaryColor"
             android:textColor="@color/white"
-            app:tint="@color/white" />
+            app:tint="@color/white"/>
 
-
+        <!-- Loading Progress Bar -->
         <ProgressBar
             android:id="@+id/loadingProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:indeterminateTint="@color/primaryColor"
-            app:layout_constraintTop_toBottomOf="@+id/loadingStatus"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/loadingStatus" />
+            app:layout_constraintStart_toStartOf="@+id/loadingStatus"
+            app:layout_constraintTop_toBottomOf="@+id/loadingStatus" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

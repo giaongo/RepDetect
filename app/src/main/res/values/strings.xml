@@ -9,18 +9,11 @@
     <string name="kick_start">Kick start your journey by crafting a tailored workout plan that suits your needs and goals</string>
     <string name="create_a_workout">Create a workout plan to stay fit</string>
     <string name="next_onboarding">Next</string>
+    <string name="get_started">Get Started</string>
 
-    <!-- Strings for homescreen -->
+    <!-- Strings for home-screen -->
     <string name="mixed_text">20 <font fgcolor="#A9A9A9">x 3</font></string>
-    <!--<string name="orange_rectangle">Progress Image</string>
-    <string name="squats">Squats</string>
-    <string name="lunges">Lunges</string>
-    <string name="plan_today">Today\'s Plan</string>
-    <string name="push_up">Push Up</string>
-    <string name="sub_header">100 Push up a day</string>
-    <string name="sit_up">Sit Up</string>
-    <string name="sit_up_a_day">20 Sit up a day</string>-->
-
+    <string name="there_is_no_plan_set_at_the_moment">There is no plan set at the moment</string>
 
     <string name="app_name" translatable="false">RepDetect+</string>
 
@@ -121,15 +114,17 @@
     <string name="completed_min">%1$d mins</string>
     <string name="completed_icon_content_description">Completed Icon</string>
     <string name="completed_title">Completed</string>
-    <string name="good_job_body">Good Job, Adeline</string>
+    <string name="good_job_body">Good Job</string>
     <string name="completed_announcement">Your activity is over, keep improving your training skills!</string>
     <string name="home_button">Home</string>
     <string name="canceled_workout_title">Canceled Workout</string>
-    <string name="no_worries_body">No Worries, Adeline</string>
+    <string name="no_worries_body">No Worries</string>
     <string name="canceled_announcement">Keep the motivation alive, and let\'s get back to it when you feel inspired!</string>
     <string name="workoutResultDisplay">%s</string>
     <string name="noWorkoutResultDisplay">No Exercise Performed</string>
     <string name="workoutTimer">%s</string>
+    <string name="current_exercise_format">Exercise: %s</string>
+    <string name="current_repetition_format">Count: %d</string>
 
     <!-- Strings for Start&InProcess fragment -->
     <string name="cancel_button">Cancel</string>
@@ -154,6 +149,10 @@
     <string name="sub_header">100 Push up a day</string>
     <string name="sit_up">Sit Up</string>
     <string name="sit_up_a_day">20 Sit up a day</string>
+    <string name="skip">Skip</string>
+    <string name="_00_00">00:00</string>
+    <string name="confidence_indicator">Confidence Indicator</string>
+    <string name="record_icon">record icon</string>
 
     <!-- Strings for PlanStepOne & PlanStepTwo fragment -->
     <string name="choose_exercise">Choose Exercises</string>
@@ -184,7 +183,7 @@
 
     <!-- Strings for Profile fragment -->
     <string name="content_description">User avatar</string>
-    <string name="default_user">Adline Castelino</string>
+    <string name="default_user">Adeline Castelino</string>
     <string name="result">Weekly result</string>
     <string name="summary">Weekly summary</string>
     <string name="total_time">%d minutes</string>
@@ -194,10 +193,12 @@
     <string name="no_activities_yet">No activities yet</string>
     <string name="total_calories"> %s Kcal this week</string>
     <string name="loading">Loading Pose AI model in camera preview..</string>
-    <string name="skip">Skip</string>
+    <string name="overlay">Semi-transparent overlay for visual effect</string>
+    <string name="equipment_description">Image of workout equipment</string>
+    <string name="logo">logo for the app</string>
+    <string name="counting_reps_made_simple">Counting Reps Made Simple</string>
+    <string name="reps">Reps</string>
     <string name="completedAll">Congratulation!\nYou have completed all the planned exercise for today.</string>
 
-    <!-- Strings for exercise name -->
-    <!--    <string name="push_up">Push up</string>-->
 </resources>
 

@@ -1,56 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_small"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <!-- Horizontal LinearLayout to contain image and text -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
-        android:layout_margin="8dp">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/plannedExerciseImage"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/logo" />
+        <!-- ImageView for displaying the exercise image -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".3"
+            app:layout_constraintDimensionRatio="1:1"/>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:orientation="vertical"
-                android:padding="@dimen/margin_large">
+        <!-- Exercise title -->
+        <TextView
+            android:id="@+id/exercise_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sit_up"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_label"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@id/delete_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/exercise_rep"/>
 
-                <TextView
-                    android:id="@+id/exercise_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/sit_up"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:background="@drawable/delete"
+            app:layout_constraintWidth_percent=".1"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/exercise_rep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/sit_up_a_day"
-                    android:textColor="@color/textGray"
-                    android:textSize="14sp" />
 
-            </LinearLayout>
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+        <!-- Exercise repetition details -->
+        <TextView
+            android:id="@+id/exercise_rep"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sit_up_a_day"
+            android:textColor="@color/textGray"
+            android:textSize="@dimen/text_normal"
+            app:layout_constraintStart_toStartOf="@+id/exercise_title"
+            app:layout_constraintTop_toBottomOf="@+id/exercise_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@id/delete_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
 

@@ -53,7 +53,6 @@ import java.util.TimerTask;
  */
 public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
 
-  protected static final String MANUAL_TESTING_LOG = "LogTagForTest";
   private static final String TAG = "VisionProcessorBase";
 
   private final ActivityManager activityManager;
@@ -232,16 +231,6 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                 graphicOverlay.add(new CameraImageGraphic(graphicOverlay, originalCameraImage));
               }
               VisionProcessorBase.this.onSuccess(results, graphicOverlay);
-
-              // disable the overlay for information we don't need
-              /*if (!PreferenceUtils.shouldHideDetectionInfo(graphicOverlay.getContext())) {
-                graphicOverlay.add(
-                    new InferenceInfoGraphic(
-                        graphicOverlay,
-                        currentFrameLatencyMs,
-                        currentDetectorLatencyMs,
-                        shouldShowFps ? framesPerSecond : null));
-              }*/
               graphicOverlay.postInvalidate();
             })
         .addOnFailureListener(

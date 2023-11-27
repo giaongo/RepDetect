@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/planStepOneFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundFill"
-    tools:context=".views.fragment.PlanStepOneFragment"
-    android:id="@+id/planStepOneFragment"
-    >
+    tools:context=".views.fragment.PlanStepOneFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
+
+        <!-- LinearLayout for grouping UI elements vertically -->
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            android:orientation="vertical">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <!-- Title TextView for choosing exercise -->
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
@@ -32,6 +33,7 @@
                 android:textSize="32sp"
                 android:textStyle="bold" />
 
+            <!-- ChipGroup for exercise difficulty levels -->
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group"
                 android:layout_width="wrap_content"
@@ -39,26 +41,25 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp">
 
+                <!-- Chips for beginner levels -->
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_1"
                     style="@style/Widget.Material3.Chip.Suggestion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="@string/level_easy"
+                    android:text="@string/level_easy" />
 
-                    />
-
+                <!-- Chips for intermmediate levels -->
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_2"
                     style="@style/Widget.Material3.Chip.Suggestion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="@string/level_intermediate"
+                    android:text="@string/level_intermediate" />
 
-                    />
-
+                <!-- Chips for advance levels -->
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_3"
                     style="@style/Widget.Material3.Chip.Suggestion"
@@ -66,21 +67,23 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
                     android:text="@string/level_advance" />
+
             </com.google.android.material.chip.ChipGroup>
+
+            <!-- RecyclerView for displaying exercises -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scrollbars="vertical"
                 android:layout_marginBottom="@dimen/margin_xxlarge"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:scrollbars="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-                tools:listitem="@layout/card_exercise_type"
-                />
+                tools:listitem="@layout/card_exercise_type" />
         </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
 

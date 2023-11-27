@@ -1,6 +1,8 @@
 package com.example.poseexercise.views.activity
 
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -24,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         prefManager = PrefManager(this)
         if (prefManager.isFirstTimeLaunch()) {
             // Show the onboarding screen
@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
+        increaseNotificationVolume()
 
         // Get the navigation host fragment from this Activity
         val navHostFragment = supportFragmentManager
@@ -65,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         )
         binding.navView.setMenuItems(menuItems, 0)
         binding.navView.setupWithNavController(navController)
-
     }
 
     /**
@@ -80,4 +80,16 @@ class MainActivity : AppCompatActivity() {
         var workoutTimer: String? = null
     }
 
+    /**
+     * This method is used to increase the notification sound volume to max
+     */
+    private fun increaseNotificationVolume() {
+        // Increase the volume to max.
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.setStreamVolume(
+            AudioManager.STREAM_NOTIFICATION,
+            audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION),
+            0
+        )
+    }
 }

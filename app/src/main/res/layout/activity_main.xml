@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.activity.MainActivity"
     tools:ignore="MissingClass">
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-    >
+        android:layout_height="match_parent">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             app:defaultNavHost="true"
+            app:layout_constraintBottom_toTopOf="@id/nav_view"
             app:navGraph="@navigation/nav_graph" />
-    </FrameLayout>
 
-    <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cbn_selectedColor="@color/white"
-        app:cbn_fabBg="@color/primaryColor"
-        app:cbn_bg="@color/black"
-        app:cbn_unSelectedColor="@color/white"
-       android:layout_alignBottom="@id/fragmentContainer"/>
+        <!-- Custom CurvedBottomNavigationView -->
+        <np.com.susanthapa.curved_bottom_navigation.CurvedBottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cbn_bg="@color/black"
+            app:cbn_fabBg="@color/primaryColor"
+            app:cbn_selectedColor="@color/white"
+            app:cbn_unSelectedColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</RelativeLayout>
+</FrameLayout>
