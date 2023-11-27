@@ -43,7 +43,7 @@ class PoseDetectorProcessor(
   private val rescaleZForVisualization: Boolean,
   private val runClassification: Boolean,
   private val isStreamMode: Boolean,
-  private val cameraXViewModel: CameraXViewModel
+  private var cameraXViewModel: CameraXViewModel? = null
 ) : VisionProcessorBase<PoseDetectorProcessor.PoseWithClassification>(context) {
 
   private val detector: PoseDetector
@@ -57,7 +57,7 @@ class PoseDetectorProcessor(
     init {
       // update live data value
         if(classificationResult.isNotEmpty()) {
-          cameraXViewModel.postureLiveData.postValue(classificationResult)
+          cameraXViewModel?.postureLiveData?.postValue(classificationResult)
         }
     }
   }
@@ -67,9 +67,11 @@ class PoseDetectorProcessor(
     classificationExecutor = Executors.newSingleThreadExecutor()
   }
 
+
   override fun stop() {
     super.stop()
     detector.close()
+    cameraXViewModel = null
   }
 
   override fun detectInImage(image: InputImage): Task<PoseWithClassification> {
