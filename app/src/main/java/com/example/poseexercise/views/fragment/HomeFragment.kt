@@ -247,6 +247,11 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
                 // Delete the plan from database
                 lifecycleScope.launch {
                     addPlanViewModel.deletePlan(planId)
+
+                    // After deleting the plan, fetch the updated data and update the UI
+                    val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                    val result2 = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+                    updateResultFromDatabase(result1, result2)
                 }
                 dialog.dismiss()
             }
