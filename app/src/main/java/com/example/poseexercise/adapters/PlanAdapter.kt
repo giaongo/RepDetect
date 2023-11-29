@@ -1,7 +1,6 @@
 package com.example.poseexercise.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +39,6 @@ class PlanAdapter internal constructor(context: Context):
         holder.deleteButton.setOnClickListener {
             listener.onItemClicked(currentPlan.id, position)
             notifyDataSetChanged()
-            Log.d(TAG, "adapater position is $position")
         }
     }
 

@@ -26,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 class PlanStepTwoFragment: Fragment(), CoroutineScope {
     val TAG = "RepDetect Debug"
     private lateinit var addPlanViewModel: AddPlanViewModel
-    private var mExerciseName : String? = null
+    private var mExerciseName : String = ""
     private var mKcal: Double = 0.0
     private val selectedDays = mutableListOf<String>()
     private lateinit var days: Array<String>
@@ -41,14 +41,8 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_plan_step_two, container, false)
         // Set the values
-        arguments?.let {
-            if (it.containsKey("exerciseName")) {
-                mExerciseName = it.getString("exerciseName")
-            }
-            if (it.containsKey("caloriesPerRep")) {
-                mKcal = it.getDouble("caloriesPerRep")
-            }
-        }
+        mExerciseName = arguments?.getString("exerciseName") ?: ""
+        mKcal = arguments?.getDouble("caloriesPerRep") ?: 0.0
         return view
     }
 
@@ -94,7 +88,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
                     days += "$i "
                 }
                 val repeatCount = repeatEditText.text.toString()
-                val newPlan = Plan(0,mExerciseName!!,mKcal,repeatCount.toInt() ,days)
+                val newPlan = Plan(0,mExerciseName,mKcal,repeatCount.toInt() ,days)
                 launch{
                     addPlanViewModel.insert(newPlan)
                 }

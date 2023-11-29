@@ -38,7 +38,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.poseexercise.R
-import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
@@ -55,6 +54,7 @@ import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.viewmodels.HomeViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.views.activity.MainActivity
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
@@ -62,7 +62,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.ArrayList
+import java.util.Collections
 import java.util.Date
 import java.util.Locale
 import java.util.Timer
@@ -106,7 +106,7 @@ class WorkOutFragment : Fragment() {
     private var runOnce: Boolean = false
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
-    private var notCompletePlanList: List<Plan>? = emptyList()
+    private var todayPlan: MutableList<Plan>? = Collections.emptyList()
     private var userWantsToSkip: Boolean = false
     private lateinit var exerciseGifImageView: ImageView
     private lateinit var completeAllExercise: TextView
@@ -147,12 +147,9 @@ class WorkOutFragment : Fragment() {
         completeAllExercise = view.findViewById(R.id.completedAllExerciseTextView)
         confIndicatorView.visibility = View.GONE
         confidenceTextView.visibility = View.GONE
-
         loadingTV = view.findViewById(R.id.loadingStatus)
         loadProgress = view.findViewById(R.id.loadingProgress)
-
         skipButton = view.findViewById(R.id.skipButton)
-
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
         exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
@@ -165,7 +162,6 @@ class WorkOutFragment : Fragment() {
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
         cameraFlipFAB.visibility = View.VISIBLE
-
         // Set click listener for the skip button
         skipButton.setOnClickListener {
             // Reset the flag before starting the exercise
@@ -176,12 +172,12 @@ class WorkOutFragment : Fragment() {
         startButton.setOnClickListener {
                 lifecycleScope.launch(Dispatchers.IO) {
                     // Fetch the planned exercises for the day from the view model
-                    val todayPlan = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                    todayPlan = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
                     val plannedExerciseList: MutableSet<String> = mutableSetOf()
                     val newExerciseList = todayPlan?.map {
                         // Map the exercise names to their corresponding GIF names
                         when (it.exercise) {
-                            "Sit Up" -> "situp_up"
+                            "Sit up" -> "situp_up"
                             "Push up" -> "pushups_down"
                             else -> it.exercise.lowercase(Locale.ROOT)
                         }
@@ -196,9 +192,7 @@ class WorkOutFragment : Fragment() {
                             exerciseGifImageView.setBackgroundColor(Color.BLACK)
                             exerciseGifImageView.visibility = View.VISIBLE
                             skipButton.visibility = View.VISIBLE
-
                             startButton.visibility = View.INVISIBLE
-
                             for (exerciseName in plannedExerciseList) {
                                 showExerciseGif(exerciseName)
                                 // Check if the user pressed skip during the exercise
