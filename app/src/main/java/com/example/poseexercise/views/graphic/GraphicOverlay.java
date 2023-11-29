@@ -77,7 +77,7 @@ public class GraphicOverlay extends View {
    * instances to the overlay using {@link GraphicOverlay#add(Graphic)}.
    */
   public abstract static class Graphic {
-    private GraphicOverlay overlay;
+    private final GraphicOverlay overlay;
 
     public Graphic(GraphicOverlay overlay) {
       this.overlay = overlay;
@@ -98,27 +98,9 @@ public class GraphicOverlay extends View {
      */
     public abstract void draw(Canvas canvas);
 
-    protected void drawRect(
-        Canvas canvas, float left, float top, float right, float bottom, Paint paint) {
-      canvas.drawRect(left, top, right, bottom, paint);
-    }
-
-    protected void drawText(Canvas canvas, String text, float x, float y, Paint paint) {
-      canvas.drawText(text, x, y, paint);
-    }
-
     /** Adjusts the supplied value from the image scale to the view scale. */
     public float scale(float imagePixel) {
       return imagePixel * overlay.scaleFactor;
-    }
-
-    /** Returns the application context of the app. */
-    public Context getApplicationContext() {
-      return overlay.getContext().getApplicationContext();
-    }
-
-    public boolean isImageFlipped() {
-      return overlay.isImageFlipped;
     }
 
     /**
@@ -146,9 +128,6 @@ public class GraphicOverlay extends View {
       return overlay.transformationMatrix;
     }
 
-    public void postInvalidate() {
-      overlay.postInvalidate();
-    }
 
     /**
      * Given the {@code zInImagePixel}, update the color for the passed in {@code paint}. The color will be
@@ -233,14 +212,6 @@ public class GraphicOverlay extends View {
     }
   }
 
-  /** Removes a graphic from the overlay. */
-  public void remove(Graphic graphic) {
-    synchronized (lock) {
-      graphics.remove(graphic);
-    }
-    postInvalidate();
-  }
-
   /**
    * Sets the source information of the image being processed by detectors, including size and
    * whether it is flipped, which informs how to transform image coordinates later.
@@ -260,14 +231,6 @@ public class GraphicOverlay extends View {
       needUpdateTransformation = true;
     }
     postInvalidate();
-  }
-
-  public int getImageWidth() {
-    return imageWidth;
-  }
-
-  public int getImageHeight() {
-    return imageHeight;
   }
 
   private void updateTransformationIfNeeded() {
