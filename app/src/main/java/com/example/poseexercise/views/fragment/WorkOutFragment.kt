@@ -82,6 +82,24 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private var today: String = DateFormat.format("EEEE", Date()) as String
+    private var runOnce: Boolean = false
+    private var notCompletePlanList: List<Plan>? = emptyList()
+    private var userWantsToSkip: Boolean = false
+    private var isAllWorkoutFinished: Boolean = false
+    private var mRecTimer: Timer? = null
+    private var mRecSeconds = 0
+    private var mRecMinute = 0
+    private var mRecHours = 0
+
+    // lateinit properties---
+    private lateinit var resultViewModel: ResultViewModel
+    private lateinit var timerTextView: TextView
+    private lateinit var timerRecordIcon: ImageView
+    private lateinit var workoutRecyclerView: RecyclerView
+    private lateinit var workoutAdapter: WorkoutAdapter
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var addPlanViewModel: AddPlanViewModel
     private lateinit var startButton: Button
     private lateinit var buttonCompleteExercise: Button
     private lateinit var buttonCancelExercise: Button
@@ -91,27 +109,12 @@ class WorkOutFragment : Fragment() {
     private lateinit var currentRepetitionTextView: TextView
     private lateinit var confidenceTextView: TextView
     private lateinit var cameraViewModel: CameraXViewModel
-    private var mRecTimer: Timer? = null
-    private var mRecSeconds = 0
-    private var mRecMinute = 0
-    private var mRecHours = 0
-    private lateinit var timerTextView: TextView
-    private lateinit var timerRecordIcon: ImageView
-    private lateinit var ttf: TextToSpeech
-    private lateinit var workoutRecyclerView: RecyclerView
-    private lateinit var workoutAdapter: WorkoutAdapter
-    private lateinit var homeViewModel: HomeViewModel
-    private lateinit var addPlanViewModel: AddPlanViewModel
-    private var today: String = DateFormat.format("EEEE", Date()) as String
-    private var runOnce: Boolean = false
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
-    private var notCompletePlanList: List<Plan>? = emptyList()
-    private var userWantsToSkip: Boolean = false
     private lateinit var exerciseGifImageView: ImageView
     private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
-    private var isAllWorkoutFinished: Boolean = false
+    private lateinit var textToSpeech: TextToSpeech
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -239,7 +242,7 @@ class WorkOutFragment : Fragment() {
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
-            textToSpeech("Workout Cancelled")
+            synthesizeSpeech("Workout Cancelled")
             stopMediaTimer()
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_cancelFragment)
@@ -259,7 +262,7 @@ class WorkOutFragment : Fragment() {
         val squats = Postures.squats
 
         buttonCompleteExercise.setOnClickListener {
-            textToSpeech("Workout Complete")
+            synthesizeSpeech("Workout Complete")
             cameraViewModel.postureLiveData.value?.let {
                 //val builder = StringBuilder()
                 for ((_, value) in it) {
