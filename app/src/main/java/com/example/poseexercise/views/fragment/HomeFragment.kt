@@ -243,20 +243,23 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         builder
             .setMessage("Are you sure you want to delete the plan?")
             .setTitle("Delete plan")
-            .setPositiveButton("Delete") { dialog, which ->
+            .setPositiveButton("Delete") { dialog, _->
                 // Delete the plan from database
                 lifecycleScope.launch {
                     addPlanViewModel.deletePlan(planId)
                 }
                 Log.d(TAG,"Delete plan $planId" )
-//                adapter.notifyItemRemoved(position)
                 Log.d(TAG, "Adapter position is $position")
                 notCompletePlanList?.removeAt(position)
                 adapter.notifyItemRemoved(position)
                 adapter.notifyDataSetChanged()
+                if (notCompletePlanList?.isEmpty() == true) {
+                    noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
+                    recyclerView.visibility = View.GONE
+                }
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, which ->
+            .setNegativeButton("Cancel") { dialog, _ ->
                 // Cancel the action
                 dialog.dismiss()
             }
