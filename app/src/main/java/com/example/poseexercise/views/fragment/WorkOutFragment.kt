@@ -121,6 +121,7 @@ class WorkOutFragment : Fragment() {
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         }
+        initTextToSpeech()
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
         cameraViewModel = ViewModelProvider(
             this, ViewModelProvider.AndroidViewModelFactory
@@ -423,13 +424,13 @@ class WorkOutFragment : Fragment() {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
                             // inform the user about completion only once
-                            textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
+                            synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
 
                             // check if all the exercise list complete if yes tell all exercise is complete
                             if (exerciseLog.areAllExercisesCompleted(databaseExercisePlan)) {
                                 val handler = Handler(Looper.getMainLooper())
                                 handler.postDelayed({
-                                    textToSpeech("Congratulation! You have completed all the planned exercise for today.")
+                                    synthesizeSpeech("Congratulation! all the planned exercise completed")
                                     isAllWorkoutFinished = true
                                     completeAllExercise.visibility = View.VISIBLE
                                 }, 5000)
@@ -478,26 +479,26 @@ class WorkOutFragment : Fragment() {
                 runOnce = true
                 loadingTV.visibility = View.GONE
                 loadProgress.visibility = View.GONE
-                textToSpeech("AI model is ready for you to do some exercise")
+                synthesizeSpeech("ready to start")
+                startMediaTimer()
+                timerTextView.visibility = View.VISIBLE
+                timerRecordIcon.visibility = View.VISIBLE
             }
         }
     }
 
-
-    private fun textToSpeech(name: String) {
-        // Initialize TextToSpeech
-        ttf = TextToSpeech(context) {
+    private fun initTextToSpeech() {
+        textToSpeech = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
-                ttf.language = Locale.US
-                ttf.setSpeechRate(1.0f)
-                val params = Bundle()
-                ttf.speak(name, TextToSpeech.QUEUE_ADD, params, null)
+                textToSpeech.language = Locale.US
+                textToSpeech.setSpeechRate(1.0f)
             }
         }
-        if (name == "AI model is ready for you to do some exercise") {
-            startMediaTimer()
-            timerTextView.visibility = View.VISIBLE
-            timerRecordIcon.visibility = View.VISIBLE
+    }
+
+    private fun synthesizeSpeech(name: String) {
+        lifecycleScope.launch(Dispatchers.Default){
+            textToSpeech.speak(name, TextToSpeech.QUEUE_ADD, null, null)
         }
     }
 
