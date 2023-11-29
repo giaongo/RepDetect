@@ -10,6 +10,10 @@ interface WorkoutResultDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: WorkoutResult)
 
-    @Query("SELECT * FROM workout_results")
+    @Query("SELECT * FROM workout_results ")
     suspend fun getAll(): List<WorkoutResult>
+
+    @Query("SELECT * FROM workout_results ORDER BY timestamp DESC LIMIT 10")
+    suspend fun getRecentWorkout(): List<WorkoutResult>
+
 }
