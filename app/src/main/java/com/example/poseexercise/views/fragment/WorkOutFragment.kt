@@ -45,6 +45,7 @@ import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.MyUtils.Companion.databaseNameToClassification
@@ -68,8 +69,7 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
-class WorkOutFragment : Fragment() {
-    private lateinit var resultViewModel: ResultViewModel
+class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -887,6 +887,37 @@ class WorkOutFragment : Fragment() {
             print("No match found")
         }
         return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    }
+
+    /**
+     * overridden function to clean up memory, clear object reference and un-register onClickListener
+     * in WorkOutFragment
+     */
+    override fun clearMemory() {
+        if (!textToSpeech.isSpeaking) {
+            textToSpeech.stop()
+        }
+        textToSpeech.shutdown()
+        previewView = null
+        graphicOverlay = null
+        cameraProvider = null
+        camera = null
+        previewUseCase = null
+        analysisUseCase = null
+        imageProcessor = null
+        cameraSelector = null
+        notCompletePlanList = null
+        mRecTimer = null
+        startButton.setOnClickListener(null)
+        buttonCompleteExercise.setOnClickListener(null)
+        buttonCancelExercise.setOnClickListener(null)
+        cameraFlipFAB.setOnClickListener(null)
+        skipButton.setOnClickListener(null)
+    }
+
+    override fun onDestroy() {
+        clearMemory()
+        super.onDestroy()
     }
 
     companion object {
