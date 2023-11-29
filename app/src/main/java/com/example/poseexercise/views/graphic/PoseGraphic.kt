@@ -31,22 +31,15 @@ internal constructor(
     private val pose: Pose,
     private val showInFrameLikelihood: Boolean,
     private val visualizeZ: Boolean,
-    private val rescaleZForVisualization: Boolean,
-    private val poseClassification: List<String>
+    private val rescaleZForVisualization: Boolean
 ) : Graphic(overlay) {
   private var zMin = java.lang.Float.MAX_VALUE
   private var zMax = java.lang.Float.MIN_VALUE
-  private val classificationTextPaint: Paint = Paint()
   private val leftPaint: Paint
   private val rightPaint: Paint
-  private val whitePaint: Paint
+  private val whitePaint: Paint = Paint()
 
   init {
-    classificationTextPaint.color = Color.WHITE
-    classificationTextPaint.textSize = POSE_CLASSIFICATION_TEXT_SIZE
-    classificationTextPaint.setShadowLayer(5.0f, 0f, 0f, Color.BLACK)
-
-    whitePaint = Paint()
     whitePaint.strokeWidth = STROKE_WIDTH
     whitePaint.color = Color.WHITE
     whitePaint.textSize = IN_FRAME_LIKELIHOOD_TEXT_SIZE
@@ -62,20 +55,6 @@ internal constructor(
     val landmarks = pose.allPoseLandmarks
     if (landmarks.isEmpty()) {
       return
-    }
-
-    // Draw pose classification text.
-    val classificationX = POSE_CLASSIFICATION_TEXT_SIZE * 1f
-    for (i in poseClassification.indices) {
-      val classificationY =
-        canvas.height -
-          (POSE_CLASSIFICATION_TEXT_SIZE *10f + POSE_CLASSIFICATION_TEXT_SIZE * 1.5f * (poseClassification.size - i).toFloat())
-      canvas.drawText(
-        poseClassification[i],
-        classificationX,
-        classificationY,
-        classificationTextPaint
-      )
     }
 
     // Draw all the points
@@ -221,10 +200,8 @@ internal constructor(
   }
 
   companion object {
-
     private const val DOT_RADIUS = 6.0f
     private const val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 0.0f
     private const val STROKE_WIDTH = 5.0f
-    private const val POSE_CLASSIFICATION_TEXT_SIZE = 0.0f
   }
 }
