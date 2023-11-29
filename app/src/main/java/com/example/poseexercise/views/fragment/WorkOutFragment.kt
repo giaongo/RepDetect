@@ -306,9 +306,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-            // update MainActivity static postureResultData based on the postureLiveData
-            //Log.d("WorkoutFragment", "complete button clicked")
-
             // update the workoutResultData in MainActivity
             cameraViewModel.postureLiveData.value?.let {
                 val builder = StringBuilder()
@@ -385,8 +382,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
             for ((key, value) in mapResult) {
-
-                //Log.d("logging_key: ", "${key}: ${value.confidence}")
 
                 // Visualize the repetition exercise data
                 if (key in allExercise) {
@@ -907,12 +902,16 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         imageProcessor = null
         cameraSelector = null
         notCompletePlanList = null
-        mRecTimer = null
+        mRecTimer?.let {
+            it.cancel()
+            mRecTimer = null
+        }
         startButton.setOnClickListener(null)
         buttonCompleteExercise.setOnClickListener(null)
         buttonCancelExercise.setOnClickListener(null)
         cameraFlipFAB.setOnClickListener(null)
         skipButton.setOnClickListener(null)
+        workoutRecyclerView.adapter = null
     }
 
     override fun onDestroy() {
