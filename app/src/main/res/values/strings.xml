@@ -14,6 +14,7 @@
     <!-- Strings for home-screen -->
     <string name="mixed_text">20 <font fgcolor="#A9A9A9">x 3</font></string>
     <string name="there_is_no_plan_set_at_the_moment">There is no plan set at the moment</string>
+    <string name="exercise_left">%d exercise left</string>
 
     <string name="app_name" translatable="false">RepDetect+</string>
 
@@ -198,6 +199,7 @@
     <string name="logo">logo for the app</string>
     <string name="counting_reps_made_simple">Counting Reps Made Simple</string>
     <string name="reps">Reps</string>
+    <string name="completedAll">Congratulation!\nYou have completed all the planned exercise for today.</string>
 
 </resources>
 

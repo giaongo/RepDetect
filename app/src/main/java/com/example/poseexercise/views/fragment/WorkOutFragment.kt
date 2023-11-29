@@ -1,10 +1,11 @@
 package com.example.poseexercise.views.fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.graphics.Color
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.speech.tts.TextToSpeech
@@ -37,6 +38,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.poseexercise.R
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
@@ -44,7 +46,7 @@ import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.util.MyApplication
-import com.example.poseexercise.util.MyUtils
+import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.MyUtils.Companion.databaseNameToClassification
 import com.example.poseexercise.util.MyUtils.Companion.exerciseNameToDisplay
 import com.example.poseexercise.util.VisionImageProcessor
@@ -53,7 +55,6 @@ import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.viewmodels.HomeViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.views.activity.MainActivity
-import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
@@ -61,6 +62,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 import java.util.Timer
@@ -87,6 +89,7 @@ class WorkOutFragment : Fragment() {
     private lateinit var confIndicatorView: ImageView
     private lateinit var currentExerciseTextView: TextView
     private lateinit var currentRepetitionTextView: TextView
+    private lateinit var confidenceTextView: TextView
     private lateinit var cameraViewModel: CameraXViewModel
     private var mRecTimer: Timer? = null
     private var mRecSeconds = 0
@@ -104,9 +107,11 @@ class WorkOutFragment : Fragment() {
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
     private var notCompletePlanList: List<Plan>? = emptyList()
-    private lateinit var exerciseGifImageView: ImageView
     private var userWantsToSkip: Boolean = false
+    private lateinit var exerciseGifImageView: ImageView
+    private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
+    private var isAllWorkoutFinished: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,13 +143,19 @@ class WorkOutFragment : Fragment() {
         confIndicatorView = view.findViewById(R.id.confidenceIndicatorView)
         currentExerciseTextView = view.findViewById(R.id.currentExerciseText)
         currentRepetitionTextView = view.findViewById(R.id.currentRepetitionText)
-        confIndicatorView.visibility = View.INVISIBLE
+        confidenceTextView = view.findViewById(R.id.confidenceIndicatorTextView)
+        completeAllExercise = view.findViewById(R.id.completedAllExerciseTextView)
+        confIndicatorView.visibility = View.GONE
+        confidenceTextView.visibility = View.GONE
+
         loadingTV = view.findViewById(R.id.loadingStatus)
         loadProgress = view.findViewById(R.id.loadingProgress)
+
+        skipButton = view.findViewById(R.id.skipButton)
+
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
         exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
-        skipButton = view.findViewById(R.id.skipButton)
         return view
     }
 
@@ -163,66 +174,68 @@ class WorkOutFragment : Fragment() {
 
         // start exercise button
         startButton.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                // Fetch the planned exercises for the day from the view model
-                val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
-                val plannedExerciseList: MutableSet<String> = mutableSetOf()
-                val newExerciseList = result1?.map {
-                    // Map the exercise names to their corresponding GIF names
-                    when (it.exercise) {
-                        "Sit Up" -> "situp_up"
-                        "Push up" -> "pushups_down"
-                        else -> it.exercise.lowercase(Locale.ROOT)
-                    }
-                }?.toMutableSet() ?: mutableSetOf()
-                // Clear and add the new exercise list to the set
-                plannedExerciseList.clear()
-                plannedExerciseList.addAll(newExerciseList)
-
-                withContext(Dispatchers.Main) {
-                    if (plannedExerciseList.isNotEmpty()) {
-                        // Show the GIF view and the skip button
-                        exerciseGifImageView.setBackgroundColor(Color.BLACK)
-                        exerciseGifImageView.visibility = View.VISIBLE
-                        skipButton.visibility = View.VISIBLE
-
-                        startButton.visibility = View.INVISIBLE
-
-                        for (exerciseName in plannedExerciseList) {
-                            showExerciseGif(exerciseName)
-                            // Check if the user pressed skip during the exercise
-                            if (userWantsToSkip) {
-                                // Hide the GIF view and exit the loop if the user wants to skip
-                                exerciseGifImageView.visibility = View.GONE
-                                break  // Exit the loop if the user wants to skip
-                            }
-                            // Delay for 3 seconds between GIF displays
-                            delay(3000)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    // Fetch the planned exercises for the day from the view model
+                    val todayPlan = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                    val plannedExerciseList: MutableSet<String> = mutableSetOf()
+                    val newExerciseList = todayPlan?.map {
+                        // Map the exercise names to their corresponding GIF names
+                        when (it.exercise) {
+                            "Sit Up" -> "situp_up"
+                            "Push up" -> "pushups_down"
+                            else -> it.exercise.lowercase(Locale.ROOT)
                         }
-                        exerciseGifImageView.visibility = View.GONE
-                        skipButton.visibility = View.GONE
-                        startButton.visibility = View.VISIBLE
-                    } else {
-                        // showing loading AI pose detection Model information to user
-                        loadingTV.visibility = View.VISIBLE
-                        loadProgress.visibility = View.VISIBLE
+                    }?.toMutableSet() ?: mutableSetOf()
+                    // Clear and add the new exercise list to the set
+                    plannedExerciseList.clear()
+                    plannedExerciseList.addAll(newExerciseList)
+
+                    withContext(Dispatchers.Main) {
+                        if (plannedExerciseList.isNotEmpty()) {
+                            // Show the GIF view and the skip button
+                            exerciseGifImageView.setBackgroundColor(Color.BLACK)
+                            exerciseGifImageView.visibility = View.VISIBLE
+                            skipButton.visibility = View.VISIBLE
+
+                            startButton.visibility = View.INVISIBLE
+
+                            for (exerciseName in plannedExerciseList) {
+                                showExerciseGif(exerciseName)
+                                // Check if the user pressed skip during the exercise
+                                if (userWantsToSkip) {
+                                    // Hide the GIF view and exit the loop if the user wants to skip
+                                    exerciseGifImageView.visibility = View.GONE
+                                    break  // Exit the loop if the user wants to skip
+                                }
+                                // Delay for 3 seconds between GIF displays
+                                delay(5000)
+                            }
+                            exerciseGifImageView.visibility = View.GONE
+                            skipButton.visibility = View.GONE
+                            startButton.visibility = View.VISIBLE
+                        } else {
+                            // showing loading AI pose detection Model inforamtion to user
+                            loadingTV.visibility = View.VISIBLE
+                            loadProgress.visibility = View.VISIBLE
+                        }
+                        // Set the screenOn flag to true, preventing the screen from turning off
+                        screenOn = true
+
+                        // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+                        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+                        cameraFlipFAB.visibility = View.GONE
+                        buttonCancelExercise.visibility = View.VISIBLE
+                        buttonCompleteExercise.visibility = View.VISIBLE
+                        startButton.visibility = View.GONE
+
+                        // To disable screen timeout
+                        cameraViewModel.triggerClassification.value = true
                     }
-                    // Set the screenOn flag to true, preventing the screen from turning off
-                    screenOn = true
-
-                    // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
-                    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-                    cameraFlipFAB.visibility = View.GONE
-                    buttonCancelExercise.visibility = View.VISIBLE
-                    buttonCompleteExercise.visibility = View.VISIBLE
-                    startButton.visibility = View.GONE
-
-                    // To disable screen timeout
-                    cameraViewModel.triggerClassification.value = true
                 }
-            }
         }
+
+
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
@@ -245,6 +258,74 @@ class WorkOutFragment : Fragment() {
         val lunges = Postures.lunges
         val squats = Postures.squats
 
+        buttonCompleteExercise.setOnClickListener {
+            textToSpeech("Workout Complete")
+            cameraViewModel.postureLiveData.value?.let {
+                //val builder = StringBuilder()
+                for ((_, value) in it) {
+                    if (value.repetition != 0) {
+                        lifecycleScope.launch {
+                            val calorie = when (value.postureType) {
+                                sitUp.type -> sitUp.value / 10
+                                pushUps.type -> pushUps.value / 10
+                                lunges.type -> lunges.value / 10
+                                squats.type -> squats.value / 10
+                                else -> 0.0
+                            }
+                            val workoutTime =
+                                convertTimeStringToMinutes(timerTextView.text.toString())
+
+                            val workOutResult = WorkoutResult(
+                                0,
+                                value.postureType,
+                                value.repetition,
+                                value.confidence,
+                                System.currentTimeMillis(),
+                                calorie * value.repetition,
+                                workoutTime
+                            )
+                            resultViewModel.insert(workOutResult)
+                        }
+                    }
+                }
+            }
+
+            // update the workoutTimer in MainActivity
+            val currentTimer = timerTextView.text.toString()
+            MainActivity.workoutTimer = currentTimer
+
+            stopMediaTimer()
+
+            // Set the screenOn flag to false, allowing the screen to turn off
+            screenOn = false
+
+            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // update MainActivity static postureResultData based on the postureLiveData
+            //Log.d("WorkoutFragment", "complete button clicked")
+
+            // update the workoutResultData in MainActivity
+            cameraViewModel.postureLiveData.value?.let {
+                val builder = StringBuilder()
+                for ((_, value) in it) {
+                    if (value.repetition != 0) {
+                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
+                    }
+                }
+                if (builder.toString().isNotEmpty()) MainActivity.workoutResultData =
+                    builder.toString()
+            }
+
+            // stop triggering classification process
+            cameraViewModel.triggerClassification.value = false
+
+            // Navigation to complete fragment
+            Navigation.findNavController(view)
+                .navigate(R.id.action_workoutFragment_to_completedFragment)
+        }
+
+
         if (previewView == null) {
             Log.d(TAG, "Preview is null")
         }
@@ -266,14 +347,18 @@ class WorkOutFragment : Fragment() {
         val exerciseLog = ExerciseLog()
         // get the list of plans from database
         lifecycleScope.launch(Dispatchers.IO) {
+
             // get not completed exercise from database using coroutine
-            notCompletePlanList =
-                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today)}
-            notCompletePlanList?.forEach { item ->
+            val notCompletedExercise =
+                withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+
+            notCompletedExercise?.forEach { item ->
                 val exercisePlan =
                     ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
+
                 val existingExercisePlan =
                     databaseExercisePlan.find { it.exerciseName == databaseNameToClassification(item.exercise) }
+
                 if (existingExercisePlan != null) {
                     // Update repetitions if ExercisePlan with the same exerciseName already exists
                     existingExercisePlan.repetitions += item.repeatCount
@@ -284,23 +369,43 @@ class WorkOutFragment : Fragment() {
             }
             // Push the planned exercise name in exercise Log
             databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName, 0, 0f, false) }
+
         }
+
 
         //Declare all the only pose exercise
         val onlyExercise = listOf("squats", "pushups_down", "lunges", "situp_up")
-        val onlyPose = listOf("yoga")
+        val onlyPose = listOf("warrior", "tree_pose")
+        val allExercise = listOf("squats", "pushups_down", "lunges", "situp_up", "warrior", "tree_pose")
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
+
             for ((key, value) in mapResult) {
+
+                //Log.d("logging_key: ", "${key}: ${value.confidence}")
+
                 // Visualize the repetition exercise data
-                if (key in onlyExercise) {
-                    // make confidence marker invisible
-                    confIndicatorView.visibility = View.INVISIBLE
+                if (key in allExercise) {
+
                     // get the data from exercise log of specific exercise
                     val data = exerciseLog.getExerciseData(key)
-                    if (data == null) {
+
+                    if (key in onlyExercise && data == null) {
                         // Adding exercise for the first time
                         exerciseLog.addExercise(key, value.repetition, value.confidence, false)
-                    } else if (value.repetition == data.repetitions.plus(1)) {
+
+                    } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
+
+                        workoutRecyclerView.visibility = View.VISIBLE
+                        if(isAllWorkoutFinished){
+                            completeAllExercise.visibility = View.VISIBLE
+                        } else{
+                            completeAllExercise.visibility = View.GONE
+                        }
+
+                        confIndicatorView.visibility = View.GONE
+                        confidenceTextView.visibility = View.GONE
+
                         // check if the exercise target is complete
                         var repetition: Int? = databaseExercisePlan.find {
                             it.exerciseName.equals(
@@ -316,47 +421,49 @@ class WorkOutFragment : Fragment() {
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
                             // inform the user about completion only once
                             textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
-                            // get the plan from database for exercise
-                            val planForExercise =
-                                notCompletePlanList?.find { databaseNameToClassification(it.exercise) == data.exerciseName }
-                            Log.d(
-                                TAG,
-                                "plan for exercise ${value.postureType} 's id is ${planForExercise?.exercise}"
-                            )
-                            if (planForExercise != null) {
-                                // Update the plan's complete status
-                                lifecycleScope.launch {
-                                    addPlanViewModel.updateComplete(
-                                        true,
-                                        System.currentTimeMillis(),
-                                        planForExercise.id
-                                    )
-                                    Log.d(TAG, "add time complete to database")
-                                }
-                            } else {
-                                Log.d(TAG, "No plan found for exercise ${data.exerciseName}")
+
+                            // check if all the exercise list complete if yes tell all exercise is complete
+                            if (exerciseLog.areAllExercisesCompleted(databaseExercisePlan)) {
+                                val handler = Handler(Looper.getMainLooper())
+                                handler.postDelayed({
+                                    textToSpeech("Congratulation! You have completed all the planned exercise for today.")
+                                    isAllWorkoutFinished = true
+                                    completeAllExercise.visibility = View.VISIBLE
+                                }, 5000)
                             }
+
                         } else if (data.isComplete) {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
                         } else {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, false)
-                            Log.d(TAG, "data is complete")
                         }
+
                         // display Current result when the increment happen
                         displayResult(key, exerciseLog)
+
                         // update the display list of all exercise progress when the increment happen
                         val exerciseList = exerciseLog.getExerciseDataList()
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
+                    }else if (key in onlyPose && value.confidence > 0.5){
+                        // Implementation of pose confidence
+                        confIndicatorView.visibility = View.VISIBLE
+                        displayConfidence(value.confidence)
+                        workoutRecyclerView.visibility = View.GONE
+                        completeAllExercise.visibility = View.GONE
+
+                        currentExerciseTextView.visibility = View.VISIBLE
+                        currentRepetitionTextView.visibility = View.GONE
+                        confidenceTextView.visibility = View.VISIBLE
+                        currentExerciseTextView.text = exerciseNameToDisplay(key)
+                        confidenceTextView.text = (value.confidence*100).toInt().toString() + " %"
+
+                    }else if (key in onlyPose && value.confidence < 0.6){
+                        confIndicatorView.visibility = View.GONE
+                        confidenceTextView.visibility = View.GONE
                     }
-                } else if (key in onlyPose) {
-                    // Implementation of pose confidence
-                    confIndicatorView.visibility = View.VISIBLE
-                    displayConfidence(value.confidence)
-                } else {
-                    confIndicatorView.visibility = View.INVISIBLE
                 }
             }
 
@@ -368,66 +475,8 @@ class WorkOutFragment : Fragment() {
                 runOnce = true
                 loadingTV.visibility = View.GONE
                 loadProgress.visibility = View.GONE
-                textToSpeech("Workout Started")
+                textToSpeech("AI model is ready for you to do some exercise")
             }
-        }
-        //When user click on complete button
-        buttonCompleteExercise.setOnClickListener {
-            textToSpeech("Workout Complete")
-            cameraViewModel.postureLiveData.value?.let {
-                //val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        lifecycleScope.launch {
-                            val calorie = when (value.postureType) {
-                                sitUp.type -> sitUp.value / 10
-                                pushUps.type -> pushUps.value / 10
-                                lunges.type -> lunges.value / 10
-                                squats.type -> squats.value / 10
-                                else -> 0.0
-                            }
-                            val workoutTime =
-                                MyUtils.convertTimeStringToMinutes(timerTextView.text.toString())
-                            val workOutResult = WorkoutResult(
-                                0,
-                                value.postureType,
-                                value.repetition,
-                                value.confidence,
-                                System.currentTimeMillis(),
-                                calorie * value.repetition,
-                                workoutTime
-                            )
-                            resultViewModel.insert(workOutResult)
-                        }
-                    }
-                }
-            }
-            // update the workoutTimer in MainActivity
-            val currentTimer = timerTextView.text.toString()
-            MainActivity.workoutTimer = currentTimer
-            stopMediaTimer()
-            // Set the screenOn flag to false, allowing the screen to turn off
-            screenOn = false
-            // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
-            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            // update MainActivity static postureResultData based on the postureLiveData
-            Log.d(TAG, "complete button clicked")
-            // update the workoutResultData in MainActivity
-            cameraViewModel.postureLiveData.value?.let {
-                val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
-                    }
-                }
-                if (builder.toString().isNotEmpty()) MainActivity.workoutResultData =
-                    builder.toString()
-            }
-            // stop triggering classification process
-            cameraViewModel.triggerClassification.value = false
-            // Navigation to complete fragment
-            Navigation.findNavController(view)
-                .navigate(R.id.action_workoutFragment_to_completedFragment)
         }
     }
 
@@ -442,17 +491,21 @@ class WorkOutFragment : Fragment() {
                 ttf.speak(name, TextToSpeech.QUEUE_ADD, params, null)
             }
         }
-        if (name == "Workout Started") {
+        if (name == "AI model is ready for you to do some exercise") {
             startMediaTimer()
             timerTextView.visibility = View.VISIBLE
             timerRecordIcon.visibility = View.VISIBLE
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         currentExerciseTextView.visibility = View.VISIBLE
         currentRepetitionTextView.visibility = View.VISIBLE
-        val pushUpData = exerciseLog.getExerciseData(key)
+        val data = exerciseLog.getExerciseData(key)
+        currentExerciseTextView.text = exerciseNameToDisplay(key)
+        currentRepetitionTextView.text = "count: " + data?.repetitions.toString()
+        /*val pushUpData = exerciseLog.getExerciseData(key)
         val exerciseName = exerciseNameToDisplay(key)
         val repetitionCount = pushUpData?.repetitions ?: 0
 
@@ -460,22 +513,21 @@ class WorkOutFragment : Fragment() {
         val repetitionText = getString(R.string.current_repetition_format, repetitionCount)
 
         currentExerciseTextView.text = exerciseText
-        currentRepetitionTextView.text = repetitionText
+        currentRepetitionTextView.text = repetitionText*/
     }
 
 
     private fun displayConfidence(confidence: Float) {
-        // Display confidence indicator based on the confidence level
-        if (confidence < 0.5) {
+        if (confidence <= 0.6) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.red)
-        } else if (confidence > 0.5 && confidence <= 0.6) {
+        } else if (confidence > 0.6 && confidence <= 0.7) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.orange)
-        } else if (confidence > 0.6 && confidence <= 0.75) {
+        } else if (confidence > 0.7 && confidence <= 0.8) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.yellow)
-        } else if (confidence > 0.75 && confidence <= 0.85) {
+        } else if (confidence > 0.8 && confidence <= 0.9) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
         } else {
@@ -645,7 +697,7 @@ class WorkOutFragment : Fragment() {
 
     // Request runtime permissions
     private fun getRuntimePermissions() {
-        val permissionsToRequest = java.util.ArrayList<String>()
+        val permissionsToRequest = ArrayList<String>()
         for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
             permission.let {
                 if (!isPermissionGranted(requireContext(), it)) {
@@ -800,7 +852,7 @@ class WorkOutFragment : Fragment() {
     private val exerciseGifs = mapOf(
         Postures.pushups.type to R.drawable.pushup,
         Postures.lunges.type to R.drawable.lunge,
-        Postures.squats.type to R.drawable.squat,
+        Postures.squats.type to R.drawable.squats,
         Postures.sitUp.type to R.drawable.situp
     )
 

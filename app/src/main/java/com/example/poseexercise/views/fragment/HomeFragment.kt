@@ -34,9 +34,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Collections
 import java.util.Date
+import java.util.Locale
 import kotlin.math.min
 
 class HomeFragment : Fragment(), PlanAdapter.ItemListener {
+    @Suppress("PropertyName")
     val TAG = "RepDetect Home Fragment"
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var resultViewModel: ResultViewModel
@@ -111,7 +113,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
             }
         }
         // Initialize home view model, RecyclerView and its adapter for today's plans
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         // get the list of plans from database
         lifecycleScope.launch(Dispatchers.IO) {
             val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
@@ -147,7 +149,8 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         }
 
 //        Display the not completed plans
-        progressText.text = "${notCompletePlanList?.size} exercise left"
+        val exerciseLeftString = resources.getString(R.string.exercise_left, notCompletePlanList?.size ?: 0)
+        progressText.text = exerciseLeftString
         if (notCompletePlanList?.isEmpty() == true) {
             noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
         }
@@ -173,7 +176,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
             withContext(Dispatchers.Main) {
                 appRepository.allPlans.observe(viewLifecycleOwner) { exercisePlans ->
                     // Filter exercise plans for today
-                    val todayExercisePlans = exercisePlans?.filter { isTodayPlan(it.selectedDays) }
+                    val todayExercisePlans = exercisePlans?.filter { isTodayPlan() }
                     // Calculate progress and update UI
                     val totalPlannedRepetitions = todayExercisePlans?.sumOf { it.repeatCount } ?: 0
                     val totalCompletedRepetitions =
@@ -196,7 +199,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         return isDaySelected(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
     }
 
-    private fun isTodayPlan(selectedDays: String): Boolean {
+    private fun isTodayPlan(): Boolean {
         return isDaySelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK).toString())
     }
 
@@ -226,9 +229,9 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
     }
 
     // Get the day from which the plan was marked as complete
-    private fun getDayCompleted(time: Long): String? {
+    private fun getDayCompleted(time: Long, locale: Locale = Locale.getDefault()): String? {
         return try {
-            val sdf = SimpleDateFormat("EEEE")
+            val sdf = SimpleDateFormat("EEEE", locale)
             val netDate = Date(time)
             sdf.format(netDate)
         } catch (e: Exception) {
@@ -243,10 +246,15 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         builder
             .setMessage("Are you sure you want to delete the plan?")
             .setTitle("Delete plan")
-            .setPositiveButton("Delete") { dialog, _->
+            .setPositiveButton("Delete") { dialog, _ ->
                 // Delete the plan from database
                 lifecycleScope.launch {
                     addPlanViewModel.deletePlan(planId)
+
+                    // After deleting the plan, fetch the updated data and update the UI
+                    val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
+                    val result2 = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+                    updateResultFromDatabase(result1, result2)
                 }
                 Log.d(TAG,"Delete plan $planId" )
                 Log.d(TAG, "Adapter position is $position")

@@ -52,7 +52,7 @@ class PoseDetectorProcessor(
   private var poseClassifierProcessor: PoseClassifierProcessor? = null
 
   /** Internal class to hold Pose and classification results. */
-  inner class PoseWithClassification(val pose: Pose, val classificationResult: Map<String, PostureResult>) {
+  inner class PoseWithClassification(val pose: Pose, classificationResult: Map<String, PostureResult>) {
 
     init {
       // update live data value
@@ -123,20 +123,13 @@ class PoseDetectorProcessor(
     poseWithClassification: PoseWithClassification,
     graphicOverlay: GraphicOverlay
   ) {
-    val listStringToDisplay:MutableList<String> = mutableListOf()
-    if(poseWithClassification.classificationResult.isNotEmpty()) {
-      for((key, value) in poseWithClassification.classificationResult) {
-        listStringToDisplay.add("${key}: ${value.repetition}\n")
-      }
-    }
     graphicOverlay.add(
       PoseGraphic(
         graphicOverlay,
         poseWithClassification.pose,
         showInFrameLikelihood,
         visualizeZ,
-        rescaleZForVisualization,
-        listStringToDisplay.toList()
+        rescaleZForVisualization
       )
     )
   }

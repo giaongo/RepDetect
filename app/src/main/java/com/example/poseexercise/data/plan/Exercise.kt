@@ -28,6 +28,13 @@ class ExerciseLog {
     fun getExerciseDataList(): List<ExerciseData> {
         return exerciseMap.values.toList()
     }
+
+    fun areAllExercisesCompleted(databaseExercisePlan: List<ExercisePlan>): Boolean {
+        return databaseExercisePlan.all { exercisePlan ->
+            val exerciseData = exerciseMap[exercisePlan.exerciseName]
+            exerciseData?.isComplete ?: false
+        }
+    }
 }
 
 data class ExercisePlan(val exerciseName: String, var repetitions: Int)

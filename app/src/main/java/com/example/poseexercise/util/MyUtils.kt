@@ -8,8 +8,11 @@ class MyUtils {
         fun exerciseNameToDisplay(variableName: String): String {
             return when (variableName) {
                 "squats" -> "Squat"
-                "pushups_down" -> "Pushup"
+                "pushups_down" -> "Push up"
                 "lunges" -> "Lunge"
+                "situp_up" -> "Sit Up"
+                "warrior" -> "Warrior Yoga"
+                "tree_pose" -> "Tree Yoga"
                 // Add more cases as needed
                 else -> variableName // Default to the original name if not matched
             }
@@ -49,6 +52,8 @@ class MyUtils {
                 "Lunges" -> "lunges"
                 "Squats" -> "squats"
                 "Sit Up" -> "situp_up"
+                "Warrior Yoga" -> "warrior"
+                "Tree Yoga" -> "tree_pose"
                 // Add more cases as needed
                 else -> variableName // Default to the original name if not matched
             }

@@ -22,7 +22,7 @@ object Constants {
             Exercise(
                 id = 3,
                 name = "Squats",
-                image = R.drawable.squats,
+                image = R.drawable.squat,
                 calorie = 3.8,
                 level = "Beginner"
             ),
