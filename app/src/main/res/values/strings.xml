@@ -169,7 +169,7 @@
     <string name="new_plan">New Fitness Plan</string>
     <string name="label_exercise_name">Exercise</string>
     <string name="label_time">Time</string>
-    <string name="label_rep">Repeat Number</string>
+    <string name="label_rep">Repeat Number( Accepted range: 1 - 100)</string>
     <string name="label_days">Select days</string>
     <string name="create_button">Create plan</string>
     <string-array name="days">

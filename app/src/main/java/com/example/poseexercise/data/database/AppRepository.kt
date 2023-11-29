@@ -46,4 +46,7 @@ class AppRepository(application: Application): CoroutineScope {
     suspend fun insertResult(result: WorkoutResult){
         resultDao?.insert(result)
     }
+
+    suspend fun getRecentWorkout(): List<WorkoutResult>? = resultDao?.getRecentWorkout()
+
 }
