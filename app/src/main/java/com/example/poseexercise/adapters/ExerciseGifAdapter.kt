@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.poseexercise.R
 
-class ExercisePagerAdapter(
+class ExerciseGifAdapter(
     private val exerciseGifs: List<Pair<String, Int>>,
     private val onSkipClickListener: () -> Unit
-) : RecyclerView.Adapter<ExercisePagerAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ExerciseGifAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_gif, parent, false)
