@@ -31,7 +31,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Collections
 import java.util.Date
 import java.util.Locale
@@ -47,7 +46,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
     private var planList: List<Plan>? = emptyList()
     private var notCompletePlanList: MutableList<Plan>? = Collections.emptyList()
     private var today: String = DateFormat.format("EEEE", Date()) as String
-    private var percentage: Int = 0
     private lateinit var progressText: TextView
     private lateinit var recyclerView: RecyclerView
     private lateinit var noPlanTV: TextView
@@ -62,7 +60,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d(TAG, "TODAY IS $today")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -134,7 +131,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
                     if (plan.timeCompleted?.let { it1 -> getDayFromTimestamp(it1) } != today) {
                         lifecycleScope.launch {
                             addPlanViewModel.updateComplete(false, null, plan.id)
-                            Log.d(TAG, "update complete status for plan")
                         }
                     }
                 }
@@ -159,7 +155,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
             workoutResults = resultViewModel.getAllResult()
             // Filter workout results for today
             val todayWorkoutResults = workoutResults?.filter {
-                isToday()
+                isToday(it.timestamp)
             }
             // Observe exercise plans from the database
             withContext(Dispatchers.Main) {
@@ -182,34 +178,30 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         }
     }
 
-    private fun isToday(): Boolean {
-        val todayCalendar = Calendar.getInstance()
-        // Compare the current day with the day of the plans
-        return isDaySelected(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
-    }
-
-    private fun isTodayPlan(): Boolean {
-        return isDaySelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK).toString())
-    }
-
-    private fun isDaySelected(day: String): Boolean {
-        val todayCalendar = Calendar.getInstance()
-        // Check if the selected day matches the current day of the week
-        return day.contains(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
-    }
-
     // Function to update progress views (ProgressBar and TextView)
-    private fun updateProgressViews(progressPercentage: Int) {
+    private fun updateProgressViews(progress: Int) {
         // Check if progressPercentage is greater than 0
-        if (progressPercentage > 0) {
+        if (progress > 0) {
             // Update progress views (ProgressBar and TextView)
-            val cappedProgress = min(progressPercentage, 100)
-            progressBar?.progress = cappedProgress
-            progressText?.text = String.format("%d%%", cappedProgress)
+            val cappedProgress = min(progress, 100)
+            progressBar.progress = cappedProgress
+            progressPercentage.text = String.format("%d%%", cappedProgress)
         } else {
             // If progressPercentage is 0 or less, hide the progress views
-            progressBar?.visibility = View.GONE
-            progressText?.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            progressText.visibility = View.GONE
+        }
+    }
+
+    // Return true if the timestamp is today's date
+    private fun isToday(s: Long,locale: Locale = Locale.getDefault()): Boolean {
+        return try {
+            val sdf = SimpleDateFormat("MM/dd/yyyy", locale)
+            val netDate = Date(s )
+            val currentDate = sdf.format(Date())
+            sdf.format(netDate) == currentDate
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -238,7 +230,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
                 }
                 notCompletePlanList?.removeAt(position)
                 adapter.notifyItemRemoved(position)
-                adapter.notifyDataSetChanged()
                 updateEmptyPlan(notCompletePlanList)
                 dialog.dismiss()
             }
@@ -250,6 +241,7 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
         dialog.show()
     }
 
+    // Hide the recycler view if there are no plan left for today
     private fun updateEmptyPlan(plans: MutableList<Plan>?){
         if(plans.isNullOrEmpty()){
             noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
