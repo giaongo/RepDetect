@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -36,9 +35,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import androidx.viewpager2.widget.ViewPager2
 import com.example.poseexercise.R
-import com.example.poseexercise.views.fragment.preference.PreferenceUtils
+import com.example.poseexercise.adapters.ExercisePagerAdapter
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
@@ -63,20 +62,19 @@ import com.example.poseexercise.viewmodels.CameraXViewModel
 import com.example.poseexercise.viewmodels.HomeViewModel
 import com.example.poseexercise.viewmodels.ResultViewModel
 import com.example.poseexercise.views.activity.MainActivity
+import com.example.poseexercise.views.fragment.preference.PreferenceUtils
 import com.example.poseexercise.views.graphic.GraphicOverlay
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import androidx.viewpager2.widget.ViewPager2
-import com.example.poseexercise.adapters.ExercisePagerAdapter
+import android.widget.FrameLayout
+
 
 class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
@@ -103,7 +101,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private val onlyExercise:List<String> = listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
     private val onlyPose:List<String> = listOf(WARRIOR_CLASS,YOGA_TREE_CLASS)
 
-    // lateinit properties---
+    // late init properties---
     private lateinit var resultViewModel: ResultViewModel
     private lateinit var timerTextView: TextView
     private lateinit var timerRecordIcon: ImageView
@@ -178,9 +176,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         // Initialize views
         super.onViewCreated(view, savedInstanceState)
         previewView = view.findViewById(R.id.preview_view)
+        val gifContainer: FrameLayout = view.findViewById(R.id.gifContainer)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
         cameraFlipFAB.visibility = View.GONE
         startButton.visibility = View.GONE
+        gifContainer.visibility = View.VISIBLE
 
         val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
         val exercisePagerAdapter = ExercisePagerAdapter(exerciseGifs) {
@@ -190,17 +190,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             cameraFlipFAB.visibility = View.VISIBLE
             viewPager.visibility = View.GONE
             skipButton.visibility = View.GONE
+            gifContainer.visibility = View.GONE
         }
         viewPager.adapter = exercisePagerAdapter
-
-        /* // Set click listener for the skip button
-        skipButton.setOnClickListener {
-            // Reset the flag before starting the exercise
-            viewPager.visibility = View.GONE
-            skipButton.visibility = View.GONE
-            startButton.visibility = View.VISIBLE
-        }	        }
-*/
 
         // start exercise button
         startButton.setOnClickListener {
@@ -222,12 +214,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-
             cameraViewModel.triggerClassification.value = true
-
-
         }
-
 
 
         // Cancel the exercise

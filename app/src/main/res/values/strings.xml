@@ -126,6 +126,7 @@
     <string name="workoutTimer">%s</string>
     <string name="current_exercise_format">Exercise: %s</string>
     <string name="current_repetition_format">Count: %d</string>
+    <string name="gif_image_view">gif image view</string>
 
     <!-- Strings for Start&InProcess fragment -->
     <string name="cancel_button">Cancel</string>
