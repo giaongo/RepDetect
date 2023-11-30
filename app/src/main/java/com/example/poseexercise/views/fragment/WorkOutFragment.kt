@@ -75,6 +75,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import androidx.viewpager2.widget.ViewPager2
+import com.example.poseexercise.adapters.ExercisePagerAdapter
 
 class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
@@ -124,6 +126,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var exercisePagerAdapter: ExercisePagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,7 +171,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
-        exerciseGifImageView = view.findViewById(R.id.exerciseGifImageView)
         return view
     }
 
@@ -177,75 +179,53 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         super.onViewCreated(view, savedInstanceState)
         previewView = view.findViewById(R.id.preview_view)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
-        cameraFlipFAB.visibility = View.VISIBLE
+        cameraFlipFAB.visibility = View.GONE
+        startButton.visibility = View.GONE
 
-        // Set click listener for the skip button
+        val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
+        val exercisePagerAdapter = ExercisePagerAdapter(exerciseGifs) {
+            // Handle skip button click here
+            // Transition to the "Start" button
+            startButton.visibility = View.VISIBLE
+            cameraFlipFAB.visibility = View.VISIBLE
+            viewPager.visibility = View.GONE
+            skipButton.visibility = View.GONE
+        }
+        viewPager.adapter = exercisePagerAdapter
+
+        /* // Set click listener for the skip button
         skipButton.setOnClickListener {
             // Reset the flag before starting the exercise
-            userWantsToSkip = true
-        }
+            viewPager.visibility = View.GONE
+            skipButton.visibility = View.GONE
+            startButton.visibility = View.VISIBLE
+        }	        }
+*/
 
         // start exercise button
         startButton.setOnClickListener {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    // Fetch the planned exercises for the day from the view model
-                    val todayPlan = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
-                    val plannedExerciseList: MutableSet<String> = mutableSetOf()
-                    val newExerciseList = todayPlan?.map {
-                        // Map the exercise names to their corresponding GIF names
-                        when (it.exercise) {
-                            "Sit Up" -> "situp_up"
-                            "Push up" -> "pushups_down"
-                            else -> it.exercise.lowercase(Locale.ROOT)
-                        }
-                    }?.toMutableSet() ?: mutableSetOf()
-                    // Clear and add the new exercise list to the set
-                    plannedExerciseList.clear()
-                    plannedExerciseList.addAll(newExerciseList)
+            // showing loading AI pose detection Model information to user
+            loadingTV.visibility = View.VISIBLE
+            loadProgress.visibility = View.VISIBLE
 
-                    withContext(Dispatchers.Main) {
-                        if (plannedExerciseList.isNotEmpty()) {
-                            // Show the GIF view and the skip button
-                            exerciseGifImageView.setBackgroundColor(Color.BLACK)
-                            exerciseGifImageView.visibility = View.VISIBLE
-                            skipButton.visibility = View.VISIBLE
+            // Set the screenOn flag to true, preventing the screen from turning off
+            screenOn = true
 
-                            startButton.visibility = View.INVISIBLE
+            // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-                            for (exerciseName in plannedExerciseList) {
-                                showExerciseGif(exerciseName)
-                                // Check if the user pressed skip during the exercise
-                                if (userWantsToSkip) {
-                                    // Hide the GIF view and exit the loop if the user wants to skip
-                                    exerciseGifImageView.visibility = View.GONE
-                                    break  // Exit the loop if the user wants to skip
-                                }
-                                // Delay for 3 seconds between GIF displays
-                                delay(5000)
-                            }
-                            exerciseGifImageView.visibility = View.GONE
-                            skipButton.visibility = View.GONE
-                            startButton.visibility = View.VISIBLE
-                        } else {
-                            // showing loading AI pose detection Model inforamtion to user
-                            loadingTV.visibility = View.VISIBLE
-                            loadProgress.visibility = View.VISIBLE
-                        }
-                        // Set the screenOn flag to true, preventing the screen from turning off
-                        screenOn = true
+            cameraFlipFAB.visibility = View.GONE
+            buttonCancelExercise.visibility = View.VISIBLE
+            buttonCompleteExercise.visibility = View.VISIBLE
+            startButton.visibility = View.GONE
 
-                        // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
-                        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            // To disable screen timeout
+            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-                        cameraFlipFAB.visibility = View.GONE
-                        buttonCancelExercise.visibility = View.VISIBLE
-                        buttonCompleteExercise.visibility = View.VISIBLE
-                        startButton.visibility = View.GONE
 
-                        // To disable screen timeout
-                        cameraViewModel.triggerClassification.value = true
-                    }
-                }
+            cameraViewModel.triggerClassification.value = true
+
+
         }
 
 
@@ -479,6 +459,13 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             }
         }
     }
+
+    private val exerciseGifs = listOf(
+        Postures.pushups.type to R.drawable.pushup,
+        Postures.lunges.type to R.drawable.lunge,
+        Postures.squats.type to R.drawable.squats,
+        Postures.sitUp.type to R.drawable.situp
+    )
 
     private fun initTextToSpeech() {
         textToSpeech = TextToSpeech(context) {
@@ -844,28 +831,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             mBuilder.append(seconds)
         }
         return mBuilder.toString()
-    }
-
-    private val exerciseGifs = mapOf(
-        Postures.pushups.type to R.drawable.pushup,
-        Postures.lunges.type to R.drawable.lunge,
-        Postures.squats.type to R.drawable.squats,
-        Postures.sitUp.type to R.drawable.situp
-    )
-
-    /**
-     * Check if exercise name matches the Postures type
-     * if matched plays the relative gif file
-     */
-    private fun showExerciseGif(exerciseName: String) {
-        val exerciseGifId = exerciseGifs[exerciseName]
-        if (exerciseGifId != null) {
-            // Use Glide to load the animated GIF
-            Glide.with(this)
-                .asGif()
-                .load(exerciseGifId)
-                .into(exerciseGifImageView)
-        }
     }
 
     /**

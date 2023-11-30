@@ -242,6 +242,11 @@
             app:layout_constraintStart_toStartOf="@+id/preview_view"
             app:layout_constraintTop_toBottomOf="@+id/timerTV" />
 
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/exerciseViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <!-- GifImageView for displaying exercise GIFs -->
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/exerciseGifImageView"
