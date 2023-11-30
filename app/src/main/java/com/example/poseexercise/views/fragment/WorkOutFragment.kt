@@ -45,6 +45,13 @@ import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.LUNGES_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.POSE_CLASSES
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.PUSHUPS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SITUP_UP_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SQUATS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.WARRIOR_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.YOGA_TREE_CLASS
 import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
@@ -91,6 +98,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private var mRecSeconds = 0
     private var mRecMinute = 0
     private var mRecHours = 0
+    private val onlyExercise:List<String> = listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
+    private val onlyPose:List<String> = listOf(WARRIOR_CLASS,YOGA_TREE_CLASS)
 
     // lateinit properties---
     private lateinit var resultViewModel: ResultViewModel
@@ -326,14 +335,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 .navigate(R.id.action_workoutFragment_to_completedFragment)
         }
 
-
-        if (previewView == null) {
-            Log.d(TAG, "Preview is null")
-        }
-        if (graphicOverlay == null) {
-            Log.d(TAG, "graphicOverlay is null")
-        }
-
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
             cameraProvider = provider
             bindAllCameraUseCases()
@@ -374,17 +375,14 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
 
 
-        //Declare all the only pose exercise
-        val onlyExercise = listOf("squats", "pushups_down", "lunges", "situp_up")
-        val onlyPose = listOf("warrior", "tree_pose")
-        val allExercise = listOf("squats", "pushups_down", "lunges", "situp_up", "warrior", "tree_pose")
+
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
             for ((key, value) in mapResult) {
 
                 // Visualize the repetition exercise data
-                if (key in allExercise) {
+                if (key in POSE_CLASSES.toList()) {
 
                     // get the data from exercise log of specific exercise
                     val data = exerciseLog.getExerciseData(key)
@@ -938,9 +936,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
     class TypedConstant(val type: String, val value: Double)
     object Postures {
-        val pushups = TypedConstant("pushups_down", 3.2)
-        val lunges = TypedConstant("lunges", 3.0)
-        val squats = TypedConstant("squats", 3.8)
-        val sitUp = TypedConstant("situp_up", 5.0)
+        val pushups = TypedConstant( PUSHUPS_CLASS, 3.2)
+        val lunges = TypedConstant(LUNGES_CLASS, 3.0)
+        val squats = TypedConstant(SQUATS_CLASS, 3.8)
+        val sitUp = TypedConstant(SITUP_UP_CLASS, 5.0)
     }
 }
