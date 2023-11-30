@@ -16,14 +16,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.poseexercise.R
 import com.example.poseexercise.data.plan.Plan
+import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.viewmodels.AddPlanViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 
-class PlanStepTwoFragment: Fragment(), CoroutineScope {
+class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
     val TAG = "RepDetect Debug"
     private lateinit var addPlanViewModel: AddPlanViewModel
     private var mExerciseName : String = ""
@@ -125,4 +127,16 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO
+
+    override fun clearMemory() {
+        mExerciseName = ""
+        mKcal = 0.0
+        selectedDays.clear()
+        this.cancel()
+    }
+
+    override fun onDestroy() {
+        clearMemory()
+        super.onDestroy()
+    }
 }

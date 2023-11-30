@@ -46,25 +46,25 @@ public class PoseClassifierProcessor {
     private static final String POSE_SAMPLES_FILE = "pose/fitness_four_exercise_two_yoga_v04.csv";
 
     // The class name for the pushups
-    private static final String PUSHUPS_CLASS = "pushups_down";
+    public static final String PUSHUPS_CLASS = "pushups_down";
 
 
     // The class name for squat
-    private static final String SQUATS_CLASS = "squats";
+    public static final String SQUATS_CLASS = "squats";
 
     //class name for lunges
-    private static final String LUNGES_CLASS = "lunges";
+    public static final String LUNGES_CLASS = "lunges";
 
     // The class name for the situp
-    private static final String SITUP_UP_CLASS = "situp_up";
+    public static final String SITUP_UP_CLASS = "situp_up";
 
     // The class name for the yoga pose
-    private static final String WARRIOR_CLASS = "warrior";
+    public static final String WARRIOR_CLASS = "warrior";
 
     // The class name for the yoga tree pose
-    private static final String YOGA_TREE_CLASS = "tree_pose";
+    public static final String YOGA_TREE_CLASS = "tree_pose";
 
-    private static final String[] POSE_CLASSES = {
+    public static final String[] POSE_CLASSES = {
             PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS, WARRIOR_CLASS, YOGA_TREE_CLASS
 
     };

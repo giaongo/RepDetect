@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.poseexercise.R
 import com.example.poseexercise.data.database.AppRepository
 import com.example.poseexercise.data.results.WorkoutResult
+import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.viewmodels.ResultViewModel
 import com.github.mikephil.charting.charts.BarChart
@@ -32,7 +33,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.min
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), MemoryManagement {
     // Declare variables for ViewModel, Chart, UI components, and data
     private lateinit var resultViewModel: ResultViewModel
     private lateinit var chart: BarChart
@@ -285,5 +286,16 @@ class ProfileFragment : Fragment() {
 
         return totalCaloriesPerWeek
             .map { (_, value) -> if (value > 0) primaryColor else Color.TRANSPARENT }
+    }
+
+    override fun clearMemory() {
+        // Clear memory
+        workoutResults = null
+        chart.clear()
+    }
+
+    override fun onDestroy() {
+        clearMemory()
+        super.onDestroy()
     }
 }

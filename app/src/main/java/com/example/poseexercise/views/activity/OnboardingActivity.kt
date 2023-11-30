@@ -12,9 +12,10 @@ import com.example.poseexercise.onboarding.FirstOnboardingFragment
 import com.example.poseexercise.R
 import com.example.poseexercise.onboarding.SecondOnboardingFragment
 import com.example.poseexercise.onboarding.ThirdOnboardingFragment
+import com.example.poseexercise.util.MemoryManagement
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
-class OnboardingActivity : AppCompatActivity() {
+class OnboardingActivity : AppCompatActivity(), MemoryManagement {
     private lateinit var viewPager: ViewPager2
     private lateinit var prefManager: PrefManager
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +60,17 @@ class OnboardingActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun clearMemory() {
+        // Clear all references in this class
+        viewPager.adapter = null
+    }
+
+    override fun onDestroy() {
+        clearMemory()
+        super.onDestroy()
+    }
+
 }
 
 class PrefManager(context: Context) {
