@@ -82,15 +82,13 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
         resultViewModel = ResultViewModel(MyApplication.getInstance())
         addPlanViewModel = AddPlanViewModel(MyApplication.getInstance())
         lifecycleScope.launch {
-            val workoutResults = resultViewModel.getAllResult()
+            val workoutResults = resultViewModel.getRecentWorkout()
             // Call the function to load data and set up the chart
             loadDataAndSetupChart()
-            // Sort WorkoutResult objects by timestamp in descending order
-            val sortedWorkoutResults = workoutResults?.sortedByDescending { it.timestamp }
             // Transform WorkoutResult objects into RecentActivityItem objects
             val imageResources = arrayOf(R.drawable.blue, R.drawable.green, R.drawable.orange)
             // Transform WorkoutResult objects into RecentActivityItem objects
-            val recentActivityItems = sortedWorkoutResults?.mapIndexed { index, it ->
+            val recentActivityItems = workoutResults?.mapIndexed { index, it ->
                 RecentActivityItem(
                     imageResId = imageResources[index % imageResources.size],
                     exerciseType = MyUtils.exerciseNameToDisplay(it.exerciseName),
