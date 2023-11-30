@@ -45,6 +45,7 @@ import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.MyUtils.Companion.convertTimeStringToMinutes
 import com.example.poseexercise.util.MyUtils.Companion.databaseNameToClassification
@@ -68,8 +69,7 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
-class WorkOutFragment : Fragment() {
-    private lateinit var resultViewModel: ResultViewModel
+class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
     private var previewView: PreviewView? = null
     private var graphicOverlay: GraphicOverlay? = null
@@ -82,6 +82,24 @@ class WorkOutFragment : Fragment() {
     private var selectedModel = POSE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_BACK
     private var cameraSelector: CameraSelector? = null
+    private var today: String = DateFormat.format("EEEE", Date()) as String
+    private var runOnce: Boolean = false
+    private var notCompletePlanList: List<Plan>? = emptyList()
+    private var userWantsToSkip: Boolean = false
+    private var isAllWorkoutFinished: Boolean = false
+    private var mRecTimer: Timer? = null
+    private var mRecSeconds = 0
+    private var mRecMinute = 0
+    private var mRecHours = 0
+
+    // lateinit properties---
+    private lateinit var resultViewModel: ResultViewModel
+    private lateinit var timerTextView: TextView
+    private lateinit var timerRecordIcon: ImageView
+    private lateinit var workoutRecyclerView: RecyclerView
+    private lateinit var workoutAdapter: WorkoutAdapter
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var addPlanViewModel: AddPlanViewModel
     private lateinit var startButton: Button
     private lateinit var buttonCompleteExercise: Button
     private lateinit var buttonCancelExercise: Button
@@ -91,33 +109,19 @@ class WorkOutFragment : Fragment() {
     private lateinit var currentRepetitionTextView: TextView
     private lateinit var confidenceTextView: TextView
     private lateinit var cameraViewModel: CameraXViewModel
-    private var mRecTimer: Timer? = null
-    private var mRecSeconds = 0
-    private var mRecMinute = 0
-    private var mRecHours = 0
-    private lateinit var timerTextView: TextView
-    private lateinit var timerRecordIcon: ImageView
-    private lateinit var ttf: TextToSpeech
-    private lateinit var workoutRecyclerView: RecyclerView
-    private lateinit var workoutAdapter: WorkoutAdapter
-    private lateinit var homeViewModel: HomeViewModel
-    private lateinit var addPlanViewModel: AddPlanViewModel
-    private var today: String = DateFormat.format("EEEE", Date()) as String
-    private var runOnce: Boolean = false
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
-    private var notCompletePlanList: List<Plan>? = emptyList()
-    private var userWantsToSkip: Boolean = false
     private lateinit var exerciseGifImageView: ImageView
     private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
-    private var isAllWorkoutFinished: Boolean = false
+    private lateinit var textToSpeech: TextToSpeech
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         }
+        initTextToSpeech()
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
         cameraViewModel = ViewModelProvider(
             this, ViewModelProvider.AndroidViewModelFactory
@@ -239,7 +243,7 @@ class WorkOutFragment : Fragment() {
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
-            textToSpeech("Workout Cancelled")
+            synthesizeSpeech("Workout Cancelled")
             stopMediaTimer()
             Navigation.findNavController(view)
                 .navigate(R.id.action_workoutFragment_to_cancelFragment)
@@ -259,7 +263,7 @@ class WorkOutFragment : Fragment() {
         val squats = Postures.squats
 
         buttonCompleteExercise.setOnClickListener {
-            textToSpeech("Workout Complete")
+            synthesizeSpeech("Workout Complete")
             cameraViewModel.postureLiveData.value?.let {
                 //val builder = StringBuilder()
                 for ((_, value) in it) {
@@ -301,9 +305,6 @@ class WorkOutFragment : Fragment() {
 
             // Clear the FLAG_KEEP_SCREEN_ON flag to allow the screen to turn off
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            // update MainActivity static postureResultData based on the postureLiveData
-            //Log.d("WorkoutFragment", "complete button clicked")
 
             // update the workoutResultData in MainActivity
             cameraViewModel.postureLiveData.value?.let {
@@ -382,8 +383,6 @@ class WorkOutFragment : Fragment() {
 
             for ((key, value) in mapResult) {
 
-                //Log.d("logging_key: ", "${key}: ${value.confidence}")
-
                 // Visualize the repetition exercise data
                 if (key in allExercise) {
 
@@ -420,13 +419,13 @@ class WorkOutFragment : Fragment() {
                             // Adding data only when the increment happen
                             exerciseLog.addExercise(key, value.repetition, value.confidence, true)
                             // inform the user about completion only once
-                            textToSpeech(exerciseNameToDisplay(key) + " exercise Complete")
+                            synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
 
                             // check if all the exercise list complete if yes tell all exercise is complete
                             if (exerciseLog.areAllExercisesCompleted(databaseExercisePlan)) {
                                 val handler = Handler(Looper.getMainLooper())
                                 handler.postDelayed({
-                                    textToSpeech("Congratulation! You have completed all the planned exercise for today.")
+                                    synthesizeSpeech("Congratulation! all the planned exercise completed")
                                     isAllWorkoutFinished = true
                                     completeAllExercise.visibility = View.VISIBLE
                                 }, 5000)
@@ -475,26 +474,26 @@ class WorkOutFragment : Fragment() {
                 runOnce = true
                 loadingTV.visibility = View.GONE
                 loadProgress.visibility = View.GONE
-                textToSpeech("AI model is ready for you to do some exercise")
+                synthesizeSpeech("ready to start")
+                startMediaTimer()
+                timerTextView.visibility = View.VISIBLE
+                timerRecordIcon.visibility = View.VISIBLE
             }
         }
     }
 
-
-    private fun textToSpeech(name: String) {
-        // Initialize TextToSpeech
-        ttf = TextToSpeech(context) {
+    private fun initTextToSpeech() {
+        textToSpeech = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
-                ttf.language = Locale.US
-                ttf.setSpeechRate(1.0f)
-                val params = Bundle()
-                ttf.speak(name, TextToSpeech.QUEUE_ADD, params, null)
+                textToSpeech.language = Locale.US
+                textToSpeech.setSpeechRate(1.0f)
             }
         }
-        if (name == "AI model is ready for you to do some exercise") {
-            startMediaTimer()
-            timerTextView.visibility = View.VISIBLE
-            timerRecordIcon.visibility = View.VISIBLE
+    }
+
+    private fun synthesizeSpeech(name: String) {
+        lifecycleScope.launch(Dispatchers.Default){
+            textToSpeech.speak(name, TextToSpeech.QUEUE_ADD, null, null)
         }
     }
 
@@ -883,6 +882,41 @@ class WorkOutFragment : Fragment() {
             print("No match found")
         }
         return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    }
+
+    /**
+     * overridden function to clean up memory, clear object reference and un-register onClickListener
+     * in WorkOutFragment
+     */
+    override fun clearMemory() {
+        if (!textToSpeech.isSpeaking) {
+            textToSpeech.stop()
+        }
+        textToSpeech.shutdown()
+        previewView = null
+        graphicOverlay = null
+        cameraProvider = null
+        camera = null
+        previewUseCase = null
+        analysisUseCase = null
+        imageProcessor = null
+        cameraSelector = null
+        notCompletePlanList = null
+        mRecTimer?.let {
+            it.cancel()
+            mRecTimer = null
+        }
+        startButton.setOnClickListener(null)
+        buttonCompleteExercise.setOnClickListener(null)
+        buttonCancelExercise.setOnClickListener(null)
+        cameraFlipFAB.setOnClickListener(null)
+        skipButton.setOnClickListener(null)
+        workoutRecyclerView.adapter = null
+    }
+
+    override fun onDestroy() {
+        clearMemory()
+        super.onDestroy()
     }
 
     companion object {

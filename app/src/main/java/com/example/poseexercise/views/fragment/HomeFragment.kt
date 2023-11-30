@@ -22,6 +22,7 @@ import com.example.poseexercise.data.database.AppRepository
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.RecentActivityItem
 import com.example.poseexercise.data.results.WorkoutResult
+import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.util.MyApplication
 import com.example.poseexercise.util.MyUtils
 import com.example.poseexercise.viewmodels.AddPlanViewModel
@@ -37,7 +38,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.min
 
-class HomeFragment : Fragment(), PlanAdapter.ItemListener {
+class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
     @Suppress("PropertyName")
     val TAG = "RepDetect Home Fragment"
     private lateinit var homeViewModel: HomeViewModel
@@ -273,5 +274,16 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener {
             }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+    }
+
+    override fun clearMemory() {
+        planList = null
+        notCompletePlanList = null
+        workoutResults = null
+    }
+
+    override fun onDestroy() {
+        clearMemory()
+        super.onDestroy()
     }
 }
