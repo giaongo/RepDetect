@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -72,7 +73,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import android.widget.FrameLayout
 
 class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
@@ -195,25 +195,19 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // showing loading AI pose detection Model information to user
             loadingTV.visibility = View.GONE
             loadProgress.visibility = View.GONE
-
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
-
             // Add the FLAG_KEEP_SCREEN_ON flag to the activity's window, keeping the screen on
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
             cameraFlipFAB.visibility = View.GONE
             gifContainer.visibility = View.VISIBLE
             buttonCancelExercise.visibility = View.VISIBLE
             buttonCompleteExercise.visibility = View.VISIBLE
             startButton.visibility = View.GONE
-
             // To disable screen timeout
             //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
             cameraViewModel.triggerClassification.value = true
         }
-
 
         // Cancel the exercise
         buttonCancelExercise.setOnClickListener {
@@ -232,9 +226,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
         // Complete the exercise
         val sitUp = Postures.sitUp
-        val pushUps = Postures.pushups
-        val lunges = Postures.lunges
-        val squats = Postures.squats
+        val pushUp = Postures.pushup
+        val lunge = Postures.lunge
+        val squat = Postures.squat
 
         buttonCompleteExercise.setOnClickListener {
             synthesizeSpeech("Workout Complete")
@@ -245,9 +239,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         lifecycleScope.launch {
                             val calorie = when (value.postureType) {
                                 sitUp.type -> sitUp.value / 10
-                                pushUps.type -> pushUps.value / 10
-                                lunges.type -> lunges.value / 10
-                                squats.type -> squats.value / 10
+                                pushUp.type -> pushUp.value / 10
+                                lunge.type -> lunge.value / 10
+                                squat.type -> squat.value / 10
                                 else -> 0.0
                             }
                             val workoutTime =
@@ -318,14 +312,12 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // get not completed exercise from database using coroutine
             val notCompletedExercise =
                 withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
-
             notCompletedExercise?.forEach { item ->
                 val exercisePlan =
-                    ExercisePlan(databaseNameToClassification(item.exercise), item.repeatCount)
-
+                    ExercisePlan(item.id,databaseNameToClassification(item.exercise), item.repeatCount)
                 val existingExercisePlan =
-                    databaseExercisePlan.find { it.exerciseName == databaseNameToClassification(item.exercise) }
-
+                    databaseExercisePlan.find { it.planId == item.id
+                    }
                 if (existingExercisePlan != null) {
                     // Update repetitions if ExercisePlan with the same exerciseName already exists
                     existingExercisePlan.repetitions += item.repeatCount
@@ -335,36 +327,27 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 }
             }
             // Push the planned exercise name in exercise Log
-            databaseExercisePlan.forEach { exerciseLog.addExercise(it.exerciseName, 0, 0f, false) }
-
+            databaseExercisePlan.forEach { exerciseLog.addExercise(it.planId,it.exerciseName, 0, 0f, false) }
         }
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
-
             for ((key, value) in mapResult) {
-
                 // Visualize the repetition exercise data
                 if (key in POSE_CLASSES.toList()) {
-
                     // get the data from exercise log of specific exercise
                     val data = exerciseLog.getExerciseData(key)
-
                     if (key in onlyExercise && data == null) {
                         // Adding exercise for the first time
-                        exerciseLog.addExercise(key, value.repetition, value.confidence, false)
-
+                        exerciseLog.addExercise(null,key, value.repetition, value.confidence, false)
                     } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
-
                         workoutRecyclerView.visibility = View.VISIBLE
                         if(isAllWorkoutFinished){
                             completeAllExercise.visibility = View.VISIBLE
                         } else{
                             completeAllExercise.visibility = View.GONE
                         }
-
                         confIndicatorView.visibility = View.GONE
                         confidenceTextView.visibility = View.GONE
-
                         // check if the exercise target is complete
                         var repetition: Int? = databaseExercisePlan.find {
                             it.exerciseName.equals(
@@ -377,10 +360,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         }
                         if (!data.isComplete && (value.repetition >= repetition)) {
                             // Adding data only when the increment happen
-                            exerciseLog.addExercise(key, value.repetition, value.confidence, true)
+                            exerciseLog.addExercise(data.planId,key, value.repetition, value.confidence, true)
                             // inform the user about completion only once
                             synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
-
                             // check if all the exercise list complete if yes tell all exercise is complete
                             if (exerciseLog.areAllExercisesCompleted(databaseExercisePlan)) {
                                 val handler = Handler(Looper.getMainLooper())
@@ -390,15 +372,19 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                                     completeAllExercise.visibility = View.VISIBLE
                                 }, 5000)
                             }
-
-                        } else if (data.isComplete) {
+                            // Update complete status for existing plan
+                            if(data.planId != null){
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    addPlanViewModel.updateComplete(true, System.currentTimeMillis(), data.planId)
+                                }
+                            }
+                            } else if (data.isComplete) {
                             // Adding data only when the increment happen
-                            exerciseLog.addExercise(key, value.repetition, value.confidence, true)
+                            exerciseLog.addExercise(data.planId,key, value.repetition, value.confidence, true)
                         } else {
                             // Adding data only when the increment happen
-                            exerciseLog.addExercise(key, value.repetition, value.confidence, false)
+                            exerciseLog.addExercise(data.planId,key, value.repetition, value.confidence, false)
                         }
-
                         // display Current result when the increment happen
                         displayResult(key, exerciseLog)
 
@@ -412,13 +398,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         displayConfidence(value.confidence)
                         workoutRecyclerView.visibility = View.GONE
                         completeAllExercise.visibility = View.GONE
-
                         currentExerciseTextView.visibility = View.VISIBLE
                         currentRepetitionTextView.visibility = View.GONE
                         confidenceTextView.visibility = View.VISIBLE
                         currentExerciseTextView.text = exerciseNameToDisplay(key)
                         confidenceTextView.text = getString(R.string.confidence_percentage, (value.confidence * 100).toInt())
-
                     }else if (key in onlyPose && value.confidence < 0.6){
                         confIndicatorView.visibility = View.GONE
                         confidenceTextView.visibility = View.GONE
@@ -446,9 +430,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
      * List of exercise gifs
      */
     private val exerciseGifs = listOf(
-        Postures.pushups.type to R.drawable.pushup,
-        Postures.lunges.type to R.drawable.lunge,
-        Postures.squats.type to R.drawable.squats,
+        Postures.pushup.type to R.drawable.pushup,
+        Postures.lunge.type to R.drawable.lunge,
+        Postures.squat.type to R.drawable.squats,
         Postures.sitUp.type to R.drawable.situp
     )
 
@@ -913,9 +897,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
      */
     class TypedConstant(val type: String, val value: Double)
     object Postures {
-        val pushups = TypedConstant( PUSHUPS_CLASS, 3.2)
-        val lunges = TypedConstant(LUNGES_CLASS, 3.0)
-        val squats = TypedConstant(SQUATS_CLASS, 3.8)
+        val pushup = TypedConstant( PUSHUPS_CLASS, 3.2)
+        val lunge = TypedConstant(LUNGES_CLASS, 3.0)
+        val squat = TypedConstant(SQUATS_CLASS, 3.8)
         val sitUp = TypedConstant(SITUP_UP_CLASS, 5.0)
     }
 }

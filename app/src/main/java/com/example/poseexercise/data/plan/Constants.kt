@@ -7,28 +7,28 @@ object Constants {
         return listOf(
             Exercise(
                 id = 1,
-                name = "Push up",
+                name = "Push ups",
                 image = R.drawable.push_up,
                 calorie = 3.2,
                 level = "Intermediate"
             ),
             Exercise(
                 id = 2,
-                name = "Lunge",
+                name = "Lunges",
                 image = R.drawable.reverse_lunges,
                 calorie = 3.0,
                 level = "Beginner"
             ),
             Exercise(
                 id = 3,
-                name = "Squat",
+                name = "Squats",
                 image = R.drawable.squat,
                 calorie = 3.8,
                 level = "Beginner"
             ),
             Exercise(
                 id = 4,
-                name = "Sit up",
+                name = "Sit ups",
                 image = R.drawable.sit_ups,
                 calorie = 5.0,
                 level = "Advance"
