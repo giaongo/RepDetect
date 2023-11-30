@@ -155,6 +155,7 @@
     <string name="_00_00">00:00</string>
     <string name="confidence_indicator">Confidence Indicator</string>
     <string name="record_icon">record icon</string>
+    <string name="confidence_percentage">%d %%</string>
 
     <!-- Strings for PlanStepOne & PlanStepTwo fragment -->
     <string name="choose_exercise">Choose Exercises</string>

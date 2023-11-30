@@ -41,7 +41,6 @@ import com.example.poseexercise.adapters.ExercisePagerAdapter
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
-import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.LUNGES_CLASS
@@ -75,7 +74,6 @@ import java.util.Timer
 import java.util.TimerTask
 import android.widget.FrameLayout
 
-
 class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
     private var previewView: PreviewView? = null
@@ -91,8 +89,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private var cameraSelector: CameraSelector? = null
     private var today: String = DateFormat.format("EEEE", Date()) as String
     private var runOnce: Boolean = false
-    private var notCompletePlanList: List<Plan>? = emptyList()
-    private var userWantsToSkip: Boolean = false
     private var isAllWorkoutFinished: Boolean = false
     private var mRecTimer: Timer? = null
     private var mRecSeconds = 0
@@ -120,11 +116,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private lateinit var cameraViewModel: CameraXViewModel
     private lateinit var loadingTV: TextView
     private lateinit var loadProgress: ProgressBar
-    private lateinit var exerciseGifImageView: ImageView
     private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
     private lateinit var textToSpeech: TextToSpeech
-    private lateinit var exercisePagerAdapter: ExercisePagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -178,27 +172,29 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         previewView = view.findViewById(R.id.preview_view)
         val gifContainer: FrameLayout = view.findViewById(R.id.gifContainer)
         graphicOverlay = view.findViewById(R.id.graphic_overlay)
-        cameraFlipFAB.visibility = View.GONE
-        startButton.visibility = View.GONE
-        gifContainer.visibility = View.VISIBLE
+        cameraFlipFAB.visibility = View.VISIBLE
+        startButton.visibility = View.VISIBLE
+        gifContainer.visibility = View.GONE
+        skipButton.visibility = View.GONE
 
         val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
         val exercisePagerAdapter = ExercisePagerAdapter(exerciseGifs) {
             // Handle skip button click here
             // Transition to the "Start" button
-            startButton.visibility = View.VISIBLE
+            startButton.visibility = View.GONE
             cameraFlipFAB.visibility = View.VISIBLE
             viewPager.visibility = View.GONE
             skipButton.visibility = View.GONE
             gifContainer.visibility = View.GONE
+            cameraFlipFAB.visibility = View.GONE
         }
         viewPager.adapter = exercisePagerAdapter
 
         // start exercise button
         startButton.setOnClickListener {
             // showing loading AI pose detection Model information to user
-            loadingTV.visibility = View.VISIBLE
-            loadProgress.visibility = View.VISIBLE
+            loadingTV.visibility = View.GONE
+            loadProgress.visibility = View.GONE
 
             // Set the screenOn flag to true, preventing the screen from turning off
             screenOn = true
@@ -207,6 +203,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             cameraFlipFAB.visibility = View.GONE
+            gifContainer.visibility = View.VISIBLE
             buttonCancelExercise.visibility = View.VISIBLE
             buttonCompleteExercise.visibility = View.VISIBLE
             startButton.visibility = View.GONE
@@ -423,7 +420,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         currentRepetitionTextView.visibility = View.GONE
                         confidenceTextView.visibility = View.VISIBLE
                         currentExerciseTextView.text = exerciseNameToDisplay(key)
-                        confidenceTextView.text = (value.confidence*100).toInt().toString() + " %"
+                        confidenceTextView.text = getString(R.string.confidence_percentage, (value.confidence * 100).toInt())
 
                     }else if (key in onlyPose && value.confidence < 0.6){
                         confIndicatorView.visibility = View.GONE
