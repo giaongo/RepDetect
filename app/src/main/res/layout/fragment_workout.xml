@@ -243,23 +243,6 @@
             app:layout_constraintTop_toBottomOf="@+id/timerTV" />
 
 
-        <!-- Skip button -->
-        <Button
-            android:id="@+id/skipButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="@string/skip"
-            app:layout_constraintBottom_toBottomOf="@id/button_start_exercise"
-            app:layout_constraintEnd_toEndOf="@id/button_start_exercise"
-            app:layout_constraintStart_toStartOf="@id/button_start_exercise"
-            app:layout_constraintTop_toTopOf="@id/button_start_exercise"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintVertical_bias="0.87"
-            app:backgroundTint="@color/primaryColor"
-            android:textColor="@color/white"
-            app:tint="@color/white"/>
-
         <!-- Loading Progress Bar -->
         <ProgressBar
             android:id="@+id/loadingProgress"
@@ -288,12 +271,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+
         <!-- GifImageView for displaying exercise GIFs -->
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/exerciseGifImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"/>
+
+        <!-- Skip button -->
+        <Button
+            android:id="@+id/skipButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
+
     </FrameLayout>
 
 

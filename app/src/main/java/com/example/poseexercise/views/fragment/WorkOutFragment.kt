@@ -339,9 +339,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         }
 
-
-
-
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
 
             for ((key, value) in mapResult) {
@@ -849,7 +846,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         analysisUseCase = null
         imageProcessor = null
         cameraSelector = null
-        notCompletePlanList = null
         mRecTimer?.let {
             it.cancel()
             mRecTimer = null

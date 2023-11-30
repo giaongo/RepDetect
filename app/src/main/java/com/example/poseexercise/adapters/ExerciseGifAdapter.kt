@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.poseexercise.R
 
+
 class ExerciseGifAdapter(
     private val exerciseGifs: List<Pair<String, Int>>,
     private val onSkipClickListener: () -> Unit
