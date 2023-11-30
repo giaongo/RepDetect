@@ -442,6 +442,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
     }
 
+    /**
+     * List of exercise gifs
+     */
     private val exerciseGifs = listOf(
         Postures.pushups.type to R.drawable.pushup,
         Postures.lunges.type to R.drawable.lunge,
@@ -449,21 +452,31 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         Postures.sitUp.type to R.drawable.situp
     )
 
+    /**
+     * Initialize TextToSpeech engine
+     */
     private fun initTextToSpeech() {
         textToSpeech = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
+                // Set language to US English and speech rate to 1.0
                 textToSpeech.language = Locale.US
                 textToSpeech.setSpeechRate(1.0f)
             }
         }
     }
 
+    /**
+     * Synthesize speech using TextToSpeech
+     */
     private fun synthesizeSpeech(name: String) {
         lifecycleScope.launch(Dispatchers.Default){
             textToSpeech.speak(name, TextToSpeech.QUEUE_ADD, null, null)
         }
     }
 
+    /**
+     * Display exercise result in the UI
+     */
     @SuppressLint("SetTextI18n")
     private fun displayResult(key: String, exerciseLog: ExerciseLog) {
         currentExerciseTextView.visibility = View.VISIBLE
@@ -482,7 +495,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         currentRepetitionTextView.text = repetitionText*/
     }
 
-
+    /**
+     * Display confidence level with different colors based on thresholds
+     */
     private fun displayConfidence(confidence: Float) {
         if (confidence <= 0.6) {
             confIndicatorView.backgroundTintList =
@@ -502,7 +517,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
     }
 
-
+    /**
+     * Bind all camera use cases (preview and analysis)
+     */
     private fun bindAllCameraUseCases() {
         // Bind all camera use cases (preview and analysis)
         bindPreviewUseCase()
@@ -635,6 +652,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         cameraProvider?.bindToLifecycle(this, cameraSelector!!, analysisUseCase)
     }
 
+    /**
+     * Check if all required runtime permissions are granted
+     */
     private fun allRuntimePermissionsGranted(): Boolean {
         // Check if all required runtime permissions are granted
         for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
@@ -647,6 +667,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         return true
     }
 
+    /**
+     * Check if a specific permission is granted
+     */
     private fun isPermissionGranted(context: Context, permission: String): Boolean {
         // Check if a specific permission is granted
         if (ContextCompat.checkSelfPermission(
@@ -661,7 +684,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         return false
     }
 
-    // Request runtime permissions
+    /**
+     * Request runtime permissions
+     */
     private fun getRuntimePermissions() {
         val permissionsToRequest = ArrayList<String>()
         for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
@@ -863,6 +888,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         super.onDestroy()
     }
 
+    /**
+     *Constants and companion object
+     */
     companion object {
         private const val TAG = "RepDetect CameraXLivePreview"
         private const val POSE_DETECTION = "Pose Detection"
@@ -880,6 +908,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             )
     }
 
+    /**
+     * Typed constant class for exercise postures
+     */
     class TypedConstant(val type: String, val value: Double)
     object Postures {
         val pushups = TypedConstant( PUSHUPS_CLASS, 3.2)
