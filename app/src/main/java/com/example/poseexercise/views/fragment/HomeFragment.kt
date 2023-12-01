@@ -32,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Collections
 import java.util.Date
 import java.util.Locale
@@ -48,7 +47,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
     private var planList: List<Plan>? = emptyList()
     private var notCompletePlanList: MutableList<Plan>? = Collections.emptyList()
     private var today: String = DateFormat.format("EEEE", Date()) as String
-    private var percentage: Int = 0
     private lateinit var progressText: TextView
     private lateinit var recyclerView: RecyclerView
     private lateinit var noPlanTV: TextView
@@ -63,7 +61,6 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d(TAG, "TODAY IS $today")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -85,15 +82,13 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
         resultViewModel = ResultViewModel(MyApplication.getInstance())
         addPlanViewModel = AddPlanViewModel(MyApplication.getInstance())
         lifecycleScope.launch {
-            val workoutResults = resultViewModel.getAllResult()
+            val workoutResults = resultViewModel.getRecentWorkout()
             // Call the function to load data and set up the chart
             loadDataAndSetupChart()
-            // Sort WorkoutResult objects by timestamp in descending order
-            val sortedWorkoutResults = workoutResults?.sortedByDescending { it.timestamp }
             // Transform WorkoutResult objects into RecentActivityItem objects
             val imageResources = arrayOf(R.drawable.blue, R.drawable.green, R.drawable.orange)
             // Transform WorkoutResult objects into RecentActivityItem objects
-            val recentActivityItems = sortedWorkoutResults?.mapIndexed { index, it ->
+            val recentActivityItems = workoutResults?.mapIndexed { index, it ->
                 RecentActivityItem(
                     imageResId = imageResources[index % imageResources.size],
                     exerciseType = MyUtils.exerciseNameToDisplay(it.exerciseName),
@@ -132,17 +127,11 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
         planList?.let {
             if (it.isNotEmpty()) {
                 it.map { plan ->
-                    if (plan.timeCompleted?.let { it1 -> getDayCompleted(it1) } != today) {
+                    if (plan.timeCompleted?.let { it1 -> getDayFromTimestamp(it1) } != today) {
                         lifecycleScope.launch {
                             addPlanViewModel.updateComplete(false, null, plan.id)
-                            Log.d(TAG, "update complete status for plan")
                         }
                     }
-                    Log.d(TAG, "Exercise is ${plan.exercise}")
-                    Log.d(
-                        TAG,
-                        "plan completed on ${plan.timeCompleted?.let { it1 -> getDayCompleted(it1) }}"
-                    )
                 }
             } else {
                 Log.d(TAG, "plan list is empty")
@@ -152,16 +141,10 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
 //        Display the not completed plans
         val exerciseLeftString = resources.getString(R.string.exercise_left, notCompletePlanList?.size ?: 0)
         progressText.text = exerciseLeftString
-        if (notCompletePlanList?.isEmpty() == true) {
-            noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
-        }
         recyclerView.adapter = adapter
         adapter.setListener(this)
         notCompletePlanList?.let { adapter.setPlans(it) }
-        recyclerView.visibility = if (notCompletePlanList?.isNotEmpty() == true) View.VISIBLE else View.GONE
-        progressBar.progress = percentage
-        progressPercentage.text = percentage.toString()
-        Log.d(TAG, "Progress is $percentage")
+        updateEmptyPlan(notCompletePlanList)
     }
 
 
@@ -171,13 +154,13 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
             workoutResults = resultViewModel.getAllResult()
             // Filter workout results for today
             val todayWorkoutResults = workoutResults?.filter {
-                isToday()
+                isToday(it.timestamp)
             }
             // Observe exercise plans from the database
             withContext(Dispatchers.Main) {
                 appRepository.allPlans.observe(viewLifecycleOwner) { exercisePlans ->
                     // Filter exercise plans for today
-                    val todayExercisePlans = exercisePlans?.filter { isTodayPlan() }
+                    val todayExercisePlans = exercisePlans?.filter { it.selectedDays.contains(today) }
                     // Calculate progress and update UI
                     val totalPlannedRepetitions = todayExercisePlans?.sumOf { it.repeatCount } ?: 0
                     val totalCompletedRepetitions =
@@ -194,43 +177,35 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
         }
     }
 
-    private fun isToday(): Boolean {
-        val todayCalendar = Calendar.getInstance()
-        // Compare the current day with the day of the plans
-        return isDaySelected(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
-    }
-
-    private fun isTodayPlan(): Boolean {
-        return isDaySelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK).toString())
-    }
-
-    private fun isDaySelected(day: String): Boolean {
-        val todayCalendar = Calendar.getInstance()
-        // Check if the selected day matches the current day of the week
-        return day.contains(todayCalendar.get(Calendar.DAY_OF_WEEK).toString())
-    }
-
     // Function to update progress views (ProgressBar and TextView)
-    private fun updateProgressViews(progressPercentage: Int) {
+    private fun updateProgressViews(progress: Int) {
         // Check if progressPercentage is greater than 0
-        if (progressPercentage > 0) {
+        if (progress > 0) {
             // Update progress views (ProgressBar and TextView)
-            val cappedProgress = min(progressPercentage, 100)
-            val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
-            val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
-            progressBar?.progress = cappedProgress
-            progressTextView?.text = String.format("%d%%", cappedProgress)
+            val cappedProgress = min(progress, 100)
+            progressBar.progress = cappedProgress
+            progressPercentage.text = String.format("%d%%", cappedProgress)
         } else {
             // If progressPercentage is 0 or less, hide the progress views
-            val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
-            val progressTextView = view?.findViewById<TextView>(R.id.progress_text)
-            progressBar?.visibility = View.GONE
-            progressTextView?.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            progressText.visibility = View.GONE
+        }
+    }
+
+    // Return true if the timestamp is today's date
+    private fun isToday(s: Long,locale: Locale = Locale.getDefault()): Boolean {
+        return try {
+            val sdf = SimpleDateFormat("MM/dd/yyyy", locale)
+            val netDate = Date(s )
+            val currentDate = sdf.format(Date())
+            sdf.format(netDate) == currentDate
+        } catch (e: Exception) {
+            false
         }
     }
 
     // Get the day from which the plan was marked as complete
-    private fun getDayCompleted(time: Long, locale: Locale = Locale.getDefault()): String? {
+    private fun getDayFromTimestamp(time: Long, locale: Locale = Locale.getDefault()): String? {
         return try {
             val sdf = SimpleDateFormat("EEEE", locale)
             val netDate = Date(time)
@@ -251,21 +226,10 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
                 // Delete the plan from database
                 lifecycleScope.launch {
                     addPlanViewModel.deletePlan(planId)
-
-                    // After deleting the plan, fetch the updated data and update the UI
-                    val result1 = withContext(Dispatchers.IO) { homeViewModel.getPlanByDay(today) }
-                    val result2 = withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
-                    updateResultFromDatabase(result1, result2)
                 }
-                Log.d(TAG,"Delete plan $planId" )
-                Log.d(TAG, "Adapter position is $position")
                 notCompletePlanList?.removeAt(position)
                 adapter.notifyItemRemoved(position)
-                adapter.notifyDataSetChanged()
-                if (notCompletePlanList?.isEmpty() == true) {
-                    noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
-                    recyclerView.visibility = View.GONE
-                }
+                updateEmptyPlan(notCompletePlanList)
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
@@ -274,6 +238,16 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
             }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+    }
+
+    // Hide the recycler view if there are no plan left for today
+    private fun updateEmptyPlan(plans: MutableList<Plan>?){
+        if(plans.isNullOrEmpty()){
+            noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
+            recyclerView.visibility = View.GONE
+        }else {
+            recyclerView.visibility = View.VISIBLE
+        }
     }
 
     override fun clearMemory() {

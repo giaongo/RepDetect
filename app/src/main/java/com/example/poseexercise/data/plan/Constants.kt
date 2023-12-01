@@ -14,21 +14,21 @@ object Constants {
             ),
             Exercise(
                 id = 2,
-                name = "Lunges",
+                name = "Lunge",
                 image = R.drawable.reverse_lunges,
                 calorie = 3.0,
                 level = "Beginner"
             ),
             Exercise(
                 id = 3,
-                name = "Squats",
+                name = "Squat",
                 image = R.drawable.squat,
                 calorie = 3.8,
                 level = "Beginner"
             ),
             Exercise(
                 id = 4,
-                name = "Sit Up",
+                name = "Sit up",
                 image = R.drawable.sit_ups,
                 calorie = 5.0,
                 level = "Advance"
