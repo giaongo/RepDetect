@@ -2,7 +2,6 @@ package com.example.poseexercise.views.fragment
 
 import android.os.Bundle
 import android.text.InputFilter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +33,6 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
     private lateinit var days: Array<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        days = resources.getStringArray(R.array.days)
     }
 
     override fun onCreateView(
@@ -45,13 +43,12 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
         // Set the values
         mExerciseName = arguments?.getString("exerciseName") ?: ""
         mKcal = arguments?.getDouble("caloriesPerRep") ?: 0.0
+        days = resources.getStringArray(R.array.days)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "selectedExercise is $mExerciseName")
-        Log.d(TAG, "calories for each repeat is $mKcal")
         // Get all the layout info
         val exerciseEditText = view.findViewById<EditText>(R.id.exercise_name)
         val repeatEditText = view.findViewById<EditText>(R.id.repeat_count)
@@ -68,14 +65,11 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
         // Get the selected days
         listOfDays.setOnItemClickListener { _, _, position, _ ->
             val element = listAdapter.getItem(position)// The item that was clicked
-            Log.d(TAG, "click is $element")
             if (element != null) {
                 if (element in selectedDays) {
                     selectedDays.remove(element)
-                    Log.d(TAG, "Removed $element from selectedDays, $selectedDays")
                 } else {
                     selectedDays.add(element)
-                    Log.d(TAG, "Added $element to selectedDays, $selectedDays")
                 }
             }
         }
