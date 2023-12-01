@@ -94,8 +94,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private var mRecSeconds = 0
     private var mRecMinute = 0
     private var mRecHours = 0
-    private val onlyExercise:List<String> = listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
-    private val onlyPose:List<String> = listOf(WARRIOR_CLASS,YOGA_TREE_CLASS)
+    private val onlyExercise: List<String> =
+        listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
+    private val onlyPose: List<String> = listOf(WARRIOR_CLASS, YOGA_TREE_CLASS)
 
     // late init properties---
     private lateinit var resultViewModel: ResultViewModel
@@ -314,9 +315,14 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
             notCompletedExercise?.forEach { item ->
                 val exercisePlan =
-                    ExercisePlan(item.id,databaseNameToClassification(item.exercise), item.repeatCount)
+                    ExercisePlan(
+                        item.id,
+                        databaseNameToClassification(item.exercise),
+                        item.repeatCount
+                    )
                 val existingExercisePlan =
-                    databaseExercisePlan.find { it.planId == item.id
+                    databaseExercisePlan.find {
+                        it.planId == item.id
                     }
                 if (existingExercisePlan != null) {
                     // Update repetitions if ExercisePlan with the same exerciseName already exists
@@ -327,7 +333,15 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 }
             }
             // Push the planned exercise name in exercise Log
-            databaseExercisePlan.forEach { exerciseLog.addExercise(it.planId,it.exerciseName, 0, 0f, false) }
+            databaseExercisePlan.forEach {
+                exerciseLog.addExercise(
+                    it.planId,
+                    it.exerciseName,
+                    0,
+                    0f,
+                    false
+                )
+            }
         }
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
@@ -338,12 +352,18 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                     val data = exerciseLog.getExerciseData(key)
                     if (key in onlyExercise && data == null) {
                         // Adding exercise for the first time
-                        exerciseLog.addExercise(null,key, value.repetition, value.confidence, false)
+                        exerciseLog.addExercise(
+                            null,
+                            key,
+                            value.repetition,
+                            value.confidence,
+                            false
+                        )
                     } else if (key in onlyExercise && value.repetition == data?.repetitions?.plus(1)) {
                         workoutRecyclerView.visibility = View.VISIBLE
-                        if(isAllWorkoutFinished){
+                        if (isAllWorkoutFinished) {
                             completeAllExercise.visibility = View.VISIBLE
-                        } else{
+                        } else {
                             completeAllExercise.visibility = View.GONE
                         }
                         confIndicatorView.visibility = View.GONE
@@ -360,7 +380,13 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         }
                         if (!data.isComplete && (value.repetition >= repetition)) {
                             // Adding data only when the increment happen
-                            exerciseLog.addExercise(data.planId,key, value.repetition, value.confidence, true)
+                            exerciseLog.addExercise(
+                                data.planId,
+                                key,
+                                value.repetition,
+                                value.confidence,
+                                true
+                            )
                             // inform the user about completion only once
                             synthesizeSpeech(exerciseNameToDisplay(key) + " exercise Complete")
                             // check if all the exercise list complete if yes tell all exercise is complete
@@ -373,17 +399,33 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                                 }, 5000)
                             }
                             // Update complete status for existing plan
-                            if(data.planId != null){
+                            if (data.planId != null) {
                                 lifecycleScope.launch(Dispatchers.IO) {
-                                    addPlanViewModel.updateComplete(true, System.currentTimeMillis(), data.planId)
+                                    addPlanViewModel.updateComplete(
+                                        true,
+                                        System.currentTimeMillis(),
+                                        data.planId
+                                    )
                                 }
                             }
-                            } else if (data.isComplete) {
+                        } else if (data.isComplete) {
                             // Adding data only when the increment happen
-                            exerciseLog.addExercise(data.planId,key, value.repetition, value.confidence, true)
+                            exerciseLog.addExercise(
+                                data.planId,
+                                key,
+                                value.repetition,
+                                value.confidence,
+                                true
+                            )
                         } else {
                             // Adding data only when the increment happen
-                            exerciseLog.addExercise(data.planId,key, value.repetition, value.confidence, false)
+                            exerciseLog.addExercise(
+                                data.planId,
+                                key,
+                                value.repetition,
+                                value.confidence,
+                                false
+                            )
                         }
                         // display Current result when the increment happen
                         displayResult(key, exerciseLog)
@@ -392,7 +434,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         val exerciseList = exerciseLog.getExerciseDataList()
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
-                    }else if (key in onlyPose && value.confidence > 0.5){
+                    } else if (key in onlyPose && value.confidence > 0.5) {
                         // Implementation of pose confidence
                         confIndicatorView.visibility = View.VISIBLE
                         displayConfidence(value.confidence)
@@ -402,8 +444,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         currentRepetitionTextView.visibility = View.GONE
                         confidenceTextView.visibility = View.VISIBLE
                         currentExerciseTextView.text = exerciseNameToDisplay(key)
-                        confidenceTextView.text = getString(R.string.confidence_percentage, (value.confidence * 100).toInt())
-                    }else if (key in onlyPose && value.confidence < 0.6){
+                        confidenceTextView.text = getString(
+                            R.string.confidence_percentage,
+                            (value.confidence * 100).toInt()
+                        )
+                    } else if (key in onlyPose && value.confidence < 0.6) {
                         confIndicatorView.visibility = View.GONE
                         confidenceTextView.visibility = View.GONE
                     }
@@ -453,7 +498,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
      * Synthesize speech using TextToSpeech
      */
     private fun synthesizeSpeech(name: String) {
-        lifecycleScope.launch(Dispatchers.Default){
+        lifecycleScope.launch(Dispatchers.Default) {
             textToSpeech.speak(name, TextToSpeech.QUEUE_ADD, null, null)
         }
     }
@@ -897,7 +942,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
      */
     class TypedConstant(val type: String, val value: Double)
     object Postures {
-        val pushup = TypedConstant( PUSHUPS_CLASS, 3.2)
+        val pushup = TypedConstant(PUSHUPS_CLASS, 3.2)
         val lunge = TypedConstant(LUNGES_CLASS, 3.0)
         val squat = TypedConstant(SQUATS_CLASS, 3.8)
         val sitUp = TypedConstant(SITUP_UP_CLASS, 5.0)
