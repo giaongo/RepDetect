@@ -12,20 +12,16 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.poseexercise.R
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.viewmodels.AddPlanViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 
-class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
-    val TAG = "RepDetect Debug"
+class PlanStepTwoFragment: Fragment(), MemoryManagement {
     private lateinit var addPlanViewModel: AddPlanViewModel
     private var mExerciseName : String = ""
     private var mKcal: Double = 0.0
@@ -85,7 +81,7 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
                 }
                 val repeatCount = repeatEditText.text.toString()
                 val newPlan = Plan(0,mExerciseName,mKcal,repeatCount.toInt() ,days)
-                launch{
+                lifecycleScope.launch{
                     addPlanViewModel.insert(newPlan)
                 }
                 view.findNavController().navigate(R.id.action_planStepTwoFragment_to_homeFragment)
@@ -119,14 +115,10 @@ class PlanStepTwoFragment: Fragment(), CoroutineScope, MemoryManagement {
         editText.filters = filters
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
-
     override fun clearMemory() {
         mExerciseName = ""
         mKcal = 0.0
         selectedDays.clear()
-        this.cancel()
     }
 
     override fun onDestroy() {

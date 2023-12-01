@@ -2,7 +2,6 @@ package com.example.poseexercise.views.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import com.google.android.material.chip.ChipGroup
  * Displays a [RecyclerView] of exercise types.
  */
 class PlanStepOneFragment : Fragment(), MemoryManagement {
-    val TAG = "RepDetect Debug"
     private val exerciseList = Constants.getExerciseList()
     private var searchQuery: CharSequence? = null
 
@@ -45,11 +43,9 @@ class PlanStepOneFragment : Fragment(), MemoryManagement {
             // Get the chip from the checked chip id
             val checkedChipId = chipGroup.checkedChipId
             val chip = chipGroup.findViewById<Chip>(checkedChipId)
-            Log.d(TAG, "CLICK ON $chip")
             // Filter the result based on the selected chip
             if(chip != null){
                 searchQuery = chip.text
-                Log.d(TAG, "LEVEL CLICK IS $searchQuery")
                 adapter.filter.filter(searchQuery)
             }else {
                 adapter.setExercises(exerciseList)
