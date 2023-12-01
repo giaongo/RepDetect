@@ -29,13 +29,19 @@ import com.google.common.base.Preconditions;
 import com.google.mlkit.vision.pose.Pose;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Accepts a stream of {@link Pose} for classification and Rep counting.
@@ -43,56 +49,154 @@ import java.util.Objects;
 public class PoseClassifierProcessor {
     private static final String TAG = "PoseClassifierProcessor";
 
-    private static final String POSE_SAMPLES_FILE = "pose/fitness_four_exercise_two_yoga_v04.csv";
+    // File names of all exercise
+    private static final String SQUAT_FILE = "pose/squats.csv";
+    private static final String PUSH_UP_FILE = "pose/pushups.csv";
+    private static final String LUNGE_FILE = "pose/lunges.csv";
+    private static final String NEUTRAL_STANDING_FILE = "pose/neutral_standing.csv";
+    private static final String SIT_UP_FILE = "pose/situps.csv";
+    private static final String TREE_YOGA_FILE = "pose/treeyoga.csv";
+    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";
+    //private static final String POSE_SAMPLES_FILE = "pose/fitness_four_exercise_two_yoga_v04.csv";
 
-    // The class name for the pushups
+
+
+    // The class name for all the exercise
     public static final String PUSHUPS_CLASS = "pushups_down";
-
-
-    // The class name for squat
     public static final String SQUATS_CLASS = "squats";
-
-    //class name for lunges
     public static final String LUNGES_CLASS = "lunges";
-
-    // The class name for the situp
     public static final String SITUP_UP_CLASS = "situp_up";
-
-    // The class name for the yoga pose
     public static final String WARRIOR_CLASS = "warrior";
-
-    // The class name for the yoga tree pose
     public static final String YOGA_TREE_CLASS = "tree_pose";
-
     public static final String[] POSE_CLASSES = {
             PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS, WARRIOR_CLASS, YOGA_TREE_CLASS
-
     };
 
     private final boolean isStreamMode;
-
     private EMASmoothing emaSmoothing;
     private List<RepetitionCounter> repCounters;
     private PoseClassifier poseClassifier;
-
     private final Map<String, PostureResult> postureResults = new HashMap<>();
 
+
     @WorkerThread
-    public PoseClassifierProcessor(Context context, boolean isStreamMode) {
+    public PoseClassifierProcessor(Context context, boolean isStreamMode, List<String> plan) {
+
         Preconditions.checkState(Looper.myLooper() != Looper.getMainLooper());
         this.isStreamMode = isStreamMode;
         if (isStreamMode) {
             emaSmoothing = new EMASmoothing();
             repCounters = new ArrayList<>();
         }
-        loadPoseSamples(context);
+
+        if(plan != null){
+            Log.d("pose_classifier_processor: ", plan.toString());
+            Log.d("pose_classifier_processor: ", mapExercisesToFiles(plan).toString());
+        }
+
+        //loadPoseSamples(context);
+        combineAndLoadPoseSamples(context, mapExercisesToFiles(plan));
     }
 
-    private void loadPoseSamples(Context context) {
+    private void combineAndLoadPoseSamples(Context context, List<String> mappedPlan) {
+        // Ensure the combined file exists in internal storage
+        String combinedFilePath = context.getFilesDir().getPath() + File.separator + "combined_poses.csv";
+
+        createNewFileReplacingPrevious(combinedFilePath);
+
+        // Combine separate CSV files into a new combined file
+        combineCSVFiles(context, combinedFilePath, mappedPlan);
+
+        // Now, load pose samples from the combined file
+        loadPoseSamples(context, combinedFilePath);
+    }
+
+    private void createNewFileReplacingPrevious(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (file.exists() && !file.isDirectory()) {
+                file.delete();
+            }
+            file.createNewFile();
+        } catch (IOException e) {
+            Log.e(TAG, "Error creating file: " + filePath + "\n" + e);
+        }
+    }
+
+    private void combineCSVFiles(Context context, String outputPath, List<String> inputFiles) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(outputPath))) {
+            for (String inputFile : inputFiles) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(inputFile)));
+                String csvLine = reader.readLine();
+                while (csvLine != null) {
+                    writer.println(csvLine);
+                    csvLine = reader.readLine();
+                }
+                // Add an empty line between files
+                writer.println();
+
+                reader.close();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error when combining CSV files.\n" + e);
+        }
+    }
+
+
+    private static List<String> mapExercisesToFiles(List<String> exercises) {
+        List<String> files = new ArrayList<>();
+        Set<String> uniqueFileNames = new HashSet<>();
+
+        if(exercises != null){
+            for (String exercise : exercises) {
+                switch (exercise) {
+                    case "Squat":
+                        addUniqueFile(files, uniqueFileNames, SQUAT_FILE);
+                        addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
+                        addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
+                        break;
+                    case "Push up":
+                        addUniqueFile(files, uniqueFileNames, PUSH_UP_FILE);
+                        break;
+                    case "Sit up":
+                        addUniqueFile(files, uniqueFileNames, SIT_UP_FILE);
+                        break;
+                    case "Lunge":
+                        addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
+                        addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
+                        addUniqueFile(files, uniqueFileNames, SQUAT_FILE);
+                        break;
+                    // Add more cases for other exercises if needed
+                    default:
+                        break;
+                }
+            }
+        }
+
+        // Exercise by Default
+        addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
+        addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
+        addUniqueFile(files, uniqueFileNames, SQUAT_FILE);
+        files.add(WARRIOR_YOGA_FILE);
+        files.add(TREE_YOGA_FILE);
+
+        return files;
+    }
+
+    private static void addUniqueFile(List<String> files, Set<String> uniqueFileNames, String fileName) {
+        if (uniqueFileNames.add(fileName)) {
+            // If the file name is unique, add it to the list
+            files.add(fileName);
+        }
+    }
+
+
+    private void loadPoseSamples(Context context, String filePath) {
         List<PoseSample> poseSamples = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(context.getAssets().open(POSE_SAMPLES_FILE)));
+
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+
             String csvLine = reader.readLine();
             while (csvLine != null) {
                 // If line is not a valid {@link PoseSample}, we'll get null and skip adding to the list.
