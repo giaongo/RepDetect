@@ -135,7 +135,7 @@
     <string name="timer">%s</string>
     <string name="exercise_count">%1$s: %2$d</string>
     <string name="hello">Hello! 🔥</string>
-    <string name="name">Adeline Castelino</string>
+    <string name="name">RepDetect User</string>
     <string name="workout_progress">Workout Progress</string>
     <string name="exercises_left">12 exercises left</string>
     <string name="progress_image">Progress Image</string>
@@ -151,7 +151,7 @@
     <string name="sub_header">100 Push up a day</string>
     <string name="sit_up">Sit Up</string>
     <string name="sit_up_a_day">20 Sit up a day</string>
-    <string name="skip">Skip</string>
+    <string name="skip">Skip all</string>
     <string name="_00_00">00:00</string>
     <string name="confidence_indicator">Confidence Indicator</string>
     <string name="record_icon">record icon</string>
@@ -186,7 +186,7 @@
 
     <!-- Strings for Profile fragment -->
     <string name="content_description">User avatar</string>
-    <string name="default_user">Adeline Castelino</string>
+    <string name="default_user">RepDetect User</string>
     <string name="result">Weekly result</string>
     <string name="summary">Weekly summary</string>
     <string name="total_time">%d minutes</string>
