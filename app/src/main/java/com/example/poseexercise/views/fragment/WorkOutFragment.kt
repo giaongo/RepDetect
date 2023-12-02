@@ -42,6 +42,7 @@ import com.example.poseexercise.adapters.ExerciseGifAdapter
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
+import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.LUNGES_CLASS
@@ -97,6 +98,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private val onlyExercise: List<String> =
         listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
     private val onlyPose: List<String> = listOf(WARRIOR_CLASS, YOGA_TREE_CLASS)
+    private var notCompletedExercise: List<Plan>? = null
 
     // late init properties---
     private lateinit var resultViewModel: ResultViewModel
@@ -120,6 +122,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var yogaPoseImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,16 +157,14 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         currentRepetitionTextView = view.findViewById(R.id.currentRepetitionText)
         confidenceTextView = view.findViewById(R.id.confidenceIndicatorTextView)
         completeAllExercise = view.findViewById(R.id.completedAllExerciseTextView)
-        confIndicatorView.visibility = View.GONE
-        confidenceTextView.visibility = View.GONE
-
+        confIndicatorView.visibility = View.INVISIBLE
+        confidenceTextView.visibility = View.INVISIBLE
         loadingTV = view.findViewById(R.id.loadingStatus)
         loadProgress = view.findViewById(R.id.loadingProgress)
-
         skipButton = view.findViewById(R.id.skipButton)
-
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
+        yogaPoseImage = view.findViewById(R.id.yogaPoseSnapShot)
         return view
     }
 
@@ -278,9 +279,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // update the workoutResultData in MainActivity
             cameraViewModel.postureLiveData.value?.let {
                 val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
+                for ((key, value) in it) {
+                    if (value.repetition != 0 && key in onlyExercise) {
+                        builder.append("${exerciseNameToDisplay(value.postureType)}: ${value.repetition}\n")
+                    } else if(key in onlyPose){
+                        builder.append("${exerciseNameToDisplay(value.postureType)}\n")
                     }
                 }
                 if (builder.toString().isNotEmpty()) MainActivity.workoutResultData =
@@ -297,7 +300,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
             cameraProvider = provider
-            bindAllCameraUseCases()
+            //bindAllCameraUseCases()
+            notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(emptyList())
         }
 
         cameraFlipFAB.setOnClickListener {
@@ -311,8 +315,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         lifecycleScope.launch(Dispatchers.IO) {
 
             // get not completed exercise from database using coroutine
-            val notCompletedExercise =
+            notCompletedExercise =
                 withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+
             notCompletedExercise?.forEach { item ->
                 val exercisePlan =
                     ExercisePlan(
@@ -344,6 +349,10 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             }
         }
 
+        // Declare variables to store previous values
+        var previousKey: String? = null;
+        var previousConfidence: Float? = null;
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
             for ((key, value) in mapResult) {
                 // Visualize the repetition exercise data
@@ -366,8 +375,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         } else {
                             completeAllExercise.visibility = View.GONE
                         }
-                        confIndicatorView.visibility = View.GONE
-                        confidenceTextView.visibility = View.GONE
+                        confIndicatorView.visibility = View.INVISIBLE
+                        confidenceTextView.visibility = View.INVISIBLE
+                        yogaPoseImage.visibility = View.INVISIBLE
                         // check if the exercise target is complete
                         var repetition: Int? = databaseExercisePlan.find {
                             it.exerciseName.equals(
@@ -435,23 +445,37 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
                     } else if (key in onlyPose && value.confidence > 0.5) {
-                        // Implementation of pose confidence
-                        confIndicatorView.visibility = View.VISIBLE
-                        displayConfidence(value.confidence)
-                        workoutRecyclerView.visibility = View.GONE
-                        completeAllExercise.visibility = View.GONE
-                        currentExerciseTextView.visibility = View.VISIBLE
-                        currentRepetitionTextView.visibility = View.GONE
-                        confidenceTextView.visibility = View.VISIBLE
-                        currentExerciseTextView.text = exerciseNameToDisplay(key)
-                        confidenceTextView.text = getString(
-                            R.string.confidence_percentage,
-                            (value.confidence * 100).toInt()
-                        )
-                    } else if (key in onlyPose && value.confidence < 0.6) {
-                        confIndicatorView.visibility = View.GONE
-                        confidenceTextView.visibility = View.GONE
+
+                        if (key !== previousKey || value.confidence !== previousConfidence){
+                            // Implementation of pose confidence
+                            displayConfidence(key, value.confidence)
+                            workoutRecyclerView.visibility = View.GONE
+                            completeAllExercise.visibility = View.GONE
+                            currentExerciseTextView.visibility = View.VISIBLE
+                            currentRepetitionTextView.visibility = View.GONE
+                            confidenceTextView.visibility = View.VISIBLE
+                            currentExerciseTextView.text = exerciseNameToDisplay(key)
+                            confidenceTextView.text = getString(
+                                R.string.confidence_percentage,
+                                (value.confidence * 100).toInt()
+                            )
+                            yogaPoseImage.visibility = View.VISIBLE
+
+                            if(key !== previousKey){
+                                yogaPoseImage.setImageResource(getDrawableResourceIdYoga(key))
+                            }
+
+                            // Update previous values
+                            previousKey = key;
+                            previousConfidence = value.confidence;
+                        }
+                    } else if (key == previousKey && value.confidence < 0.6) {
+                        confIndicatorView.visibility = View.INVISIBLE
+                        confidenceTextView.visibility = View.INVISIBLE
+                        yogaPoseImage.visibility = View.INVISIBLE
                     }
+                    //Log.d("Yoga_pose_debugging:",key.toString())
+                    //Log.d("Yoga_pose_debugging:",value.confidence.toString())
                 }
             }
 
@@ -480,6 +504,18 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         Postures.squat.type to R.drawable.squats,
         Postures.sitUp.type to R.drawable.situp
     )
+
+    /**
+     * List of exercise gifs
+     */
+    private val yogaPoseImages = mapOf(
+        WARRIOR_CLASS to R.drawable.warrior_yoga_pose,
+        YOGA_TREE_CLASS to R.drawable.tree_yoga_pose
+    )
+
+    private fun getDrawableResourceIdYoga(yogaPoseKey: String): Int {
+        return yogaPoseImages[yogaPoseKey] ?: throw IllegalArgumentException("Invalid yoga pose key: $yogaPoseKey")
+    }
 
     /**
      * Initialize TextToSpeech engine
@@ -527,17 +563,19 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     /**
      * Display confidence level with different colors based on thresholds
      */
-    private fun displayConfidence(confidence: Float) {
-        if (confidence <= 0.6) {
+    private fun displayConfidence(key: String, confidence: Float) {
+        confIndicatorView.visibility = View.VISIBLE
+        yogaPoseImage.visibility = View.VISIBLE
+        if (confidence <= 0.6f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.red)
-        } else if (confidence > 0.6 && confidence <= 0.7) {
+        } else if (confidence > 0.6f && confidence <= 0.7f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.orange)
-        } else if (confidence > 0.7 && confidence <= 0.8) {
+        } else if (confidence > 0.7f && confidence <= 0.8f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.yellow)
-        } else if (confidence > 0.8 && confidence <= 0.9) {
+        } else if (confidence > 0.8f && confidence <= 0.9f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
         } else {
@@ -549,11 +587,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     /**
      * Bind all camera use cases (preview and analysis)
      */
-    private fun bindAllCameraUseCases() {
+    private fun bindAllCameraUseCases(notCompletedPlan: List<Plan>) {
         // Bind all camera use cases (preview and analysis)
         bindPreviewUseCase()
         cameraViewModel.triggerClassification.observe(viewLifecycleOwner) { pressed ->
-            bindAnalysisUseCase(pressed)
+            bindAnalysisUseCase(pressed, notCompletedPlan)
         }
     }
 
@@ -585,7 +623,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     /**
      * bind analysis use case
      */
-    private fun bindAnalysisUseCase(runClassification: Boolean) {
+    private fun bindAnalysisUseCase(runClassification: Boolean, notCompletedPlan: List<Plan>) {
         if (cameraProvider == null) {
             return
         }
@@ -620,7 +658,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         rescaleZ,
                         runClassification,
                         true,
-                        cameraViewModel
+                        cameraViewModel,
+                        notCompletedPlan
                     )
                 }
 
@@ -757,7 +796,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 Log.d(TAG, "Set facing to $newLensFacing")
                 lensFacing = newLensFacing
                 cameraSelector = newCameraSelector
-                bindAllCameraUseCases()
+                notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(emptyList())
                 return
             }
         } catch (e: CameraInfoUnavailableException) {
@@ -872,7 +911,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     /**
      * Transform the posture result text to be displayed in the CompletedFragment
      */
-    private fun transformText(input: String): String {
+/*    private fun transformText(input: String): String {
         val regex = Regex("_")
         if (regex.containsMatchIn(input)) {
             return regex.replace(input.lowercase(), " ")
@@ -881,7 +920,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             print("No match found")
         }
         return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-    }
+    }*/
 
     /**
      * overridden function to clean up memory, clear object reference and un-register onClickListener

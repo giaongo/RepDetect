@@ -19,6 +19,7 @@ package com.example.poseexercise.posedetector
 import android.content.Context
 import android.util.Log
 import com.example.poseexercise.data.PostureResult
+import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor
 import com.example.poseexercise.util.VisionProcessorBase
 import com.example.poseexercise.viewmodels.CameraXViewModel
@@ -43,13 +44,15 @@ class PoseDetectorProcessor(
   private val rescaleZForVisualization: Boolean,
   private val runClassification: Boolean,
   private val isStreamMode: Boolean,
-  private var cameraXViewModel: CameraXViewModel? = null
+  private var cameraXViewModel: CameraXViewModel? = null,
+  private val notCompletedExercise: List<Plan>
 ) : VisionProcessorBase<PoseDetectorProcessor.PoseWithClassification>(context) {
 
   private val detector: PoseDetector
   private val classificationExecutor: Executor
 
   private var poseClassifierProcessor: PoseClassifierProcessor? = null
+  private var exercisesToDetect: List<String>? = null
 
   /** Internal class to hold Pose and classification results. */
   inner class PoseWithClassification(val pose: Pose, classificationResult: Map<String, PostureResult>) {
@@ -65,6 +68,9 @@ class PoseDetectorProcessor(
   init {
     detector = PoseDetection.getClient(options)
     classificationExecutor = Executors.newSingleThreadExecutor()
+    if(notCompletedExercise.isNotEmpty()) {
+      exercisesToDetect = notCompletedExercise.map {plan -> plan.exercise}
+    }
   }
 
 
@@ -87,7 +93,8 @@ class PoseDetectorProcessor(
             poseClassifierProcessor =
               PoseClassifierProcessor(
                 context,
-                isStreamMode
+                isStreamMode,
+                exercisesToDetect
               )
           }
           classificationResult = poseClassifierProcessor!!.getPoseResult(pose)
@@ -110,7 +117,8 @@ class PoseDetectorProcessor(
             poseClassifierProcessor =
               PoseClassifierProcessor(
                 context,
-                isStreamMode
+                isStreamMode,
+                exercisesToDetect
               )
           }
           classificationResult = poseClassifierProcessor!!.getPoseResult(pose)

@@ -40,6 +40,7 @@
             android:layout_height="0dp"
             android:alpha="0.7"
             android:layout_margin="10dp"
+            android:visibility="invisible"
             android:contentDescription="@string/confidence_indicator"
             android:background="@drawable/confidence_indicator"
             app:layout_constraintDimensionRatio="1"
@@ -47,6 +48,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+
 
         <TextView
             android:id="@+id/confidenceIndicatorTextView"
@@ -198,12 +201,12 @@
             android:layout_height="wrap_content"
             android:text="@string/exercise_count"
             android:textColor="@color/white"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05" />
@@ -215,15 +218,33 @@
             android:layout_height="wrap_content"
             android:text="@string/exercise_count"
             android:textColor="@color/white"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05" />
+
+
+        <!-- Yoga Pose -->
+        <ImageView
+            android:id="@+id/yogaPoseSnapShot"
+            android:layout_width="140dp"
+            android:layout_height="150dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/confidence_indicator"
+            android:src="@drawable/warrior_yoga_pose"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.98"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.02" />
+
 
         <!-- Loading Status TextView -->
         <TextView
