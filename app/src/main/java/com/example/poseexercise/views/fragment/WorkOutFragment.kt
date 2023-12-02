@@ -45,9 +45,12 @@ import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.CHEST_PRESS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.DEAD_LIFT_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.LUNGES_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.POSE_CLASSES
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.PUSHUPS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SHOULDER_PRESS_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SITUP_UP_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SQUATS_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.WARRIOR_CLASS
@@ -227,10 +230,13 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
         // Complete the exercise
-        val sitUp = Postures.sitUp
+        val sitUp = Postures.situp
         val pushUp = Postures.pushup
         val lunge = Postures.lunge
         val squat = Postures.squat
+        val chestPress = Postures.chestpress
+        val deadLift = Postures.deadlift
+        val shoulderPress = Postures.shoulderpress
 
         buttonCompleteExercise.setOnClickListener {
             synthesizeSpeech("Workout Complete")
@@ -244,6 +250,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                                 pushUp.type -> pushUp.value / 10
                                 lunge.type -> lunge.value / 10
                                 squat.type -> squat.value / 10
+                                chestPress.type -> chestPress.value / 10
+                                deadLift.type -> deadLift.value / 10
+                                shoulderPress.type -> shoulderPress.value / 10
                                 else -> 0.0
                             }
                             val workoutTime =
@@ -502,7 +511,10 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         Postures.pushup.type to R.drawable.pushup,
         Postures.lunge.type to R.drawable.lunge,
         Postures.squat.type to R.drawable.squats,
-        Postures.sitUp.type to R.drawable.situp
+        Postures.situp.type to R.drawable.situp,
+        Postures.chestpress.type to R.drawable.chest_press_gif,
+        Postures.deadlift.type to R.drawable.dead_lift_gif,
+        Postures.shoulderpress.type to R.drawable.shoulder_press_gif
     )
 
     /**
@@ -984,6 +996,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val pushup = TypedConstant(PUSHUPS_CLASS, 3.2)
         val lunge = TypedConstant(LUNGES_CLASS, 3.0)
         val squat = TypedConstant(SQUATS_CLASS, 3.8)
-        val sitUp = TypedConstant(SITUP_UP_CLASS, 5.0)
+        val situp = TypedConstant(SITUP_UP_CLASS, 5.0)
+        val chestpress = TypedConstant(CHEST_PRESS_CLASS, 7.0)
+        val deadlift = TypedConstant(DEAD_LIFT_CLASS, 10.0)
+        val shoulderpress = TypedConstant(SHOULDER_PRESS_CLASS, 9.0)
     }
 }
