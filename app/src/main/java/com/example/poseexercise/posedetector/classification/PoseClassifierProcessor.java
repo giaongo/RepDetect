@@ -59,8 +59,7 @@ public class PoseClassifierProcessor {
     private static final String DEAD_LIFT_FILE = "pose/deadlift.csv";
     private static final String SHOULDER_PRESS_FILE = "pose/shoulderpress.csv";
     private static final String TREE_YOGA_FILE = "pose/treeyoga.csv";
-    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";
-    //private static final String POSE_SAMPLES_FILE = "pose/fitness_four_exercise_two_yoga_v04.csv";
+    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";;
 
 
 
