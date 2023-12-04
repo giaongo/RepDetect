@@ -45,9 +45,12 @@ import com.example.poseexercise.data.plan.ExercisePlan
 import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.CHEST_PRESS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.DEAD_LIFT_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.LUNGES_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.POSE_CLASSES
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.PUSHUPS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SHOULDER_PRESS_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SITUP_UP_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SQUATS_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.WARRIOR_CLASS
@@ -96,7 +99,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private var mRecMinute = 0
     private var mRecHours = 0
     private val onlyExercise: List<String> =
-        listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
+        listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS, CHEST_PRESS_CLASS, DEAD_LIFT_CLASS, SHOULDER_PRESS_CLASS)
     private val onlyPose: List<String> = listOf(WARRIOR_CLASS, YOGA_TREE_CLASS)
     private var notCompletedExercise: List<Plan>? = null
 
@@ -179,18 +182,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         gifContainer.visibility = View.GONE
         skipButton.visibility = View.GONE
 
-        val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
-        val exerciseGifAdapter = ExerciseGifAdapter(exerciseGifs) {
-            // Handle skip button click here
-            // Transition to the "Start" button
-            startButton.visibility = View.GONE
-            cameraFlipFAB.visibility = View.VISIBLE
-            viewPager.visibility = View.GONE
-            skipButton.visibility = View.GONE
-            gifContainer.visibility = View.GONE
-            cameraFlipFAB.visibility = View.GONE
-        }
-        viewPager.adapter = exerciseGifAdapter
 
         // start exercise button
         startButton.setOnClickListener {
@@ -227,10 +218,13 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
         // Complete the exercise
-        val sitUp = Postures.sitUp
+        val sitUp = Postures.situp
         val pushUp = Postures.pushup
         val lunge = Postures.lunge
         val squat = Postures.squat
+        val chestPress = Postures.chestpress
+        val deadLift = Postures.deadlift
+        val shoulderPress = Postures.shoulderpress
 
         buttonCompleteExercise.setOnClickListener {
             synthesizeSpeech("Workout Complete")
@@ -244,6 +238,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                                 pushUp.type -> pushUp.value / 10
                                 lunge.type -> lunge.value / 10
                                 squat.type -> squat.value / 10
+                                chestPress.type -> chestPress.value / 10
+                                deadLift.type -> deadLift.value / 10
+                                shoulderPress.type -> shoulderPress.value / 10
                                 else -> 0.0
                             }
                             val workoutTime =
@@ -317,6 +314,45 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // get not completed exercise from database using coroutine
             notCompletedExercise =
                 withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+
+            // Create a set to track unique exercises
+            val uniqueExercises = mutableSetOf<String>()
+
+            // Create exerciseGifs list based on notCompletedExercise, avoiding duplicates
+            val exerciseGifs = mutableListOf<Pair<String, Int>>()
+
+            // Function to add exercise to the list if it's not already present
+            fun addExerciseIfNotPresent(exercise: String) {
+                if (uniqueExercises.add(exercise)) {
+                    exerciseGifs.add(exercise to mapExerciseToDrawable(exercise))
+                }
+            }
+
+            // Add entries based on notCompletedExercise
+            notCompletedExercise?.let {
+                it.map { plan ->
+                    addExerciseIfNotPresent(plan.exercise)
+                }
+            }
+
+            // Add entries for default exercises (squat, lunge, warrior, tree)
+            addExerciseIfNotPresent(exerciseNameToDisplay(SQUATS_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(LUNGES_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(WARRIOR_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(YOGA_TREE_CLASS))
+
+            val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
+            val exerciseGifAdapter = ExerciseGifAdapter(exerciseGifs) {
+                // Handle skip button click here
+                // Transition to the "Start" button
+                startButton.visibility = View.GONE
+                cameraFlipFAB.visibility = View.VISIBLE
+                viewPager.visibility = View.GONE
+                skipButton.visibility = View.GONE
+                gifContainer.visibility = View.GONE
+                cameraFlipFAB.visibility = View.GONE
+            }
+            viewPager.adapter = exerciseGifAdapter
 
             notCompletedExercise?.forEach { item ->
                 val exercisePlan =
@@ -495,18 +531,25 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
     }
 
-    /**
-     * List of exercise gifs
-     */
-    private val exerciseGifs = listOf(
-        Postures.pushup.type to R.drawable.pushup,
-        Postures.lunge.type to R.drawable.lunge,
-        Postures.squat.type to R.drawable.squats,
-        Postures.sitUp.type to R.drawable.situp
-    )
+
+    // Map the notCompletedExercise list to a list of pairs to show gifs
+    private fun mapExerciseToDrawable(exercise: String): Int {
+        return when (exercise) {
+            exerciseNameToDisplay(PUSHUPS_CLASS) -> R.drawable.pushup
+            exerciseNameToDisplay(LUNGES_CLASS) -> R.drawable.lunge
+            exerciseNameToDisplay(SQUATS_CLASS) -> R.drawable.squats
+            exerciseNameToDisplay(SITUP_UP_CLASS) -> R.drawable.situp
+            exerciseNameToDisplay(CHEST_PRESS_CLASS) -> R.drawable.chest_press_gif
+            exerciseNameToDisplay(DEAD_LIFT_CLASS) -> R.drawable.dead_lift_gif
+            exerciseNameToDisplay(SHOULDER_PRESS_CLASS) -> R.drawable.shoulder_press_gif
+            exerciseNameToDisplay(WARRIOR_CLASS) -> R.drawable.warrior_yoga_gif
+            exerciseNameToDisplay(YOGA_TREE_CLASS) -> R.drawable.tree_yoga_gif
+            else -> R.drawable.warrior_yoga_gif
+        }
+    }
 
     /**
-     * List of exercise gifs
+     * List of yoga images
      */
     private val yogaPoseImages = mapOf(
         WARRIOR_CLASS to R.drawable.warrior_yoga_pose,
@@ -549,15 +592,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val data = exerciseLog.getExerciseData(key)
         currentExerciseTextView.text = exerciseNameToDisplay(key)
         currentRepetitionTextView.text = "count: " + data?.repetitions.toString()
-        /*val pushUpData = exerciseLog.getExerciseData(key)
-        val exerciseName = exerciseNameToDisplay(key)
-        val repetitionCount = pushUpData?.repetitions ?: 0
-
-        val exerciseText = getString(R.string.current_exercise_format, exerciseName)
-        val repetitionText = getString(R.string.current_repetition_format, repetitionCount)
-
-        currentExerciseTextView.text = exerciseText
-        currentRepetitionTextView.text = repetitionText*/
     }
 
     /**
@@ -646,8 +680,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                     val visualizeZ = PreferenceUtils.shouldPoseDetectionVisualizeZ(requireContext())
                     val rescaleZ =
                         PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(requireContext())
-
-                    //PreferenceUtils.shouldPoseDetectionRunClassification(requireContext())
 
                     // Build Pose Detector Processor based on the settings/preferences
                     PoseDetectorProcessor(
@@ -908,19 +940,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         return mBuilder.toString()
     }
 
-    /**
-     * Transform the posture result text to be displayed in the CompletedFragment
-     */
-/*    private fun transformText(input: String): String {
-        val regex = Regex("_")
-        if (regex.containsMatchIn(input)) {
-            return regex.replace(input.lowercase(), " ")
-                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-        } else {
-            print("No match found")
-        }
-        return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-    }*/
 
     /**
      * overridden function to clean up memory, clear object reference and un-register onClickListener
@@ -984,6 +1003,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val pushup = TypedConstant(PUSHUPS_CLASS, 3.2)
         val lunge = TypedConstant(LUNGES_CLASS, 3.0)
         val squat = TypedConstant(SQUATS_CLASS, 3.8)
-        val sitUp = TypedConstant(SITUP_UP_CLASS, 5.0)
+        val situp = TypedConstant(SITUP_UP_CLASS, 5.0)
+        val chestpress = TypedConstant(CHEST_PRESS_CLASS, 7.0)
+        val deadlift = TypedConstant(DEAD_LIFT_CLASS, 10.0)
+        val shoulderpress = TypedConstant(SHOULDER_PRESS_CLASS, 9.0)
+        val warrioryoga = TypedConstant(WARRIOR_CLASS, 3.0)
+        val treeyoga = TypedConstant(YOGA_TREE_CLASS, 3.0)
     }
 }

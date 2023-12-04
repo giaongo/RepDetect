@@ -55,9 +55,11 @@ public class PoseClassifierProcessor {
     private static final String LUNGE_FILE = "pose/lunges.csv";
     private static final String NEUTRAL_STANDING_FILE = "pose/neutral_standing.csv";
     private static final String SIT_UP_FILE = "pose/situps.csv";
+    private static final String CHEST_PRESS_FILE = "pose/chestpress.csv";
+    private static final String DEAD_LIFT_FILE = "pose/deadlift.csv";
+    private static final String SHOULDER_PRESS_FILE = "pose/shoulderpress.csv";
     private static final String TREE_YOGA_FILE = "pose/treeyoga.csv";
-    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";
-    //private static final String POSE_SAMPLES_FILE = "pose/fitness_four_exercise_two_yoga_v04.csv";
+    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";;
 
 
 
@@ -66,10 +68,13 @@ public class PoseClassifierProcessor {
     public static final String SQUATS_CLASS = "squats";
     public static final String LUNGES_CLASS = "lunges";
     public static final String SITUP_UP_CLASS = "situp_up";
+    public static final String CHEST_PRESS_CLASS = "chestpress_down";
+    public static final String DEAD_LIFT_CLASS = "deadlift_down";
+    public static final String SHOULDER_PRESS_CLASS = "shoulderpress_down";
     public static final String WARRIOR_CLASS = "warrior";
     public static final String YOGA_TREE_CLASS = "tree_pose";
     public static final String[] POSE_CLASSES = {
-            PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS, WARRIOR_CLASS, YOGA_TREE_CLASS
+            PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS,CHEST_PRESS_CLASS,DEAD_LIFT_CLASS,SHOULDER_PRESS_CLASS, WARRIOR_CLASS, YOGA_TREE_CLASS
     };
 
     private final boolean isStreamMode;
@@ -165,6 +170,15 @@ public class PoseClassifierProcessor {
                         addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
                         addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
                         addUniqueFile(files, uniqueFileNames, SQUAT_FILE);
+                        break;
+                    case "Chest press":
+                        addUniqueFile(files, uniqueFileNames, CHEST_PRESS_FILE);
+                        break;
+                    case "Dead lift":
+                        addUniqueFile(files, uniqueFileNames, DEAD_LIFT_FILE);
+                        break;
+                    case "Shoulder press":
+                        addUniqueFile(files, uniqueFileNames, SHOULDER_PRESS_FILE);
                         break;
                     // Add more cases for other exercises if needed
                     default:
