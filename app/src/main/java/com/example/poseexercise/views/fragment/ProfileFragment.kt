@@ -2,7 +2,6 @@ package com.example.poseexercise.views.fragment
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +32,9 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.min
 
+/**
+ * Profile view with the information on workout for a week
+ */
 class ProfileFragment : Fragment(), MemoryManagement {
     // Declare variables for ViewModel, Chart, UI components, and data
     private lateinit var resultViewModel: ResultViewModel
@@ -87,7 +89,6 @@ class ProfileFragment : Fragment(), MemoryManagement {
 
                     // Update the TextView with the formatted workout time
                     workOutTime.text = formattedWorkoutTime
-                    Log.d("my_date and workout time", formattedWorkoutTime)
 
                     val totalCaloriesPerDay =
                         workoutResults?.let { calculateTotalCaloriesPerDay(it) }

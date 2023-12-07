@@ -2,7 +2,12 @@ package com.example.poseexercise.data.plan
 
 import com.example.poseexercise.R
 
+/**
+Object containing constants related to exercise data
+ **/
 object Constants {
+
+    // Function to get a list of predefined exercises with their details
     fun getExerciseList(): List<Exercise> {
         return listOf(
             Exercise(

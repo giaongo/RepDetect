@@ -139,7 +139,8 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
         }
 
 //        Display the not completed plans
-        val exerciseLeftString = resources.getString(R.string.exercise_left, notCompletePlanList?.size ?: 0)
+        val exerciseLeftString =
+            resources.getString(R.string.exercise_left, notCompletePlanList?.size ?: 0)
         progressText.text = exerciseLeftString
         recyclerView.adapter = adapter
         adapter.setListener(this)
@@ -160,7 +161,8 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
             withContext(Dispatchers.Main) {
                 appRepository.allPlans.observe(viewLifecycleOwner) { exercisePlans ->
                     // Filter exercise plans for today
-                    val todayExercisePlans = exercisePlans?.filter { it.selectedDays.contains(today) }
+                    val todayExercisePlans =
+                        exercisePlans?.filter { it.selectedDays.contains(today) }
                     // Calculate progress and update UI
                     val totalPlannedRepetitions = todayExercisePlans?.sumOf { it.repeatCount } ?: 0
                     val totalCompletedRepetitions =
@@ -193,10 +195,10 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
     }
 
     // Return true if the timestamp is today's date
-    private fun isToday(s: Long,locale: Locale = Locale.getDefault()): Boolean {
+    private fun isToday(s: Long, locale: Locale = Locale.getDefault()): Boolean {
         return try {
             val sdf = SimpleDateFormat("MM/dd/yyyy", locale)
-            val netDate = Date(s )
+            val netDate = Date(s)
             val currentDate = sdf.format(Date())
             sdf.format(netDate) == currentDate
         } catch (e: Exception) {
@@ -241,11 +243,11 @@ class HomeFragment : Fragment(), PlanAdapter.ItemListener, MemoryManagement {
     }
 
     // Hide the recycler view if there are no plan left for today
-    private fun updateEmptyPlan(plans: MutableList<Plan>?){
-        if(plans.isNullOrEmpty()){
+    private fun updateEmptyPlan(plans: MutableList<Plan>?) {
+        if (plans.isNullOrEmpty()) {
             noPlanTV.text = getString(R.string.there_is_no_plan_set_at_the_moment)
             recyclerView.visibility = View.GONE
-        }else {
+        } else {
             recyclerView.visibility = View.VISIBLE
         }
     }
