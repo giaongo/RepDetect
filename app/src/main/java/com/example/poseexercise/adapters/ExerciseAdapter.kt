@@ -1,5 +1,6 @@
 package com.example.poseexercise.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +17,21 @@ import com.example.poseexercise.data.plan.Exercise
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 
-class ExerciseAdapter internal constructor(context: Context, private val navController: NavController):
+/**
+ * ExerciseAdapter: RecyclerView Adapter for displaying a list of exercises.
+ *
+ * This adapter is responsible for binding exercise data to the ViewHolder objects for each item
+ * in the RecyclerView.
+ *
+ * @param context The context of the activity or fragment using the adapter.
+ * @param navController The NavController for navigating to other fragments.
+ */
+class ExerciseAdapter internal constructor(
+    context: Context,
+    private val navController: NavController
+) :
     RecyclerView.Adapter<ExerciseAdapter.MyViewHolder>(), Filterable {
 
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var exerciseList: List<Exercise> = emptyList()
     var exerciseFilterList = mutableListOf<Exercise>()
 
@@ -28,6 +40,7 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
         init {
             exerciseFilterList = exerciseList as MutableList<Exercise>
         }
+
         val cardView: MaterialCardView = itemView.findViewById(R.id.card)
         val name: TextView = itemView.findViewById(R.id.exercise_name)
         val image: ImageView = itemView.findViewById(R.id.exercise_image)
@@ -35,8 +48,12 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
         val calorieBurned: TextView = itemView.findViewById(R.id.exercise_calories)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseAdapter.MyViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_exercise_type, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ExerciseAdapter.MyViewHolder {
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.card_exercise_type, parent, false)
         return MyViewHolder(itemView)
     }
 
@@ -46,6 +63,7 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
 
     // This method binds the data to the ViewHolder object
     // for each item in the RecyclerView
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentExercise = exerciseFilterList[position]
         holder.name.text = currentExercise.name
@@ -66,6 +84,7 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setExercises(exercises: List<Exercise>) {
         this.exerciseList = exercises
         exerciseFilterList = exercises as MutableList<Exercise>
@@ -76,8 +95,8 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
-                if (charSearch.isNullOrEmpty()) {
-                    exerciseFilterList = exerciseList as MutableList<Exercise>
+                exerciseFilterList = if (charSearch.isEmpty()) {
+                    exerciseList as MutableList<Exercise>
                 } else {
                     val resultList = mutableListOf<Exercise>()
                     for (row in exerciseList) {
@@ -85,13 +104,14 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
                             resultList.add(row)
                         }
                     }
-                    exerciseFilterList = resultList
+                    resultList
                 }
                 val filterResults = FilterResults()
                 filterResults.values = exerciseFilterList
                 return filterResults
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 exerciseFilterList = results?.values as MutableList<Exercise>
@@ -100,5 +120,4 @@ class ExerciseAdapter internal constructor(context: Context, private val navCont
         }
     }
 }
-
 

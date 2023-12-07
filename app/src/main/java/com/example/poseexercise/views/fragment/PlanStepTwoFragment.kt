@@ -20,16 +20,18 @@ import com.example.poseexercise.util.MemoryManagement
 import com.example.poseexercise.viewmodels.AddPlanViewModel
 import kotlinx.coroutines.launch
 
-
-class PlanStepTwoFragment: Fragment(), MemoryManagement {
+/**
+ * PlanStepTwoFragment: Fragment for capturing additional details of an exercise plan.
+ *
+ * This fragment allows the user to input details such as the exercise name, repetition count,
+ * and select the days of the week for the exercise plan.
+ */
+class PlanStepTwoFragment : Fragment(), MemoryManagement {
     private lateinit var addPlanViewModel: AddPlanViewModel
-    private var mExerciseName : String = ""
+    private var mExerciseName: String = ""
     private var mKcal: Double = 0.0
     private val selectedDays = mutableListOf<String>()
     private lateinit var days: Array<String>
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +58,11 @@ class PlanStepTwoFragment: Fragment(), MemoryManagement {
         // Set the min and max value for Repeat count
         setEditTextLimit(repeatEditText, 1, 100)
         // Option list for days in week
-        val listAdapter = ArrayAdapter(this.requireContext(),android.R.layout.simple_list_item_multiple_choice, days)
+        val listAdapter = ArrayAdapter(
+            this.requireContext(),
+            android.R.layout.simple_list_item_multiple_choice,
+            days
+        )
         listOfDays.adapter = listAdapter
         // Get the selected days
         listOfDays.setOnItemClickListener { _, _, position, _ ->
@@ -71,17 +77,17 @@ class PlanStepTwoFragment: Fragment(), MemoryManagement {
         }
         // Saving plan
         addPlanButton.setOnClickListener {
-            if(repeatEditText.text.isEmpty() || selectedDays.size == 0){
+            if (repeatEditText.text.isEmpty() || selectedDays.size == 0) {
                 showErrorMessage()
-            }else {
+            } else {
                 addPlanViewModel = ViewModelProvider(this)[AddPlanViewModel::class.java]
                 var days = ""
-                for(i in selectedDays){
+                for (i in selectedDays) {
                     days += "$i "
                 }
                 val repeatCount = repeatEditText.text.toString()
-                val newPlan = Plan(0,mExerciseName,mKcal,repeatCount.toInt() ,days)
-                lifecycleScope.launch{
+                val newPlan = Plan(0, mExerciseName, mKcal, repeatCount.toInt(), days)
+                lifecycleScope.launch {
                     addPlanViewModel.insert(newPlan)
                 }
                 view.findNavController().navigate(R.id.action_planStepTwoFragment_to_homeFragment)
@@ -89,7 +95,7 @@ class PlanStepTwoFragment: Fragment(), MemoryManagement {
         }
     }
 
-    private fun showErrorMessage(){
+    private fun showErrorMessage() {
         Toast.makeText(
             activity,
             "Please fill the form",

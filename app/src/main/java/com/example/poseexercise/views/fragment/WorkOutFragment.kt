@@ -78,6 +78,9 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
+/**
+ * Fragment responsible for handling the workout process, camera usage, and exercise tracking.
+ */
 class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
     private var previewView: PreviewView? = null
@@ -99,7 +102,15 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private var mRecMinute = 0
     private var mRecHours = 0
     private val onlyExercise: List<String> =
-        listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS, CHEST_PRESS_CLASS, DEAD_LIFT_CLASS, SHOULDER_PRESS_CLASS)
+        listOf(
+            SQUATS_CLASS,
+            PUSHUPS_CLASS,
+            LUNGES_CLASS,
+            SITUP_UP_CLASS,
+            CHEST_PRESS_CLASS,
+            DEAD_LIFT_CLASS,
+            SHOULDER_PRESS_CLASS
+        )
     private val onlyPose: List<String> = listOf(WARRIOR_CLASS, YOGA_TREE_CLASS)
     private var notCompletedExercise: List<Plan>? = null
 
@@ -279,7 +290,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 for ((key, value) in it) {
                     if (value.repetition != 0 && key in onlyExercise) {
                         builder.append("${exerciseNameToDisplay(value.postureType)}: ${value.repetition}\n")
-                    } else if(key in onlyPose){
+                    } else if (key in onlyPose) {
                         builder.append("${exerciseNameToDisplay(value.postureType)}\n")
                     }
                 }
@@ -298,7 +309,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
             cameraProvider = provider
             //bindAllCameraUseCases()
-            notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(emptyList())
+            notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(
+                emptyList()
+            )
         }
 
         cameraFlipFAB.setOnClickListener {
@@ -386,8 +399,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
 
         // Declare variables to store previous values
-        var previousKey: String? = null;
-        var previousConfidence: Float? = null;
+        var previousKey: String? = null
+        var previousConfidence: Float? = null
 
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
             for ((key, value) in mapResult) {
@@ -482,7 +495,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         workoutRecyclerView.adapter = workoutAdapter
                     } else if (key in onlyPose && value.confidence > 0.5) {
 
-                        if (key !== previousKey || value.confidence !== previousConfidence){
+                        if (key !== previousKey || value.confidence !== previousConfidence) {
                             // Implementation of pose confidence
                             displayConfidence(key, value.confidence)
                             workoutRecyclerView.visibility = View.GONE
@@ -497,21 +510,19 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                             )
                             yogaPoseImage.visibility = View.VISIBLE
 
-                            if(key !== previousKey){
+                            if (key !== previousKey) {
                                 yogaPoseImage.setImageResource(getDrawableResourceIdYoga(key))
                             }
 
                             // Update previous values
-                            previousKey = key;
-                            previousConfidence = value.confidence;
+                            previousKey = key
+                            previousConfidence = value.confidence
                         }
                     } else if (key == previousKey && value.confidence < 0.6) {
                         confIndicatorView.visibility = View.INVISIBLE
                         confidenceTextView.visibility = View.INVISIBLE
                         yogaPoseImage.visibility = View.INVISIBLE
                     }
-                    //Log.d("Yoga_pose_debugging:",key.toString())
-                    //Log.d("Yoga_pose_debugging:",value.confidence.toString())
                 }
             }
 
@@ -557,7 +568,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     )
 
     private fun getDrawableResourceIdYoga(yogaPoseKey: String): Int {
-        return yogaPoseImages[yogaPoseKey] ?: throw IllegalArgumentException("Invalid yoga pose key: $yogaPoseKey")
+        return yogaPoseImages[yogaPoseKey]
+            ?: throw IllegalArgumentException("Invalid yoga pose key: $yogaPoseKey")
     }
 
     /**
@@ -828,7 +840,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 Log.d(TAG, "Set facing to $newLensFacing")
                 lensFacing = newLensFacing
                 cameraSelector = newCameraSelector
-                notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(emptyList())
+                notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(
+                    emptyList()
+                )
                 return
             }
         } catch (e: CameraInfoUnavailableException) {
@@ -1007,7 +1021,5 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val chestpress = TypedConstant(CHEST_PRESS_CLASS, 7.0)
         val deadlift = TypedConstant(DEAD_LIFT_CLASS, 10.0)
         val shoulderpress = TypedConstant(SHOULDER_PRESS_CLASS, 9.0)
-        val warrioryoga = TypedConstant(WARRIOR_CLASS, 3.0)
-        val treeyoga = TypedConstant(YOGA_TREE_CLASS, 3.0)
     }
 }

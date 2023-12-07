@@ -59,8 +59,7 @@ public class PoseClassifierProcessor {
     private static final String DEAD_LIFT_FILE = "pose/deadlift.csv";
     private static final String SHOULDER_PRESS_FILE = "pose/shoulderpress.csv";
     private static final String TREE_YOGA_FILE = "pose/treeyoga.csv";
-    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";;
-
+    private static final String WARRIOR_YOGA_FILE = "pose/warrioryoga.csv";
 
 
     // The class name for all the exercise
@@ -74,7 +73,7 @@ public class PoseClassifierProcessor {
     public static final String WARRIOR_CLASS = "warrior";
     public static final String YOGA_TREE_CLASS = "tree_pose";
     public static final String[] POSE_CLASSES = {
-            PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS,CHEST_PRESS_CLASS,DEAD_LIFT_CLASS,SHOULDER_PRESS_CLASS, WARRIOR_CLASS, YOGA_TREE_CLASS
+            PUSHUPS_CLASS, SQUATS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS, CHEST_PRESS_CLASS, DEAD_LIFT_CLASS, SHOULDER_PRESS_CLASS, WARRIOR_CLASS, YOGA_TREE_CLASS
     };
 
     private final boolean isStreamMode;
@@ -94,7 +93,7 @@ public class PoseClassifierProcessor {
             repCounters = new ArrayList<>();
         }
 
-        if(plan != null){
+        if (plan != null) {
             Log.d("pose_classifier_processor: ", plan.toString());
             Log.d("pose_classifier_processor: ", mapExercisesToFiles(plan).toString());
         }
@@ -152,37 +151,29 @@ public class PoseClassifierProcessor {
         List<String> files = new ArrayList<>();
         Set<String> uniqueFileNames = new HashSet<>();
 
-        if(exercises != null){
+        if (exercises != null) {
             for (String exercise : exercises) {
                 switch (exercise) {
-                    case "Squat":
+                    case "Squat" -> {
                         addUniqueFile(files, uniqueFileNames, SQUAT_FILE);
                         addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
                         addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
-                        break;
-                    case "Push up":
-                        addUniqueFile(files, uniqueFileNames, PUSH_UP_FILE);
-                        break;
-                    case "Sit up":
-                        addUniqueFile(files, uniqueFileNames, SIT_UP_FILE);
-                        break;
-                    case "Lunge":
+                    }
+                    case "Push up" -> addUniqueFile(files, uniqueFileNames, PUSH_UP_FILE);
+                    case "Sit up" -> addUniqueFile(files, uniqueFileNames, SIT_UP_FILE);
+                    case "Lunge" -> {
                         addUniqueFile(files, uniqueFileNames, LUNGE_FILE);
                         addUniqueFile(files, uniqueFileNames, NEUTRAL_STANDING_FILE);
                         addUniqueFile(files, uniqueFileNames, SQUAT_FILE);
-                        break;
-                    case "Chest press":
-                        addUniqueFile(files, uniqueFileNames, CHEST_PRESS_FILE);
-                        break;
-                    case "Dead lift":
-                        addUniqueFile(files, uniqueFileNames, DEAD_LIFT_FILE);
-                        break;
-                    case "Shoulder press":
-                        addUniqueFile(files, uniqueFileNames, SHOULDER_PRESS_FILE);
-                        break;
+                    }
+                    case "Chest press" -> addUniqueFile(files, uniqueFileNames, CHEST_PRESS_FILE);
+                    case "Dead lift" -> addUniqueFile(files, uniqueFileNames, DEAD_LIFT_FILE);
+                    case "Shoulder press" ->
+                            addUniqueFile(files, uniqueFileNames, SHOULDER_PRESS_FILE);
+
                     // Add more cases for other exercises if needed
-                    default:
-                        break;
+                    default -> {
+                    }
                 }
             }
         }
