@@ -11,6 +11,12 @@ import androidx.navigation.Navigation
 import com.example.poseexercise.R
 import com.example.poseexercise.views.activity.MainActivity
 
+/**
+ * CompletedFragment: A fragment displayed when a workout is successfully completed.
+ *
+ * This fragment provides a button to navigate back to the home screen and displays the workout
+ * result and timer information.
+ */
 class CompletedFragment : Fragment() {
 
     private lateinit var navigateToHomeButton: Button
@@ -19,7 +25,10 @@ class CompletedFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_completed, container, false)
+
+        // Set up click listener to navigate to the home screen
         navigateToHomeButton = view.findViewById(R.id.goToHomeFromComplete)
         navigateToHomeButton.setOnClickListener {
             Navigation.findNavController(view)
@@ -46,6 +55,7 @@ class CompletedFragment : Fragment() {
             workoutResultText.text = getString(R.string.noWorkoutResultDisplay)
         }
 
+        // Reset workout data in the MainActivity
         MainActivity.apply {
             workoutResultData = null
             workoutResultData = null

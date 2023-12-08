@@ -15,6 +15,9 @@ import com.example.poseexercise.onboarding.ThirdOnboardingFragment
 import com.example.poseexercise.util.MemoryManagement
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
+/**
+ * Activity for handling onboarding screens and navigation.
+ */
 class OnboardingActivity : AppCompatActivity(), MemoryManagement {
     private lateinit var viewPager: ViewPager2
     private lateinit var prefManager: PrefManager
@@ -23,7 +26,7 @@ class OnboardingActivity : AppCompatActivity(), MemoryManagement {
         setContentView(R.layout.activity_onboarding)
 
         // Find and initialize UI components
-        val  nextButton = findViewById<Button>(R.id.nextButton)
+        val nextButton = findViewById<Button>(R.id.nextButton)
         prefManager = PrefManager(this)
         // List of onboarding fragments
         val fragments = listOf(
@@ -73,13 +76,19 @@ class OnboardingActivity : AppCompatActivity(), MemoryManagement {
 
 }
 
+/**
+ * Helper class to manage shared preferences for onboarding.
+ */
 class PrefManager(context: Context) {
-    private val pref: SharedPreferences = context.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
+    private val pref: SharedPreferences =
+        context.getSharedPreferences("MyPref", Context.MODE_PRIVATE)
 
+    //Check if it is the first time the app is being launched.
     fun isFirstTimeLaunch(): Boolean {
         return pref.getBoolean("isFirstTimeLaunch", true)
     }
 
+    //Set the first-time launch flag.
     fun setFirstTimeLaunch(isFirstTime: Boolean) {
         pref.edit().putBoolean("isFirstTimeLaunch", isFirstTime).apply()
     }

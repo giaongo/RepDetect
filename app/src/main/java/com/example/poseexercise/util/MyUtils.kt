@@ -11,6 +11,9 @@ class MyUtils {
                 "pushups_down" -> "Push up"
                 "lunges" -> "Lunge"
                 "situp_up" -> "Sit up"
+                "chestpress_down" -> "Chest press"
+                "deadlift_down" -> "Dead lift"
+                "shoulderpress_down" -> "Shoulder press"
                 "warrior" -> "Warrior Yoga"
                 "tree_pose" -> "Tree Yoga"
                 // Add more cases as needed
@@ -52,6 +55,9 @@ class MyUtils {
                 "Lunge" -> "lunges"
                 "Squat" -> "squats"
                 "Sit up" -> "situp_up"
+                "Chest press" -> "chestpress_down"
+                "Dead lift" -> "deadlift_down"
+                "Shoulder press" -> "shoulderpress_down"
                 "Warrior Yoga" -> "warrior"
                 "Tree Yoga" -> "tree_pose"
                 // Add more cases as needed

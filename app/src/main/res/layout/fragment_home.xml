@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
         android:layout_marginTop="8dp"
-        android:text="@string/name"
+        android:text="@string/default_user"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold" />

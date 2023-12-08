@@ -42,11 +42,15 @@ import com.example.poseexercise.adapters.ExerciseGifAdapter
 import com.example.poseexercise.adapters.WorkoutAdapter
 import com.example.poseexercise.data.plan.ExerciseLog
 import com.example.poseexercise.data.plan.ExercisePlan
+import com.example.poseexercise.data.plan.Plan
 import com.example.poseexercise.data.results.WorkoutResult
 import com.example.poseexercise.posedetector.PoseDetectorProcessor
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.CHEST_PRESS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.DEAD_LIFT_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.LUNGES_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.POSE_CLASSES
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.PUSHUPS_CLASS
+import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SHOULDER_PRESS_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SITUP_UP_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.SQUATS_CLASS
 import com.example.poseexercise.posedetector.classification.PoseClassifierProcessor.WARRIOR_CLASS
@@ -74,6 +78,9 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
+/**
+ * Fragment responsible for handling the workout process, camera usage, and exercise tracking.
+ */
 class WorkOutFragment : Fragment(), MemoryManagement {
     private var screenOn = false
     private var previewView: PreviewView? = null
@@ -95,8 +102,17 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private var mRecMinute = 0
     private var mRecHours = 0
     private val onlyExercise: List<String> =
-        listOf(SQUATS_CLASS, PUSHUPS_CLASS, LUNGES_CLASS, SITUP_UP_CLASS)
+        listOf(
+            SQUATS_CLASS,
+            PUSHUPS_CLASS,
+            LUNGES_CLASS,
+            SITUP_UP_CLASS,
+            CHEST_PRESS_CLASS,
+            DEAD_LIFT_CLASS,
+            SHOULDER_PRESS_CLASS
+        )
     private val onlyPose: List<String> = listOf(WARRIOR_CLASS, YOGA_TREE_CLASS)
+    private var notCompletedExercise: List<Plan>? = null
 
     // late init properties---
     private lateinit var resultViewModel: ResultViewModel
@@ -120,6 +136,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     private lateinit var completeAllExercise: TextView
     private lateinit var skipButton: Button
     private lateinit var textToSpeech: TextToSpeech
+    private lateinit var yogaPoseImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,16 +171,14 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         currentRepetitionTextView = view.findViewById(R.id.currentRepetitionText)
         confidenceTextView = view.findViewById(R.id.confidenceIndicatorTextView)
         completeAllExercise = view.findViewById(R.id.completedAllExerciseTextView)
-        confIndicatorView.visibility = View.GONE
-        confidenceTextView.visibility = View.GONE
-
+        confIndicatorView.visibility = View.INVISIBLE
+        confidenceTextView.visibility = View.INVISIBLE
         loadingTV = view.findViewById(R.id.loadingStatus)
         loadProgress = view.findViewById(R.id.loadingProgress)
-
         skipButton = view.findViewById(R.id.skipButton)
-
         workoutRecyclerView = view.findViewById(R.id.workoutRecycleViewArea)
         workoutRecyclerView.layoutManager = LinearLayoutManager(activity)
+        yogaPoseImage = view.findViewById(R.id.yogaPoseSnapShot)
         return view
     }
 
@@ -178,18 +193,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         gifContainer.visibility = View.GONE
         skipButton.visibility = View.GONE
 
-        val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
-        val exerciseGifAdapter = ExerciseGifAdapter(exerciseGifs) {
-            // Handle skip button click here
-            // Transition to the "Start" button
-            startButton.visibility = View.GONE
-            cameraFlipFAB.visibility = View.VISIBLE
-            viewPager.visibility = View.GONE
-            skipButton.visibility = View.GONE
-            gifContainer.visibility = View.GONE
-            cameraFlipFAB.visibility = View.GONE
-        }
-        viewPager.adapter = exerciseGifAdapter
 
         // start exercise button
         startButton.setOnClickListener {
@@ -226,10 +229,13 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         // 10 reps =  3.2 for push up -> 1 reps = 3.2/10
         // Complete the exercise
-        val sitUp = Postures.sitUp
+        val sitUp = Postures.situp
         val pushUp = Postures.pushup
         val lunge = Postures.lunge
         val squat = Postures.squat
+        val chestPress = Postures.chestpress
+        val deadLift = Postures.deadlift
+        val shoulderPress = Postures.shoulderpress
 
         buttonCompleteExercise.setOnClickListener {
             synthesizeSpeech("Workout Complete")
@@ -243,6 +249,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                                 pushUp.type -> pushUp.value / 10
                                 lunge.type -> lunge.value / 10
                                 squat.type -> squat.value / 10
+                                chestPress.type -> chestPress.value / 10
+                                deadLift.type -> deadLift.value / 10
+                                shoulderPress.type -> shoulderPress.value / 10
                                 else -> 0.0
                             }
                             val workoutTime =
@@ -278,9 +287,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             // update the workoutResultData in MainActivity
             cameraViewModel.postureLiveData.value?.let {
                 val builder = StringBuilder()
-                for ((_, value) in it) {
-                    if (value.repetition != 0) {
-                        builder.append("${transformText(value.postureType)}: ${value.repetition}\n")
+                for ((key, value) in it) {
+                    if (value.repetition != 0 && key in onlyExercise) {
+                        builder.append("${exerciseNameToDisplay(value.postureType)}: ${value.repetition}\n")
+                    } else if (key in onlyPose) {
+                        builder.append("${exerciseNameToDisplay(value.postureType)}\n")
                     }
                 }
                 if (builder.toString().isNotEmpty()) MainActivity.workoutResultData =
@@ -297,7 +308,10 @@ class WorkOutFragment : Fragment(), MemoryManagement {
 
         cameraViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider: ProcessCameraProvider? ->
             cameraProvider = provider
-            bindAllCameraUseCases()
+            //bindAllCameraUseCases()
+            notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(
+                emptyList()
+            )
         }
 
         cameraFlipFAB.setOnClickListener {
@@ -311,8 +325,48 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         lifecycleScope.launch(Dispatchers.IO) {
 
             // get not completed exercise from database using coroutine
-            val notCompletedExercise =
+            notCompletedExercise =
                 withContext(Dispatchers.IO) { homeViewModel.getNotCompletePlans(today) }
+
+            // Create a set to track unique exercises
+            val uniqueExercises = mutableSetOf<String>()
+
+            // Create exerciseGifs list based on notCompletedExercise, avoiding duplicates
+            val exerciseGifs = mutableListOf<Pair<String, Int>>()
+
+            // Function to add exercise to the list if it's not already present
+            fun addExerciseIfNotPresent(exercise: String) {
+                if (uniqueExercises.add(exercise)) {
+                    exerciseGifs.add(exercise to mapExerciseToDrawable(exercise))
+                }
+            }
+
+            // Add entries based on notCompletedExercise
+            notCompletedExercise?.let {
+                it.map { plan ->
+                    addExerciseIfNotPresent(plan.exercise)
+                }
+            }
+
+            // Add entries for default exercises (squat, lunge, warrior, tree)
+            addExerciseIfNotPresent(exerciseNameToDisplay(SQUATS_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(LUNGES_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(WARRIOR_CLASS))
+            addExerciseIfNotPresent(exerciseNameToDisplay(YOGA_TREE_CLASS))
+
+            val viewPager: ViewPager2 = view.findViewById(R.id.exerciseViewPager)
+            val exerciseGifAdapter = ExerciseGifAdapter(exerciseGifs) {
+                // Handle skip button click here
+                // Transition to the "Start" button
+                startButton.visibility = View.GONE
+                cameraFlipFAB.visibility = View.VISIBLE
+                viewPager.visibility = View.GONE
+                skipButton.visibility = View.GONE
+                gifContainer.visibility = View.GONE
+                cameraFlipFAB.visibility = View.GONE
+            }
+            viewPager.adapter = exerciseGifAdapter
+
             notCompletedExercise?.forEach { item ->
                 val exercisePlan =
                     ExercisePlan(
@@ -344,6 +398,10 @@ class WorkOutFragment : Fragment(), MemoryManagement {
             }
         }
 
+        // Declare variables to store previous values
+        var previousKey: String? = null
+        var previousConfidence: Float? = null
+
         cameraViewModel.postureLiveData.observe(viewLifecycleOwner) { mapResult ->
             for ((key, value) in mapResult) {
                 // Visualize the repetition exercise data
@@ -366,8 +424,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         } else {
                             completeAllExercise.visibility = View.GONE
                         }
-                        confIndicatorView.visibility = View.GONE
-                        confidenceTextView.visibility = View.GONE
+                        confIndicatorView.visibility = View.INVISIBLE
+                        confidenceTextView.visibility = View.INVISIBLE
+                        yogaPoseImage.visibility = View.INVISIBLE
                         // check if the exercise target is complete
                         var repetition: Int? = databaseExercisePlan.find {
                             it.exerciseName.equals(
@@ -435,22 +494,34 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         workoutAdapter = WorkoutAdapter(exerciseList, databaseExercisePlan)
                         workoutRecyclerView.adapter = workoutAdapter
                     } else if (key in onlyPose && value.confidence > 0.5) {
-                        // Implementation of pose confidence
-                        confIndicatorView.visibility = View.VISIBLE
-                        displayConfidence(value.confidence)
-                        workoutRecyclerView.visibility = View.GONE
-                        completeAllExercise.visibility = View.GONE
-                        currentExerciseTextView.visibility = View.VISIBLE
-                        currentRepetitionTextView.visibility = View.GONE
-                        confidenceTextView.visibility = View.VISIBLE
-                        currentExerciseTextView.text = exerciseNameToDisplay(key)
-                        confidenceTextView.text = getString(
-                            R.string.confidence_percentage,
-                            (value.confidence * 100).toInt()
-                        )
-                    } else if (key in onlyPose && value.confidence < 0.6) {
-                        confIndicatorView.visibility = View.GONE
-                        confidenceTextView.visibility = View.GONE
+
+                        if (key !== previousKey || value.confidence !== previousConfidence) {
+                            // Implementation of pose confidence
+                            displayConfidence(key, value.confidence)
+                            workoutRecyclerView.visibility = View.GONE
+                            completeAllExercise.visibility = View.GONE
+                            currentExerciseTextView.visibility = View.VISIBLE
+                            currentRepetitionTextView.visibility = View.GONE
+                            confidenceTextView.visibility = View.VISIBLE
+                            currentExerciseTextView.text = exerciseNameToDisplay(key)
+                            confidenceTextView.text = getString(
+                                R.string.confidence_percentage,
+                                (value.confidence * 100).toInt()
+                            )
+                            yogaPoseImage.visibility = View.VISIBLE
+
+                            if (key !== previousKey) {
+                                yogaPoseImage.setImageResource(getDrawableResourceIdYoga(key))
+                            }
+
+                            // Update previous values
+                            previousKey = key
+                            previousConfidence = value.confidence
+                        }
+                    } else if (key == previousKey && value.confidence < 0.6) {
+                        confIndicatorView.visibility = View.INVISIBLE
+                        confidenceTextView.visibility = View.INVISIBLE
+                        yogaPoseImage.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -471,15 +542,35 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         }
     }
 
+
+    // Map the notCompletedExercise list to a list of pairs to show gifs
+    private fun mapExerciseToDrawable(exercise: String): Int {
+        return when (exercise) {
+            exerciseNameToDisplay(PUSHUPS_CLASS) -> R.drawable.pushup
+            exerciseNameToDisplay(LUNGES_CLASS) -> R.drawable.lunge
+            exerciseNameToDisplay(SQUATS_CLASS) -> R.drawable.squats
+            exerciseNameToDisplay(SITUP_UP_CLASS) -> R.drawable.situp
+            exerciseNameToDisplay(CHEST_PRESS_CLASS) -> R.drawable.chest_press_gif
+            exerciseNameToDisplay(DEAD_LIFT_CLASS) -> R.drawable.dead_lift_gif
+            exerciseNameToDisplay(SHOULDER_PRESS_CLASS) -> R.drawable.shoulder_press_gif
+            exerciseNameToDisplay(WARRIOR_CLASS) -> R.drawable.warrior_yoga_gif
+            exerciseNameToDisplay(YOGA_TREE_CLASS) -> R.drawable.tree_yoga_gif
+            else -> R.drawable.warrior_yoga_gif
+        }
+    }
+
     /**
-     * List of exercise gifs
+     * List of yoga images
      */
-    private val exerciseGifs = listOf(
-        Postures.pushup.type to R.drawable.pushup,
-        Postures.lunge.type to R.drawable.lunge,
-        Postures.squat.type to R.drawable.squats,
-        Postures.sitUp.type to R.drawable.situp
+    private val yogaPoseImages = mapOf(
+        WARRIOR_CLASS to R.drawable.warrior_yoga_pose,
+        YOGA_TREE_CLASS to R.drawable.tree_yoga_pose
     )
+
+    private fun getDrawableResourceIdYoga(yogaPoseKey: String): Int {
+        return yogaPoseImages[yogaPoseKey]
+            ?: throw IllegalArgumentException("Invalid yoga pose key: $yogaPoseKey")
+    }
 
     /**
      * Initialize TextToSpeech engine
@@ -513,31 +604,24 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val data = exerciseLog.getExerciseData(key)
         currentExerciseTextView.text = exerciseNameToDisplay(key)
         currentRepetitionTextView.text = "count: " + data?.repetitions.toString()
-        /*val pushUpData = exerciseLog.getExerciseData(key)
-        val exerciseName = exerciseNameToDisplay(key)
-        val repetitionCount = pushUpData?.repetitions ?: 0
-
-        val exerciseText = getString(R.string.current_exercise_format, exerciseName)
-        val repetitionText = getString(R.string.current_repetition_format, repetitionCount)
-
-        currentExerciseTextView.text = exerciseText
-        currentRepetitionTextView.text = repetitionText*/
     }
 
     /**
      * Display confidence level with different colors based on thresholds
      */
-    private fun displayConfidence(confidence: Float) {
-        if (confidence <= 0.6) {
+    private fun displayConfidence(key: String, confidence: Float) {
+        confIndicatorView.visibility = View.VISIBLE
+        yogaPoseImage.visibility = View.VISIBLE
+        if (confidence <= 0.6f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.red)
-        } else if (confidence > 0.6 && confidence <= 0.7) {
+        } else if (confidence > 0.6f && confidence <= 0.7f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.orange)
-        } else if (confidence > 0.7 && confidence <= 0.8) {
+        } else if (confidence > 0.7f && confidence <= 0.8f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.yellow)
-        } else if (confidence > 0.8 && confidence <= 0.9) {
+        } else if (confidence > 0.8f && confidence <= 0.9f) {
             confIndicatorView.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.lightGreen)
         } else {
@@ -549,11 +633,11 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     /**
      * Bind all camera use cases (preview and analysis)
      */
-    private fun bindAllCameraUseCases() {
+    private fun bindAllCameraUseCases(notCompletedPlan: List<Plan>) {
         // Bind all camera use cases (preview and analysis)
         bindPreviewUseCase()
         cameraViewModel.triggerClassification.observe(viewLifecycleOwner) { pressed ->
-            bindAnalysisUseCase(pressed)
+            bindAnalysisUseCase(pressed, notCompletedPlan)
         }
     }
 
@@ -585,7 +669,7 @@ class WorkOutFragment : Fragment(), MemoryManagement {
     /**
      * bind analysis use case
      */
-    private fun bindAnalysisUseCase(runClassification: Boolean) {
+    private fun bindAnalysisUseCase(runClassification: Boolean, notCompletedPlan: List<Plan>) {
         if (cameraProvider == null) {
             return
         }
@@ -609,8 +693,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                     val rescaleZ =
                         PreferenceUtils.shouldPoseDetectionRescaleZForVisualization(requireContext())
 
-                    //PreferenceUtils.shouldPoseDetectionRunClassification(requireContext())
-
                     // Build Pose Detector Processor based on the settings/preferences
                     PoseDetectorProcessor(
                         requireContext(),
@@ -620,7 +702,8 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                         rescaleZ,
                         runClassification,
                         true,
-                        cameraViewModel
+                        cameraViewModel,
+                        notCompletedPlan
                     )
                 }
 
@@ -757,7 +840,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
                 Log.d(TAG, "Set facing to $newLensFacing")
                 lensFacing = newLensFacing
                 cameraSelector = newCameraSelector
-                bindAllCameraUseCases()
+                notCompletedExercise?.let { bindAllCameraUseCases(it) } ?: bindAllCameraUseCases(
+                    emptyList()
+                )
                 return
             }
         } catch (e: CameraInfoUnavailableException) {
@@ -869,19 +954,6 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         return mBuilder.toString()
     }
 
-    /**
-     * Transform the posture result text to be displayed in the CompletedFragment
-     */
-    private fun transformText(input: String): String {
-        val regex = Regex("_")
-        if (regex.containsMatchIn(input)) {
-            return regex.replace(input.lowercase(), " ")
-                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-        } else {
-            print("No match found")
-        }
-        return input.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-    }
 
     /**
      * overridden function to clean up memory, clear object reference and un-register onClickListener
@@ -945,6 +1017,9 @@ class WorkOutFragment : Fragment(), MemoryManagement {
         val pushup = TypedConstant(PUSHUPS_CLASS, 3.2)
         val lunge = TypedConstant(LUNGES_CLASS, 3.0)
         val squat = TypedConstant(SQUATS_CLASS, 3.8)
-        val sitUp = TypedConstant(SITUP_UP_CLASS, 5.0)
+        val situp = TypedConstant(SITUP_UP_CLASS, 5.0)
+        val chestpress = TypedConstant(CHEST_PRESS_CLASS, 7.0)
+        val deadlift = TypedConstant(DEAD_LIFT_CLASS, 10.0)
+        val shoulderpress = TypedConstant(SHOULDER_PRESS_CLASS, 9.0)
     }
 }

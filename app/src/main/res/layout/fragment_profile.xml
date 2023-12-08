@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/content_description"
-            android:src="@drawable/default_user"
+            android:src="@drawable/default_user_avatar"
             app:layout_constraintBottom_toBottomOf="@+id/card"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/card"

@@ -9,7 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.poseexercise.R
 
-
+/**
+ * CancelFragment: A fragment displayed when the user cancels an operation.
+ *
+ * This fragment provides a button to navigate back to the home screen using the Navigation component.
+ */
 class CancelFragment : Fragment() {
     private lateinit var navigateToHomeButton: Button
 
@@ -25,6 +29,7 @@ class CancelFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navigateToHomeButton = view.findViewById(R.id.goToHomeFromCancel)
 
+        // Set up click listener to navigate to the home screen
         navigateToHomeButton.setOnClickListener {
             Navigation.findNavController(view)
                 .navigate(R.id.action_cancelFragment_to_homeFragment2)

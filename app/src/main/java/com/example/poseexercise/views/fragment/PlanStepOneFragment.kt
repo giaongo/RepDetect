@@ -44,10 +44,10 @@ class PlanStepOneFragment : Fragment(), MemoryManagement {
             val checkedChipId = chipGroup.checkedChipId
             val chip = chipGroup.findViewById<Chip>(checkedChipId)
             // Filter the result based on the selected chip
-            if(chip != null){
+            if (chip != null) {
                 searchQuery = chip.text
                 adapter.filter.filter(searchQuery)
-            }else {
+            } else {
                 adapter.setExercises(exerciseList)
             }
         }
