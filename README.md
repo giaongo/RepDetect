@@ -100,7 +100,7 @@ The training model is based on transfer learning and the training is done in [Go
 3. Build and run the app on your Android device or emulator.
 
 OR--
-1. Download the  [app-release.apk](https://github.com/SurajKRB/RepDetect/blob/sign_upload/release/app-release.apk) to Android phone
+1. Download the  [app-release.apk](https://github.com/giaongo/RepDetect/tags) to Android phone
 2. Remember to "Allowing app installs from Unknown Sources in Android"
    
 ### Usage
